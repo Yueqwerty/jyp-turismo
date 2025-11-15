@@ -261,58 +261,73 @@ export default function HomePage() {
                 </div>
               </motion.div>
 
-              {/* Grid de imágenes - 7 columnas derecha */}
+              {/* Mosaico de imágenes - 7 columnas derecha */}
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="md:col-span-7 grid grid-cols-2 gap-4"
+                className="md:col-span-7 grid grid-cols-3 gap-3"
               >
-                {/* Imagen grande */}
-                <div className="col-span-2 relative h-[400px] rounded-2xl overflow-hidden group">
+                {/* Fila superior */}
+                <div className="relative h-[200px] rounded-xl overflow-hidden">
                   <Image
                     src="/images/tours/laguna-san-rafael.jpg"
-                    alt="Glaciar San Rafael"
+                    alt="Tour 1"
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                  <div className="absolute bottom-6 left-6 right-6 text-white">
-                    <span className="inline-block px-2 py-1 bg-white/20 backdrop-blur-sm rounded text-xs font-bold mb-2">
-                      MÁS PEDIDO
-                    </span>
-                    <h3 className="text-2xl font-black mb-1">Glaciar San Rafael</h3>
-                    <p className="text-white/90 text-sm">Navegación • Campo de Hielo Norte</p>
-                  </div>
                 </div>
-
-                {/* Imágenes secundarias */}
-                <div className="relative h-[240px] rounded-2xl overflow-hidden group">
+                <div className="relative h-[200px] rounded-xl overflow-hidden">
                   <Image
                     src="/images/tours/capillas-marmol.jpg"
-                    alt="Capillas de Mármol"
+                    alt="Tour 2"
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
-                  <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <h4 className="text-lg font-black">Capillas de Mármol</h4>
-                    <p className="text-white/90 text-xs">Lago General Carrera</p>
-                  </div>
                 </div>
-
-                <div className="relative h-[240px] rounded-2xl overflow-hidden group">
+                <div className="relative h-[200px] rounded-xl overflow-hidden">
                   <Image
                     src="/images/tours/queulat.jpg"
-                    alt="Queulat"
+                    alt="Tour 3"
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
-                  <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <h4 className="text-lg font-black">Parque Queulat</h4>
-                    <p className="text-white/90 text-xs">Ventisquero Colgante</p>
-                  </div>
+                </div>
+
+                {/* Fila media */}
+                <div className="col-span-2 relative h-[220px] rounded-xl overflow-hidden">
+                  <Image
+                    src="/images/tours/ensenada-perez.jpg"
+                    alt="Tour 4"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="relative h-[220px] rounded-xl overflow-hidden">
+                  <Image
+                    src="/images/tours/ventisqueros.jpg"
+                    alt="Tour 5"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+
+                {/* Fila inferior */}
+                <div className="relative h-[200px] rounded-xl overflow-hidden">
+                  <Image
+                    src="/images/tours/carretera-austral.jpg"
+                    alt="Tour 6"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="col-span-2 relative h-[200px] rounded-xl overflow-hidden">
+                  <Image
+                    src="/images/tours/pesca-deportiva.jpg"
+                    alt="Tour 7"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
               </motion.div>
 
