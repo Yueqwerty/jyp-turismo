@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
 
 const TourCard = ({
@@ -151,10 +151,10 @@ const SideNav = ({ activeSection, scrollProgress }: { activeSection: string; scr
       <div className="p-6 border-b border-gray-200/50">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-600/20">
-            <span className="text-xl font-black text-white">JYP</span>
+            <span className="text-xl font-black text-white">J&P</span>
           </div>
           <div className="hidden lg:block">
-            <h2 className="text-lg font-black text-gray-900 tracking-tight">JYP Turismo</h2>
+            <h2 className="text-lg font-black text-gray-900 tracking-tight">J&P Turismo</h2>
             <p className="text-xs text-gray-500 font-medium">Patagonia Aysén</p>
           </div>
         </div>
@@ -216,23 +216,6 @@ const SideNav = ({ activeSection, scrollProgress }: { activeSection: string; scr
   );
 };
 
-// Scroll Progress Bar
-const ScrollProgressBar = () => {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
-
-  return (
-    <motion.div
-      className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-600 origin-left z-50"
-      style={{ scaleX }}
-    />
-  );
-};
-
 export default function HomePage() {
   const [activeSection, setActiveSection] = useState('inicio');
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -280,7 +263,6 @@ export default function HomePage() {
 
   return (
     <div className="bg-gray-50">
-      <ScrollProgressBar />
       <SideNav activeSection={activeSection} scrollProgress={scrollProgress} />
 
       {/* Main Content */}
@@ -564,9 +546,9 @@ export default function HomePage() {
               <div className="md:col-span-2">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
-                    <span className="text-xl font-black text-white">JYP</span>
+                    <span className="text-xl font-black text-white">J&P</span>
                   </div>
-                  <span className="text-2xl font-black text-gray-900 tracking-tight">JYP Turismo</span>
+                  <span className="text-2xl font-black text-gray-900 tracking-tight">J&P Turismo</span>
                 </div>
                 <p className="text-gray-600 leading-relaxed max-w-md font-light">
                   Expertos en experiencias auténticas de Patagonia. Descubre la belleza natural
@@ -596,7 +578,7 @@ export default function HomePage() {
 
             <div className="border-t border-gray-200/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-gray-500 text-sm font-medium">
-                &copy; {new Date().getFullYear()} JYP Turismo. Región de Aysén, Chile.
+                &copy; {new Date().getFullYear()} J&P Turismo. Región de Aysén, Chile.
               </p>
               <p className="text-gray-400 text-xs font-medium tracking-wide">
                 Diseñado para la Patagonia
