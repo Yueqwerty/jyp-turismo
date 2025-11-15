@@ -1,11 +1,99 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useState, useRef } from 'react';
 
+const TourCard = ({
+  title,
+  description,
+  tags,
+  image,
+  gradient,
+  className = "",
+  featured = false
+}: {
+  title: string;
+  description: string;
+  tags?: string[];
+  image?: string;
+  gradient: string;
+  className?: string;
+  featured?: boolean;
+}) => {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
+      className={`group relative overflow-hidden rounded-3xl cursor-pointer ${className}`}
+    >
+      {/* Background Image or Gradient */}
+      <div className="absolute inset-0">
+        {image && !imgError ? (
+          <>
+            <Image
+              src={image}
+              alt={title}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-110"
+              onError={() => setImgError(true)}
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/70"></div>
+          </>
+        ) : (
+          <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`}>
+            <div className="absolute inset-0 bg-black/20"></div>
+          </div>
+        )}
+      </div>
+
+      {/* Glassmorphism overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+      {/* Content */}
+      <div className={`relative z-10 p-8 ${featured ? 'md:p-12' : 'md:p-8'} h-full flex flex-col justify-between`}>
+        <div>
+          {featured && (
+            <span className="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-xl rounded-full text-white text-xs font-semibold uppercase tracking-wider mb-6 border border-white/30">
+              Destacado
+            </span>
+          )}
+          <h3 className={`font-black text-white mb-4 leading-tight tracking-tight ${featured ? 'text-4xl md:text-6xl' : 'text-2xl md:text-3xl'}`}>
+            {title}
+          </h3>
+          <p className={`text-white/90 font-light leading-relaxed ${featured ? 'text-xl mb-8 max-w-lg' : 'text-sm mb-6'}`}>
+            {description}
+          </p>
+        </div>
+
+        {tags && tags.length > 0 && (
+          <div className="flex flex-wrap gap-3">
+            {tags.map((tag, i) => (
+              <span key={i} className="px-4 py-2 bg-white/15 backdrop-blur-xl rounded-full text-white text-sm font-medium border border-white/20">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Animated border */}
+      <div className="absolute inset-0 rounded-3xl border border-white/10 group-hover:border-white/30 transition-colors duration-500"></div>
+
+      {/* Glow effect */}
+      {featured && (
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-cyan-400/30 rounded-full blur-[100px] group-hover:blur-[120px] transition-all duration-500"></div>
+      )}
+    </motion.div>
+  );
+};
+
 export default function HomePage() {
-  const [videoError, setVideoError] = useState(false);
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -147,187 +235,99 @@ export default function HomePage() {
 
           {/* Bento Grid */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
-            {/* Cuevas de Mármol - Hero card */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="md:col-span-8 md:row-span-2 group relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-cyan-600 to-blue-700 p-8 md:p-12 min-h-[500px] flex flex-col justify-between cursor-pointer"
-            >
-              {/* Glassmorphism overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            {/* Laguna San Rafael - Hero card */}
+            <TourCard
+              title="Laguna San Rafael"
+              description="Navegación hasta el imponente Glaciar San Rafael, parte del Campo de Hielo Norte. Observa témpanos de hielo azul flotando en aguas cristalinas y escucha el estruendo de los desprendimientos."
+              tags={["Navegación", "Día Completo", "Glaciar"]}
+              image="/images/tours/laguna-san-rafael.jpg"
+              gradient="from-blue-600 via-cyan-600 to-blue-700"
+              className="md:col-span-7 md:row-span-2 min-h-[500px]"
+              featured
+            />
 
-              {/* Glow effect */}
-              <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-cyan-400/30 rounded-full blur-[100px] group-hover:blur-[120px] transition-all duration-500"></div>
+            {/* Capillas del Mármol */}
+            <TourCard
+              title="Capillas del Mármol"
+              description="Explora las formaciones de mármol más espectaculares del mundo. Colores turquesa y azul cambian con las estaciones."
+              tags={["Navegación", "Fotografía"]}
+              image="/images/tours/capillas-marmol.jpg"
+              gradient="from-cyan-500 via-blue-600 to-indigo-600"
+              className="md:col-span-5 min-h-[280px]"
+            />
 
-              <div className="relative z-10">
-                <span className="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-xl rounded-full text-white text-xs font-semibold uppercase tracking-wider mb-6 border border-white/30">
-                  Destacado
-                </span>
-                <h3 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight tracking-tight">
-                  Cuevas de<br />Mármol
-                </h3>
-                <p className="text-xl text-blue-50/90 mb-8 max-w-lg font-light leading-relaxed">
-                  Navega por formaciones de mármol únicas en el mundo. Las cuevas cambian de color
-                  con las estaciones, creando un espectáculo natural inolvidable.
-                </p>
-              </div>
+            {/* Parque Nacional Queulat */}
+            <TourCard
+              title="Parque Nacional Queulat"
+              description="Ventisquero Colgante y bosques milenarios. Una de las postales más icónicas de Aysén con su glaciar suspendido entre montañas."
+              tags={["Trekking", "Naturaleza"]}
+              image="/images/tours/queulat.jpg"
+              gradient="from-emerald-600 to-green-700"
+              className="md:col-span-5 min-h-[280px]"
+            />
 
-              <div className="relative z-10 flex flex-wrap gap-3">
-                <span className="px-4 py-2 bg-white/15 backdrop-blur-xl rounded-full text-white text-sm font-medium border border-white/20">
-                  Navegación
-                </span>
-                <span className="px-4 py-2 bg-white/15 backdrop-blur-xl rounded-full text-white text-sm font-medium border border-white/20">
-                  Fotografía
-                </span>
-                <span className="px-4 py-2 bg-white/15 backdrop-blur-xl rounded-full text-white text-sm font-medium border border-white/20">
-                  Medio día
-                </span>
-              </div>
+            {/* Full Mármol Puerto Sánchez */}
+            <TourCard
+              title="Full Mármol desde Puerto Sánchez"
+              description="Navegación completa por las Cuevas y Capillas de Mármol. Incluye recorrido por Catedral de Mármol y zonas exclusivas."
+              tags={["Navegación", "Día Completo"}}
+              image="/images/tours/puerto-sanchez.jpg"
+              gradient="from-blue-500 via-violet-600 to-purple-600"
+              className="md:col-span-5 min-h-[320px]"
+            />
 
-              {/* Animated border */}
-              <div className="absolute inset-0 rounded-3xl border border-white/10 group-hover:border-white/20 transition-colors duration-500"></div>
-            </motion.div>
-
-            {/* Glaciar Exploradores */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="md:col-span-4 group relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 md:p-8 min-h-[240px] flex flex-col justify-between cursor-pointer border border-white/5 hover:border-cyan-500/30 transition-all duration-500"
-            >
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(6,182,212,0.1),transparent)] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-              <div className="relative z-10">
-                <div className="w-14 h-14 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-2xl flex items-center justify-center mb-6 border border-cyan-500/20 group-hover:scale-110 transition-transform duration-500">
-                  <svg className="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-3 tracking-tight">Glaciar Exploradores</h3>
-                <p className="text-gray-400 text-sm font-light leading-relaxed">
-                  Trekking sobre hielo milenario en una experiencia única de contacto con la naturaleza glaciar
-                </p>
-              </div>
-            </motion.div>
+            {/* Ensenada Pérez */}
+            <TourCard
+              title="Ensenada Pérez"
+              description="Fiordos prístinos y aguas glaciares. Conecta con la naturaleza más remota de la Patagonia en kayak o navegación."
+              tags={["Kayak", "Aventura"]}
+              image="/images/tours/ensenada-perez.jpg"
+              gradient="from-slate-700 to-slate-900"
+              className="md:col-span-4 min-h-[320px]"
+            />
 
             {/* Carretera Austral */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="md:col-span-4 group relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 to-green-700 p-6 md:p-8 min-h-[240px] flex flex-col justify-between cursor-pointer"
-            >
-              <div className="absolute -top-24 -right-24 w-48 h-48 bg-green-400/20 rounded-full blur-[80px] group-hover:blur-[100px] transition-all duration-500"></div>
+            <TourCard
+              title="Carretera Austral"
+              description="Recorre la ruta escénica más espectacular de Chile. Paisajes de montaña, ríos turquesa y pueblos tradicionales."
+              tags={["Ruta Panorámica", "Multiday"]}
+              image="/images/tours/carretera-austral.jpg"
+              gradient="from-green-600 to-teal-700"
+              className="md:col-span-3 min-h-[280px]"
+            />
 
-              <div className="relative z-10">
-                <div className="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center mb-6 border border-white/30 group-hover:scale-110 transition-transform duration-500">
-                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-3 tracking-tight">Carretera Austral</h3>
-                <p className="text-emerald-50/80 text-sm font-light leading-relaxed">
-                  La ruta escénica más espectacular de Chile con paisajes de montaña y ríos cristalinos
-                </p>
-              </div>
-
-              <div className="absolute inset-0 rounded-3xl border border-white/10 group-hover:border-white/20 transition-colors duration-500"></div>
-            </motion.div>
-
-            {/* Laguna San Rafael */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="md:col-span-5 group relative overflow-hidden rounded-3xl bg-slate-900/50 backdrop-blur-xl p-6 md:p-8 min-h-[300px] flex flex-col justify-between cursor-pointer border border-white/10 hover:border-blue-500/30 transition-all duration-500"
-            >
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(59,130,246,0.1),transparent)]"></div>
-
-              <div className="relative z-10">
-                <div className="flex items-start gap-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-500 shadow-lg shadow-blue-500/30">
-                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 tracking-tight">
-                      Laguna San Rafael
-                    </h3>
-                    <p className="text-gray-400 font-light leading-relaxed">
-                      Navegación hasta el Glaciar San Rafael. Observa témpanos de hielo azul flotando en aguas cristalinas.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative z-10 flex gap-2 flex-wrap mt-6">
-                <span className="px-4 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-400 text-xs font-semibold uppercase tracking-wider">
-                  Día completo
-                </span>
-                <span className="px-4 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-400 text-xs font-semibold uppercase tracking-wider">
-                  Navegación
-                </span>
-              </div>
-            </motion.div>
+            {/* Parque Nacional Ventisqueros */}
+            <TourCard
+              title="Ventisqueros"
+              description="Glaciares colgantes y trekking de altura. Experimenta la Patagonia en su máxima expresión."
+              tags={["Glaciar", "Trekking"]}
+              image="/images/tours/ventisqueros.jpg"
+              gradient="from-cyan-600 to-blue-800"
+              className="md:col-span-4 min-h-[280px]"
+            />
 
             {/* Pesca Deportiva */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="md:col-span-3 group relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 md:p-8 min-h-[300px] flex flex-col justify-between cursor-pointer border border-white/5 hover:border-orange-500/30 transition-all duration-500"
-            >
-              <div className="absolute -bottom-16 -right-16 w-40 h-40 bg-orange-500/10 rounded-full blur-[60px]"></div>
-
-              <div className="relative z-10">
-                <div className="w-14 h-14 bg-orange-500/10 backdrop-blur-xl rounded-2xl flex items-center justify-center mb-6 border border-orange-500/20 group-hover:scale-110 transition-transform duration-500">
-                  <svg className="w-7 h-7 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3 tracking-tight">Pesca Deportiva</h3>
-                <p className="text-gray-400 text-sm font-light leading-relaxed">
-                  Ríos repletos de truchas y salmones para pescadores de todos los niveles
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Trekking */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="md:col-span-4 group relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-600 via-red-600 to-orange-700 p-6 md:p-8 min-h-[300px] flex flex-col justify-between cursor-pointer"
-            >
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
-              <div className="absolute -top-20 -right-20 w-40 h-40 bg-orange-400/30 rounded-full blur-[80px] group-hover:blur-[100px] transition-all duration-500"></div>
-
-              <div className="relative z-10">
-                <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">Trekking y Montañismo</h3>
-                <p className="text-orange-50/90 font-light leading-relaxed mb-6">
-                  Rutas para todos los niveles en la Cordillera de los Andes patagónicos
-                </p>
-                <div className="flex gap-3 flex-wrap">
-                  <span className="px-4 py-2 bg-white/15 backdrop-blur-xl rounded-full text-white text-sm font-medium border border-white/20">
-                    Aventura
-                  </span>
-                  <span className="px-4 py-2 bg-white/15 backdrop-blur-xl rounded-full text-white text-sm font-medium border border-white/20">
-                    Naturaleza
-                  </span>
-                </div>
-              </div>
-
-              <div className="absolute inset-0 rounded-3xl border border-white/10 group-hover:border-white/20 transition-colors duration-500"></div>
-            </motion.div>
+            <TourCard
+              title="Pesca Deportiva"
+              description="Ríos y lagos repletos de truchas y salmones. Experiencia para pescadores de todos los niveles con guías expertos."
+              tags={["Pesca", "Medio Día"]}
+              image="/images/tours/pesca-deportiva.jpg"
+              gradient="from-orange-600 via-red-600 to-orange-700"
+              className="md:col-span-5 min-h-[280px]"
+            />
           </div>
+
+          {/* Note about images */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="mt-12 text-center"
+          >
+            <p className="text-gray-600 text-sm">
+              Sube tus fotos en /public/images/tours/ para personalizar cada destino
+            </p>
+          </motion.div>
         </div>
       </section>
 
