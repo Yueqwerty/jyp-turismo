@@ -1,0 +1,186 @@
+@page "/messages"
+@using Microsoft.AspNetCore.SignalR.Client
+@using JypTurismo.Core.Interfaces
+@inject IUnitOfWork UnitOfWork
+@inject NavigationManager Navigation
+@implements IAsyncDisposable
+
+<PageTitle>Mensajes - JYP Turismo</PageTitle>
+
+<div class="messages-container">
+    <div class="page-header">
+        <h1>Central de Mensajes</h1>
+        <p class="text-muted">Todos los mensajes de WhatsApp, Messenger e Instagram</p>
+    </div>
+
+    <div class="filters-section">
+        <div class="filter-group">
+            <label for="channelFilter">Canal:</label>
+            <select id="channelFilter" class="form-select" @bind="selectedChannel" @bind:after="LoadMessages">
+                <option value="">Todos los canales</option>
+                <option value="1">WhatsApp Business</option>
+                <option value="2">Messenger</option>
+                <option value="3">Instagram</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="directionFilter">Dirección:</label>
+            <select id="directionFilter" class="form-select" @bind="selectedDirection" @bind:after="LoadMessages">
+                <option value="">Todas</option>
+                <option value="1">Entrantes</option>
+                <option value="2">Salientes</option>
+            </select>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="loading-container">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando mensajes...</span>
+            </div>
+            <p>Cargando mensajes...</p>
+        </div>
+    }
+    else if (messages == null || !messages.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <span class="oi oi-chat"></span>
+            </div>
+            <h3>No hay mensajes</h3>
+            <p>Los mensajes aparecerán aquí cuando lleguen desde los canales configurados.</p>
+        </div>
+    }
+    else
+    {
+        <div class="messages-list">
+            @foreach (var message in messages.OrderByDescending(m => m.SentAt))
+            {
+                <div class="message-card @GetMessageDirectionClass(message.Direction)">
+                    <div class="message-header">
+                        <div class="message-channel">
+                            <span class="channel-badge @GetChannelClass(message.Channel)">
+                                @message.Channel.ToString()
+                            </span>
+                        </div>
+                        <div class="message-time">
+                            @message.SentAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                        </div>
+                    </div>
+                    <div class="message-sender">
+                        <strong>@(message.Direction == MessageDirection.Inbound ? message.SenderName : message.RecipientName)</strong>
+                    </div>
+                    <div class="message-content">
+                        @message.TextContent
+                    </div>
+                    <div class="message-footer">
+                        <span class="message-status @GetStatusClass(message.Status)">
+                            @message.Status.ToString()
+                        </span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<Message> messages = new();
+    private HubConnection? hubConnection;
+    private bool isLoading = true;
+    private string selectedChannel = "";
+    private string selectedDirection = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMessages();
+        await InitializeSignalR();
+    }
+
+    private async Task LoadMessages()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            var allMessages = await UnitOfWork.Messages.GetAllAsync();
+            messages = allMessages.ToList();
+
+            if (!string.IsNullOrEmpty(selectedChannel))
+            {
+                var channelValue = (MessageChannel)int.Parse(selectedChannel);
+                messages = messages.Where(m => m.Channel == channelValue).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(selectedDirection))
+            {
+                var directionValue = (MessageDirection)int.Parse(selectedDirection);
+                messages = messages.Where(m => m.Direction == directionValue).ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading messages: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task InitializeSignalR()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/messagingHub"))
+            .WithAutomaticReconnect()
+            .Build();
+
+        hubConnection.On<Message>("ReceiveMessage", async (message) =>
+        {
+            messages.Insert(0, message);
+            await InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    private string GetChannelClass(MessageChannel channel)
+    {
+        return channel switch
+        {
+            MessageChannel.WhatsAppBusiness => "channel-whatsapp",
+            MessageChannel.Messenger => "channel-messenger",
+            MessageChannel.Instagram => "channel-instagram",
+            _ => ""
+        };
+    }
+
+    private string GetMessageDirectionClass(MessageDirection direction)
+    {
+        return direction == MessageDirection.Inbound ? "message-inbound" : "message-outbound";
+    }
+
+    private string GetStatusClass(MessageStatus status)
+    {
+        return status switch
+        {
+            MessageStatus.Sent => "status-sent",
+            MessageStatus.Delivered => "status-delivered",
+            MessageStatus.Read => "status-read",
+            MessageStatus.Failed => "status-failed",
+            _ => "status-pending"
+        };
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}
