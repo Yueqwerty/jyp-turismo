@@ -2,8 +2,117 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { useState, useRef } from 'react';
+import { motion, useScroll, useTransform, useSpring, useMotionValue, useSpring as useSpringMotion } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+
+// Custom Cursor Component
+const CustomCursor = () => {
+  const cursorX = useMotionValue(-100);
+  const cursorY = useMotionValue(-100);
+
+  const springConfig = { damping: 25, stiffness: 700 };
+  const cursorXSpring = useSpringMotion(cursorX, springConfig);
+  const cursorYSpring = useSpringMotion(cursorY, springConfig);
+
+  useEffect(() => {
+    const moveCursor = (e: MouseEvent) => {
+      cursorX.set(e.clientX - 16);
+      cursorY.set(e.clientY - 16);
+    };
+
+    window.addEventListener('mousemove', moveCursor);
+    return () => window.removeEventListener('mousemove', moveCursor);
+  }, [cursorX, cursorY]);
+
+  return (
+    <>
+      <motion.div
+        className="fixed w-8 h-8 border-2 border-blue-600 rounded-full pointer-events-none z-[9999] mix-blend-difference hidden md:block"
+        style={{
+          left: cursorXSpring,
+          top: cursorYSpring,
+        }}
+      />
+      <motion.div
+        className="fixed w-2 h-2 bg-cyan-500 rounded-full pointer-events-none z-[9999] mix-blend-difference hidden md:block"
+        style={{
+          left: cursorX,
+          top: cursorY,
+          x: 13,
+          y: 13,
+        }}
+      />
+    </>
+  );
+};
+
+// Magnetic Button Component
+const MagneticButton = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    x.set((e.clientX - centerX) * 0.3);
+    y.set((e.clientY - centerY) * 0.3);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ x, y }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+// Animated Counter Component
+const AnimatedCounter = ({ value, suffix = "" }: { value: number; suffix?: string }) => {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          let start = 0;
+          const end = value;
+          const duration = 2000;
+          const increment = end / (duration / 16);
+
+          const timer = setInterval(() => {
+            start += increment;
+            if (start >= end) {
+              setCount(end);
+              clearInterval(timer);
+            } else {
+              setCount(Math.floor(start));
+            }
+          }, 16);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [value]);
+
+  return <span ref={ref}>{count}{suffix}</span>;
+};
 
 const TourCard = ({
   title,
@@ -23,7 +132,7 @@ const TourCard = ({
   featured?: boolean;
 }) => {
   const [imgError, setImgError] = useState(false);
-  const cardRef = useRef(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: cardRef,
     offset: ["start end", "end start"]
@@ -32,14 +141,42 @@ const TourCard = ({
   const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.2, 1, 1.1]);
   const imageY = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
+  // 3D Tilt Effect
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateXValue = ((y - centerY) / centerY) * -10;
+    const rotateYValue = ((x - centerX) / centerX) * 10;
+    setRotateX(rotateXValue);
+    setRotateY(rotateYValue);
+  };
+
+  const handleMouseLeave = () => {
+    setRotateX(0);
+    setRotateY(0);
+  };
+
   return (
     <motion.div
       ref={cardRef}
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 60, scale: 0.95 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-      className={`group relative overflow-hidden rounded-3xl cursor-pointer ${className}`}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        transformStyle: 'preserve-3d',
+        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+      }}
+      className={`group relative overflow-hidden rounded-3xl cursor-pointer transition-transform duration-200 ${className}`}
     >
       {/* Background Image with Parallax */}
       <motion.div
@@ -134,6 +271,9 @@ export default function HomePage() {
 
   return (
     <div className="bg-white" ref={containerRef}>
+      {/* Custom Cursor */}
+      <CustomCursor />
+
       {/* Progress indicator */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 origin-left z-[100]"
@@ -210,23 +350,48 @@ export default function HomePage() {
                     Transporte · Patagonia Aysén
                   </motion.div>
 
-                  <h1 className="text-[clamp(3.5rem,10vw,9rem)] font-black text-gray-900 leading-[0.85] tracking-tighter mb-10">
-                    <motion.span
-                      initial={{ opacity: 0, y: 50 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.8, delay: 0.6 }}
-                      className="block"
-                    >
-                      Explora
-                    </motion.span>
-                    <motion.span
-                      initial={{ opacity: 0, y: 50, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ duration: 0.8, delay: 0.75 }}
-                      className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 animate-gradient"
-                    >
-                      Aysén
-                    </motion.span>
+                  <h1 className="text-[clamp(3.5rem,10vw,9rem)] font-black text-gray-900 leading-[0.85] tracking-tighter mb-10 overflow-hidden">
+                    <div className="block">
+                      {"Explora".split("").map((letter, i) => (
+                        <motion.span
+                          key={i}
+                          initial={{ opacity: 0, y: 100, rotateX: 90 }}
+                          animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                          transition={{
+                            duration: 0.8,
+                            delay: 0.5 + i * 0.05,
+                            ease: [0.16, 1, 0.3, 1]
+                          }}
+                          className="inline-block"
+                          style={{ transformOrigin: 'center bottom' }}
+                        >
+                          {letter}
+                        </motion.span>
+                      ))}
+                    </div>
+                    <div className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 animate-gradient">
+                      {"Aysén".split("").map((letter, i) => (
+                        <motion.span
+                          key={i}
+                          initial={{ opacity: 0, y: 100, rotateX: 90, scale: 0.8 }}
+                          animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
+                          transition={{
+                            duration: 0.8,
+                            delay: 0.85 + i * 0.06,
+                            ease: [0.16, 1, 0.3, 1]
+                          }}
+                          whileHover={{
+                            scale: 1.1,
+                            rotateZ: [-2, 2, -2, 0],
+                            transition: { duration: 0.5 }
+                          }}
+                          className="inline-block"
+                          style={{ transformOrigin: 'center bottom' }}
+                        >
+                          {letter}
+                        </motion.span>
+                      ))}
+                    </div>
                   </h1>
 
                   <motion.p
@@ -271,29 +436,33 @@ export default function HomePage() {
                   transition={{ duration: 0.8, delay: 1.2 }}
                   className="flex flex-col sm:flex-row gap-4 max-w-xl"
                 >
-                  <motion.a
-                    href="https://wa.me/56XXXXXXXXX"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.03, y: -3 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="group relative px-8 py-5 bg-gray-900 text-white rounded-2xl font-bold overflow-hidden flex items-center justify-center gap-3"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <span className="relative z-10">WhatsApp</span>
-                    <svg className="relative z-10 w-5 h-5 transition-transform group-hover:translate-x-2 duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </motion.a>
+                  <MagneticButton>
+                    <motion.a
+                      href="https://wa.me/56XXXXXXXXX"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="group relative px-8 py-5 bg-gray-900 text-white rounded-2xl font-bold overflow-hidden flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl transition-shadow duration-300"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <span className="relative z-10">WhatsApp</span>
+                      <svg className="relative z-10 w-5 h-5 transition-transform group-hover:translate-x-2 duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </motion.a>
+                  </MagneticButton>
 
-                  <motion.a
-                    href="tel:+56XXXXXXXXX"
-                    whileHover={{ scale: 1.03, y: -3 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="px-8 py-5 bg-white border-2 border-gray-200 text-gray-900 rounded-2xl font-bold hover:border-gray-900 transition-all duration-300 text-center shadow-sm hover:shadow-md"
-                  >
-                    +56 9 XXXX XXXX
-                  </motion.a>
+                  <MagneticButton>
+                    <motion.a
+                      href="tel:+56XXXXXXXXX"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-8 py-5 bg-white border-2 border-gray-200 text-gray-900 rounded-2xl font-bold hover:border-gray-900 transition-all duration-300 text-center shadow-lg hover:shadow-xl"
+                    >
+                      +56 9 XXXX XXXX
+                    </motion.a>
+                  </MagneticButton>
                 </motion.div>
               </motion.div>
 
@@ -330,6 +499,104 @@ export default function HomePage() {
 
             </div>
           </motion.div>
+        </section>
+
+        {/* Stats Section - Cinematic Reveal */}
+        <section className="relative py-32 md:py-40 px-8 md:px-16 bg-gray-900 overflow-hidden">
+          {/* Animated Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0" style={{
+              backgroundImage: 'radial-gradient(circle at 2px 2px, cyan 1px, transparent 0)',
+              backgroundSize: '40px 40px'
+            }}></div>
+          </div>
+
+          {/* Floating Orbs */}
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600 rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.2, 0.4, 0.2],
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            className="absolute bottom-1/4 right-1/3 w-80 h-80 bg-cyan-500 rounded-full blur-3xl"
+          />
+
+          <div className="max-w-[1600px] mx-auto relative z-10">
+
+            {/* Title */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-20"
+            >
+              <motion.div
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: 0.2 }}
+                className="w-24 h-1 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto mb-8"
+              />
+              <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-black text-white leading-[0.9] tracking-tighter">
+                Experiencia
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+                  Comprobada
+                </span>
+              </h2>
+            </motion.div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+              {[
+                { value: 500, suffix: '+', label: 'Clientes Satisfechos', delay: 0 },
+                { value: 2, suffix: '', label: 'Buses Disponibles', delay: 0.2 },
+                { value: 15, suffix: '+', label: 'Rutas Turísticas', delay: 0.4 },
+                { value: 98, suffix: '%', label: 'Recomendación', delay: 0.6 },
+              ].map((stat, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 60, clipPath: 'circle(0% at 50% 50%)' }}
+                  whileInView={{ opacity: 1, y: 0, clipPath: 'circle(100% at 50% 50%)' }}
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{ duration: 1, delay: stat.delay, ease: [0.16, 1, 0.3, 1] }}
+                  className="text-center group"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.05, rotateY: 5 }}
+                    transition={{ duration: 0.3 }}
+                    className="p-8 bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all duration-500"
+                  >
+                    <div className="text-[clamp(3rem,7vw,5rem)] font-black text-transparent bg-clip-text bg-gradient-to-br from-blue-400 via-cyan-400 to-blue-500 mb-3 leading-none">
+                      <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+                    </div>
+                    <div className="w-16 h-1 bg-gradient-to-r from-blue-500/50 to-cyan-500/50 mx-auto mb-4 group-hover:w-24 transition-all duration-500"></div>
+                    <p className="text-white/70 text-sm md:text-base font-medium uppercase tracking-wider">
+                      {stat.label}
+                    </p>
+                  </motion.div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Decorative Line */}
+            <motion.div
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.5, delay: 0.8 }}
+              className="mt-20 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent origin-left"
+            />
+          </div>
         </section>
 
         {/* Tours Section - Bento Grid with Reveal Transition */}
