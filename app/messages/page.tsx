@@ -120,13 +120,13 @@ export default function MessagesPage() {
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 px-4 py-2 bg-green-50 rounded-xl">
+              <div className="flex items-center gap-2 px-4 py-2 bg-green-50 rounded-2xl">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="text-sm font-medium text-green-700">En línea</span>
               </div>
               <Link
                 href="/api/auth/signout"
-                className="px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-700 text-sm font-bold transition-all duration-300"
+                className="px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-2xl text-gray-700 text-sm font-bold transition-all duration-300"
               >
                 Cerrar Sesión
               </Link>
@@ -234,7 +234,7 @@ export default function MessagesPage() {
                       onClick={() => setSelectedChannel(channel.id)}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 ${
+                      className={`px-5 py-2.5 rounded-2xl text-sm font-bold whitespace-nowrap transition-all duration-300 ${
                         selectedChannel === channel.id
                           ? 'bg-gray-900 text-white shadow-lg'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'

@@ -169,21 +169,24 @@ export default function HomePage() {
 
       {/* Minimal Navigation */}
       <motion.header
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed top-0 left-0 right-0 z-50 mix-blend-difference"
+        className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200"
       >
-        <div className="max-w-[1600px] mx-auto px-8 md:px-16 py-8 flex items-center justify-between">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="text-white font-black text-2xl tracking-tighter cursor-pointer"
-          >
-            J&P
-          </motion.div>
+        <div className="max-w-[1600px] mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3 group">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="w-12 h-12 bg-gray-900 rounded-2xl flex items-center justify-center"
+            >
+              <span className="text-xl font-black text-white">J&P</span>
+            </motion.div>
+            <span className="text-xl font-black text-gray-900 tracking-tighter">J&P Turismo</span>
+          </Link>
           <Link
             href="/login"
-            className="text-white text-sm font-medium hover:opacity-70 transition-opacity"
+            className="px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-2xl text-gray-700 text-sm font-bold transition-all duration-300"
           >
             Admin
           </Link>
