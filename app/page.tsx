@@ -184,7 +184,7 @@ export default function HomePage() {
                     Región de Aysén, Chile
                   </div>
                   <h1 className="text-5xl md:text-6xl font-black text-gray-900 mb-4 leading-tight">
-                    Navegá glaciares,<br/>recorré fiordos
+                    Navega glaciares,<br/>recorre fiordos
                   </h1>
                   <p className="text-xl text-gray-600 leading-relaxed">
                     Tours desde Puerto Aysén hacia los glaciares del Campo de Hielo Norte,
@@ -194,7 +194,7 @@ export default function HomePage() {
 
                 {/* Contacto directo */}
                 <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                  <div className="text-sm font-bold text-gray-900 mb-4">Reservá directamente</div>
+                  <div className="text-sm font-bold text-gray-900 mb-4">Reserva directamente</div>
                   <div className="space-y-3">
                     <a
                       href="https://wa.me/56XXXXXXXXX"
@@ -227,7 +227,7 @@ export default function HomePage() {
                       </div>
                       <div className="flex-1">
                         <div className="font-bold text-gray-900">+56 9 XXXX XXXX</div>
-                        <div className="text-sm text-gray-500">Llamá directamente</div>
+                        <div className="text-sm text-gray-500">Llama directamente</div>
                       </div>
                     </a>
 
