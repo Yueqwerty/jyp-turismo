@@ -1,412 +1,402 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useState, useRef } from 'react';
 
 export default function HomePage() {
   const [videoError, setVideoError] = useState(false);
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"]
+  });
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 },
-  };
+  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
-      {/* Hero Section con Video/Imagen de fondo */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Video o Imagen */}
-        <div className="absolute inset-0 z-0">
-          {!videoError ? (
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover opacity-40"
-              onError={() => setVideoError(true)}
-            >
-              <source src="/videos/hero-video.mp4" type="video/mp4" />
-            </video>
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-blue-900 via-slate-800 to-blue-900 opacity-60"></div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70"></div>
+    <main className="min-h-screen bg-[#0A0A0A]">
+      {/* Hero Section */}
+      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-slate-900 to-blue-950">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(17,24,39,0),rgba(17,24,39,1))]"></div>
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/30 rounded-full blur-[128px] animate-pulse"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-[128px] animate-pulse delay-1000"></div>
         </div>
 
-        {/* Hero Content */}
-        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40"></div>
+
+        <motion.div
+          style={{ opacity, scale }}
+          className="relative z-10 text-center px-6 max-w-6xl mx-auto"
+        >
+          {/* Logo */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className="mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] }}
+            className="mb-8 inline-block"
           >
-            {/* Logo placeholder - reemplazar con logo real */}
-            <div className="w-32 h-32 mx-auto mb-6 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center border border-white/20">
-              <span className="text-6xl font-bold text-white">JYP</span>
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-3xl blur-2xl opacity-50 group-hover:opacity-75 transition-opacity duration-500"></div>
+              <div className="relative w-28 h-28 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl flex items-center justify-center border border-white/20 shadow-2xl">
+                <span className="text-5xl font-black bg-gradient-to-br from-white to-blue-200 bg-clip-text text-transparent">
+                  JYP
+                </span>
+              </div>
             </div>
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl md:text-7xl font-bold text-white mb-6"
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.6, 0.05, 0.01, 0.9] }}
+            className="text-6xl md:text-8xl font-black text-white mb-8 tracking-tight"
           >
-            Descubre la Patagonia de Aysén
+            <span className="block bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent">
+              La Patagonia
+            </span>
+            <span className="block mt-2 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+              Te Espera
+            </span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl text-blue-100 mb-12 max-w-3xl mx-auto"
+            transition={{ duration: 0.8, delay: 0.4, ease: [0.6, 0.05, 0.01, 0.9] }}
+            className="text-xl md:text-2xl text-blue-200/80 mb-12 max-w-3xl mx-auto font-light leading-relaxed"
           >
-            Vive experiencias inolvidables en la región más prístina de Chile.
-            Glaciares, lagos, montañas y la majestuosa Carretera Austral te esperan.
+            Descubre glaciares milenarios, lagos turquesa y montañas imponentes en la región más prístina de Chile
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            transition={{ duration: 0.8, delay: 0.6, ease: [0.6, 0.05, 0.01, 0.9] }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <a
               href="#tours"
-              className="bg-white text-blue-900 px-8 py-4 rounded-full font-semibold hover:bg-blue-50 transition-all duration-300 hover:scale-105 shadow-xl"
+              className="group relative overflow-hidden bg-white text-gray-900 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 shadow-2xl"
             >
-              Explorar Tours
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <span className="relative z-10 group-hover:text-white transition-colors duration-300">
+                Explorar Destinos
+              </span>
             </a>
             <a
               href="#contacto"
-              className="bg-white/10 backdrop-blur-md text-white border-2 border-white/30 px-8 py-4 rounded-full font-semibold hover:bg-white/20 transition-all duration-300"
+              className="relative group bg-white/5 backdrop-blur-xl text-white border border-white/20 px-8 py-4 rounded-2xl font-semibold hover:bg-white/10 transition-all duration-300 shadow-xl"
             >
-              Contáctanos
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+              <span className="relative z-10">Contáctanos</span>
             </a>
           </motion.div>
-        </div>
+        </motion.div>
 
         {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
+          transition={{ delay: 1.2, duration: 0.8 }}
+          className="absolute bottom-12 left-1/2 transform -translate-x-1/2 z-10"
         >
-          <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="w-1.5 h-1.5 bg-white rounded-full mt-2"
-            />
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-blue-300/60 text-xs font-medium uppercase tracking-widest">Descubre más</span>
+            <div className="w-6 h-10 border-2 border-blue-400/30 rounded-full flex justify-center p-1">
+              <motion.div
+                animate={{ y: [0, 16, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                className="w-1.5 h-1.5 bg-blue-400 rounded-full"
+              />
+            </div>
           </div>
         </motion.div>
       </section>
 
-      {/* Sobre Nosotros */}
-      <section className="py-20 px-6 bg-white" id="nosotros">
-        <div className="max-w-7xl mx-auto">
+      {/* Bento Grid Section */}
+      <section className="py-32 px-4 md:px-8 bg-[#0A0A0A] relative overflow-hidden" id="tours">
+        {/* Background effects */}
+        <div className="absolute top-0 left-1/3 w-96 h-96 bg-blue-600/10 rounded-full blur-[128px]"></div>
+        <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-cyan-600/10 rounded-full blur-[128px]"></div>
+
+        <div className="max-w-[1400px] mx-auto relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Sobre JYP Turismo
+            <span className="text-blue-400 font-semibold text-sm uppercase tracking-widest mb-4 block">
+              Experiencias Únicas
+            </span>
+            <h2 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tight">
+              <span className="bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+                Nuestros Tours
+              </span>
             </h2>
-            <div className="w-24 h-1 bg-blue-600 mx-auto mb-8"></div>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Somos una empresa especializada en turismo de aventura y naturaleza en la región de Aysén.
-              Con años de experiencia, te guiamos por los rincones más espectaculares de la Patagonia chilena,
-              garantizando seguridad, profesionalismo y experiencias auténticas.
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto font-light">
+              Aventuras diseñadas para conectarte con la naturaleza más salvaje de Aysén
             </p>
           </motion.div>
 
-          {/* Placeholder para imagen de presentación */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="relative h-96 bg-gradient-to-br from-blue-500 to-blue-700 rounded-3xl overflow-hidden shadow-2xl"
-          >
-            <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-white text-lg opacity-50">
-                Coloca tu imagen de presentación en /public/images/presentacion.jpg
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Destinos y Tours - Estilo Bento */}
-      <section className="py-20 px-6 bg-gradient-to-br from-slate-50 to-blue-50" id="tours">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Nuestros Tours
-            </h2>
-            <div className="w-24 h-1 bg-blue-600 mx-auto mb-8"></div>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Explora los destinos más icónicos de Aysén con guías expertos
-            </p>
-          </motion.div>
-
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-6 gap-4 auto-rows-[minmax(250px,auto)]"
-          >
-            {/* Cuevas de Mármol - Grande */}
+          {/* Bento Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
+            {/* Cuevas de Mármol - Hero card */}
             <motion.div
-              variants={itemVariants}
-              className="md:col-span-4 md:row-span-2 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-3xl p-8 md:p-12 text-white relative overflow-hidden group cursor-pointer"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="md:col-span-8 md:row-span-2 group relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-cyan-600 to-blue-700 p-8 md:p-12 min-h-[500px] flex flex-col justify-between cursor-pointer"
             >
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-all duration-300"></div>
-              <div className="relative z-10 h-full flex flex-col justify-between">
-                <div>
-                  <h3 className="text-3xl md:text-4xl font-bold mb-4">
-                    Cuevas de Mármol
-                  </h3>
-                  <p className="text-lg text-blue-100 mb-6 max-w-lg">
-                    Navega por las impresionantes formaciones de mármol en el Lago General Carrera.
-                    Una maravilla natural única en el mundo que cambia de color según la estación.
-                  </p>
-                </div>
-                <div className="flex gap-3 flex-wrap">
-                  <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm">
-                    Navegación
-                  </span>
-                  <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm">
-                    Fotografía
-                  </span>
-                  <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm">
-                    Medio día
-                  </span>
-                </div>
-              </div>
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
-            </motion.div>
+              {/* Glassmorphism overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-            {/* Carretera Austral */}
-            <motion.div
-              variants={itemVariants}
-              className="md:col-span-2 bg-white rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 group cursor-pointer"
-            >
-              <div className="h-32 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl mb-4 flex items-center justify-center">
-                <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                </svg>
+              {/* Glow effect */}
+              <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-cyan-400/30 rounded-full blur-[100px] group-hover:blur-[120px] transition-all duration-500"></div>
+
+              <div className="relative z-10">
+                <span className="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-xl rounded-full text-white text-xs font-semibold uppercase tracking-wider mb-6 border border-white/30">
+                  Destacado
+                </span>
+                <h3 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight tracking-tight">
+                  Cuevas de<br />Mármol
+                </h3>
+                <p className="text-xl text-blue-50/90 mb-8 max-w-lg font-light leading-relaxed">
+                  Navega por formaciones de mármol únicas en el mundo. Las cuevas cambian de color
+                  con las estaciones, creando un espectáculo natural inolvidable.
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Carretera Austral</h3>
-              <p className="text-gray-600 text-sm">
-                Recorre la ruta escénica más famosa de Chile. Paisajes de montaña, bosques y ríos cristalinos.
-              </p>
+
+              <div className="relative z-10 flex flex-wrap gap-3">
+                <span className="px-4 py-2 bg-white/15 backdrop-blur-xl rounded-full text-white text-sm font-medium border border-white/20">
+                  Navegación
+                </span>
+                <span className="px-4 py-2 bg-white/15 backdrop-blur-xl rounded-full text-white text-sm font-medium border border-white/20">
+                  Fotografía
+                </span>
+                <span className="px-4 py-2 bg-white/15 backdrop-blur-xl rounded-full text-white text-sm font-medium border border-white/20">
+                  Medio día
+                </span>
+              </div>
+
+              {/* Animated border */}
+              <div className="absolute inset-0 rounded-3xl border border-white/10 group-hover:border-white/20 transition-colors duration-500"></div>
             </motion.div>
 
             {/* Glaciar Exploradores */}
             <motion.div
-              variants={itemVariants}
-              className="md:col-span-2 bg-white rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 group cursor-pointer"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="md:col-span-4 group relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 md:p-8 min-h-[240px] flex flex-col justify-between cursor-pointer border border-white/5 hover:border-cyan-500/30 transition-all duration-500"
             >
-              <div className="h-32 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl mb-4 flex items-center justify-center">
-                <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Glaciar Exploradores</h3>
-              <p className="text-gray-600 text-sm">
-                Trekking sobre hielo milenario. Una experiencia única de contacto con la naturaleza glaciar.
-              </p>
-            </motion.div>
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(6,182,212,0.1),transparent)] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-            {/* Pesca Deportiva */}
-            <motion.div
-              variants={itemVariants}
-              className="md:col-span-2 bg-gradient-to-br from-slate-700 to-slate-900 rounded-3xl p-6 text-white relative overflow-hidden group cursor-pointer"
-            >
-              <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl"></div>
               <div className="relative z-10">
-                <div className="w-14 h-14 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-4">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                <div className="w-14 h-14 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-2xl flex items-center justify-center mb-6 border border-cyan-500/20 group-hover:scale-110 transition-transform duration-500">
+                  <svg className="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold mb-2">Pesca Deportiva</h3>
-                <p className="text-blue-100 text-sm">
-                  Ríos y lagos repletos de truchas y salmones. Ideal para pescadores de todos los niveles.
+                <h3 className="text-2xl font-bold text-white mb-3 tracking-tight">Glaciar Exploradores</h3>
+                <p className="text-gray-400 text-sm font-light leading-relaxed">
+                  Trekking sobre hielo milenario en una experiencia única de contacto con la naturaleza glaciar
                 </p>
               </div>
             </motion.div>
 
-            {/* Laguna San Rafael */}
+            {/* Carretera Austral */}
             <motion.div
-              variants={itemVariants}
-              className="md:col-span-3 bg-white rounded-3xl p-8 shadow-lg border border-gray-100 group cursor-pointer hover:shadow-2xl transition-all duration-300"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="md:col-span-4 group relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 to-green-700 p-6 md:p-8 min-h-[240px] flex flex-col justify-between cursor-pointer"
             >
-              <div className="flex items-start gap-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0">
-                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <div className="absolute -top-24 -right-24 w-48 h-48 bg-green-400/20 rounded-full blur-[80px] group-hover:blur-[100px] transition-all duration-500"></div>
+
+              <div className="relative z-10">
+                <div className="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center mb-6 border border-white/30 group-hover:scale-110 transition-transform duration-500">
+                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                   </svg>
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3">Laguna San Rafael</h3>
-                  <p className="text-gray-600 mb-4">
-                    Navegación hasta el Glaciar San Rafael, parte del Campo de Hielo Norte.
-                    Observa témpanos de hielo azul flotando en aguas cristalinas.
-                  </p>
-                  <div className="flex gap-2 flex-wrap">
-                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">
-                      Día completo
-                    </span>
-                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">
-                      Navegación
-                    </span>
+                <h3 className="text-2xl font-bold text-white mb-3 tracking-tight">Carretera Austral</h3>
+                <p className="text-emerald-50/80 text-sm font-light leading-relaxed">
+                  La ruta escénica más espectacular de Chile con paisajes de montaña y ríos cristalinos
+                </p>
+              </div>
+
+              <div className="absolute inset-0 rounded-3xl border border-white/10 group-hover:border-white/20 transition-colors duration-500"></div>
+            </motion.div>
+
+            {/* Laguna San Rafael */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="md:col-span-5 group relative overflow-hidden rounded-3xl bg-slate-900/50 backdrop-blur-xl p-6 md:p-8 min-h-[300px] flex flex-col justify-between cursor-pointer border border-white/10 hover:border-blue-500/30 transition-all duration-500"
+            >
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(59,130,246,0.1),transparent)]"></div>
+
+              <div className="relative z-10">
+                <div className="flex items-start gap-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-500 shadow-lg shadow-blue-500/30">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 tracking-tight">
+                      Laguna San Rafael
+                    </h3>
+                    <p className="text-gray-400 font-light leading-relaxed">
+                      Navegación hasta el Glaciar San Rafael. Observa témpanos de hielo azul flotando en aguas cristalinas.
+                    </p>
                   </div>
                 </div>
+              </div>
+
+              <div className="relative z-10 flex gap-2 flex-wrap mt-6">
+                <span className="px-4 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-400 text-xs font-semibold uppercase tracking-wider">
+                  Día completo
+                </span>
+                <span className="px-4 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-400 text-xs font-semibold uppercase tracking-wider">
+                  Navegación
+                </span>
+              </div>
+            </motion.div>
+
+            {/* Pesca Deportiva */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="md:col-span-3 group relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 md:p-8 min-h-[300px] flex flex-col justify-between cursor-pointer border border-white/5 hover:border-orange-500/30 transition-all duration-500"
+            >
+              <div className="absolute -bottom-16 -right-16 w-40 h-40 bg-orange-500/10 rounded-full blur-[60px]"></div>
+
+              <div className="relative z-10">
+                <div className="w-14 h-14 bg-orange-500/10 backdrop-blur-xl rounded-2xl flex items-center justify-center mb-6 border border-orange-500/20 group-hover:scale-110 transition-transform duration-500">
+                  <svg className="w-7 h-7 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3 tracking-tight">Pesca Deportiva</h3>
+                <p className="text-gray-400 text-sm font-light leading-relaxed">
+                  Ríos repletos de truchas y salmones para pescadores de todos los niveles
+                </p>
               </div>
             </motion.div>
 
             {/* Trekking */}
             <motion.div
-              variants={itemVariants}
-              className="md:col-span-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-3xl p-8 text-white relative overflow-hidden group cursor-pointer"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="md:col-span-4 group relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-600 via-red-600 to-orange-700 p-6 md:p-8 min-h-[300px] flex flex-col justify-between cursor-pointer"
             >
-              <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-orange-400/30 rounded-full blur-[80px] group-hover:blur-[100px] transition-all duration-500"></div>
+
               <div className="relative z-10">
-                <h3 className="text-2xl font-bold mb-4">Trekking y Montañismo</h3>
-                <p className="text-orange-100 mb-6">
-                  Rutas para todos los niveles. Desde caminatas suaves hasta ascensos desafiantes
-                  en la Cordillera de los Andes patagónicos.
+                <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">Trekking y Montañismo</h3>
+                <p className="text-orange-50/90 font-light leading-relaxed mb-6">
+                  Rutas para todos los niveles en la Cordillera de los Andes patagónicos
                 </p>
-                <div className="flex gap-3">
-                  <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm">
+                <div className="flex gap-3 flex-wrap">
+                  <span className="px-4 py-2 bg-white/15 backdrop-blur-xl rounded-full text-white text-sm font-medium border border-white/20">
                     Aventura
                   </span>
-                  <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm">
+                  <span className="px-4 py-2 bg-white/15 backdrop-blur-xl rounded-full text-white text-sm font-medium border border-white/20">
                     Naturaleza
                   </span>
                 </div>
               </div>
+
+              <div className="absolute inset-0 rounded-3xl border border-white/10 group-hover:border-white/20 transition-colors duration-500"></div>
             </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Galería de Imágenes */}
-      <section className="py-20 px-6 bg-white" id="galeria">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Galería
-            </h2>
-            <div className="w-24 h-1 bg-blue-600 mx-auto mb-8"></div>
-            <p className="text-xl text-gray-600">
-              Momentos capturados en la Patagonia de Aysén
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4"
-          >
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div
-                key={i}
-                className="aspect-square bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl overflow-hidden relative group cursor-pointer"
-              >
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-                  <p className="text-white text-sm opacity-50">
-                    galeria-{i}.jpg
-                  </p>
-                </div>
-              </div>
-            ))}
-          </motion.div>
-
-          <div className="mt-8 text-center">
-            <p className="text-gray-500 text-sm">
-              Coloca tus imágenes en /public/images/galeria-1.jpg a galeria-8.jpg
-            </p>
           </div>
         </div>
       </section>
 
-      {/* Contacto y CTA */}
-      <section className="py-20 px-6 bg-gradient-to-br from-blue-900 via-slate-800 to-blue-900" id="contacto">
-        <div className="max-w-4xl mx-auto text-center">
+      {/* CTA Section */}
+      <section className="py-32 px-4 md:px-8 bg-[#0A0A0A] relative overflow-hidden" id="contacto">
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-950/20 via-transparent to-cyan-950/20"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[150px]"></div>
+
+        <div className="max-w-5xl mx-auto text-center relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.8 }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Comienza tu Aventura
+            <span className="text-cyan-400 font-semibold text-sm uppercase tracking-widest mb-6 block">
+              Comienza tu aventura
+            </span>
+            <h2 className="text-5xl md:text-7xl font-black text-white mb-8 tracking-tight">
+              <span className="bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+                Tu Próximo Viaje<br />Empieza Aquí
+              </span>
             </h2>
-            <p className="text-xl text-blue-100 mb-12 max-w-2xl mx-auto">
-              Contáctanos para diseñar tu experiencia perfecta en Aysén.
-              Estamos listos para hacer realidad tu viaje soñado.
+            <p className="text-xl text-gray-400 mb-16 max-w-2xl mx-auto font-light leading-relaxed">
+              Contáctanos para diseñar tu experiencia perfecta en Aysén. Estamos listos para hacer realidad tu viaje soñado.
             </p>
 
-            <div className="grid md:grid-cols-3 gap-6 mb-12">
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                <svg className="w-8 h-8 text-blue-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
-                <h4 className="text-white font-semibold mb-2">Teléfono</h4>
-                <p className="text-blue-200 text-sm">+56 9 XXXX XXXX</p>
+            <div className="grid md:grid-cols-3 gap-6 mb-16">
+              {/* Phone */}
+              <div className="group relative overflow-hidden rounded-2xl bg-slate-900/50 backdrop-blur-xl p-8 border border-white/10 hover:border-cyan-500/30 transition-all duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="relative z-10">
+                  <div className="w-12 h-12 bg-cyan-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-500">
+                    <svg className="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                  </div>
+                  <h4 className="text-white font-bold mb-2">Teléfono</h4>
+                  <p className="text-gray-400 text-sm">+56 9 XXXX XXXX</p>
+                </div>
               </div>
 
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                <svg className="w-8 h-8 text-blue-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                <h4 className="text-white font-semibold mb-2">Email</h4>
-                <p className="text-blue-200 text-sm">contacto@jypturismo.cl</p>
+              {/* Email */}
+              <div className="group relative overflow-hidden rounded-2xl bg-slate-900/50 backdrop-blur-xl p-8 border border-white/10 hover:border-blue-500/30 transition-all duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="relative z-10">
+                  <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-500">
+                    <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <h4 className="text-white font-bold mb-2">Email</h4>
+                  <p className="text-gray-400 text-sm">contacto@jypturismo.cl</p>
+                </div>
               </div>
 
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                <svg className="w-8 h-8 text-blue-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <h4 className="text-white font-semibold mb-2">Ubicación</h4>
-                <p className="text-blue-200 text-sm">Aysén, Chile</p>
+              {/* Location */}
+              <div className="group relative overflow-hidden rounded-2xl bg-slate-900/50 backdrop-blur-xl p-8 border border-white/10 hover:border-purple-500/30 transition-all duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="relative z-10">
+                  <div className="w-12 h-12 bg-purple-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-500">
+                    <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <h4 className="text-white font-bold mb-2">Ubicación</h4>
+                  <p className="text-gray-400 text-sm">Aysén, Chile</p>
+                </div>
               </div>
             </div>
 
@@ -415,18 +405,18 @@ export default function HomePage() {
                 href="https://wa.me/56XXXXXXXXX"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-xl flex items-center justify-center gap-2"
+                className="group relative overflow-hidden bg-gradient-to-r from-green-500 to-emerald-600 text-white px-10 py-5 rounded-2xl font-bold transition-all duration-300 hover:scale-105 shadow-2xl shadow-green-500/30 flex items-center justify-center gap-3"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                 </svg>
-                WhatsApp
+                <span>Escríbenos por WhatsApp</span>
               </a>
               <a
                 href="mailto:contacto@jypturismo.cl"
-                className="bg-white/10 backdrop-blur-md text-white border-2 border-white/30 px-8 py-4 rounded-full font-semibold hover:bg-white/20 transition-all duration-300"
+                className="relative group bg-white/5 backdrop-blur-xl text-white border border-white/20 px-10 py-5 rounded-2xl font-bold hover:bg-white/10 transition-all duration-300"
               >
-                Enviar Email
+                <span className="relative z-10">Enviar Email</span>
               </a>
             </div>
           </motion.div>
@@ -434,34 +424,39 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 py-12 px-6 border-t border-white/10">
+      <footer className="bg-black/40 backdrop-blur-xl py-16 px-4 md:px-8 border-t border-white/5">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <h3 className="text-white font-bold text-xl mb-4">JYP Turismo</h3>
-              <p className="text-gray-400 text-sm">
+          <div className="grid md:grid-cols-4 gap-12 mb-12">
+            <div className="md:col-span-2">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center">
+                  <span className="text-xl font-black text-white">JYP</span>
+                </div>
+                <span className="text-2xl font-black text-white">JYP Turismo</span>
+              </div>
+              <p className="text-gray-400 font-light leading-relaxed max-w-sm">
                 Tu guía experto para descubrir la magia de la Patagonia de Aysén.
+                Experiencias auténticas en la región más prístina de Chile.
               </p>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4">Enlaces</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li><a href="#nosotros" className="hover:text-white transition-colors">Sobre Nosotros</a></li>
-                <li><a href="#tours" className="hover:text-white transition-colors">Nuestros Tours</a></li>
-                <li><a href="#galeria" className="hover:text-white transition-colors">Galería</a></li>
-                <li><a href="#contacto" className="hover:text-white transition-colors">Contacto</a></li>
+              <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">Enlaces</h4>
+              <ul className="space-y-3">
+                <li><a href="#tours" className="text-gray-400 hover:text-cyan-400 transition-colors font-light">Nuestros Tours</a></li>
+                <li><a href="#contacto" className="text-gray-400 hover:text-cyan-400 transition-colors font-light">Contacto</a></li>
+                <li><Link href="/login" className="text-gray-500 hover:text-gray-400 transition-colors font-light text-sm">Acceso operadores</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4">Síguenos</h4>
-              <div className="flex gap-4">
-                <a href="#" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
-                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">Síguenos</h4>
+              <div className="flex gap-3">
+                <a href="#" className="w-11 h-11 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center hover:bg-white/10 hover:border-cyan-500/30 transition-all duration-300 group">
+                  <svg className="w-5 h-5 text-gray-400 group-hover:text-cyan-400 transition-colors" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                   </svg>
                 </a>
-                <a href="#" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
-                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <a href="#" className="w-11 h-11 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center hover:bg-white/10 hover:border-pink-500/30 transition-all duration-300 group">
+                  <svg className="w-5 h-5 text-gray-400 group-hover:text-pink-400 transition-colors" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
                   </svg>
                 </a>
@@ -469,12 +464,12 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="border-t border-white/10 pt-8 text-center text-gray-400 text-sm">
-            <p>&copy; {new Date().getFullYear()} JYP Turismo - Región de Aysén, Chile. Todos los derechos reservados.</p>
-            <p className="mt-2">
-              <Link href="/login" className="text-gray-500 hover:text-gray-400 transition-colors text-xs">
-                Acceso operadores
-              </Link>
+          <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-gray-500 text-sm font-light">
+              &copy; {new Date().getFullYear()} JYP Turismo. Región de Aysén, Chile. Todos los derechos reservados.
+            </p>
+            <p className="text-gray-600 text-xs font-light">
+              Diseñado con pasión por la Patagonia
             </p>
           </div>
         </div>
