@@ -197,7 +197,7 @@ export default function HomePage() {
     <div className="bg-white" ref={containerRef}>
       {/* Progress indicator */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 origin-left z-[100]"
+        className="fixed top-0 left-0 right-0 h-0.5 bg-blue-600 origin-left z-[100]"
         style={{ scaleX: smoothProgress }}
       />
 
@@ -233,17 +233,7 @@ export default function HomePage() {
       {/* Main Content */}
       <main>
         {/* Hero Section - Cinematic with Multilayer Parallax */}
-        <section ref={heroRef} className="relative min-h-screen flex items-center px-8 md:px-16 py-48 md:py-56 overflow-hidden bg-gradient-to-b from-white via-gray-50/30 to-white">
-
-          {/* Floating gradient orbs - Background layer */}
-          <motion.div
-            style={{ y: floatingY, opacity: heroOpacity }}
-            className="absolute top-20 -right-40 w-[600px] h-[600px] bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl"
-          />
-          <motion.div
-            style={{ y: floatingY, opacity: heroOpacity }}
-            className="absolute bottom-40 -left-40 w-[500px] h-[500px] bg-gradient-to-br from-cyan-500/15 to-blue-600/15 rounded-full blur-3xl"
-          />
+        <section ref={heroRef} className="relative min-h-screen flex items-center px-8 md:px-16 py-48 md:py-56 overflow-hidden bg-white">
 
           <motion.div
             style={{ y: heroY, opacity: heroOpacity }}
@@ -251,10 +241,10 @@ export default function HomePage() {
           >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
 
-              {/* Left: Typography - 7 columns */}
+              {/* Left: Typography - 6 columns */}
               <motion.div
                 style={{ y: textY }}
-                className="lg:col-span-7 space-y-12"
+                className="lg:col-span-6 space-y-12"
               >
                 <motion.div
                   initial={{ opacity: 0, y: 40 }}
@@ -267,7 +257,7 @@ export default function HomePage() {
                     transition={{ duration: 0.8, delay: 0.5 }}
                     className="text-xs text-gray-400 uppercase tracking-[0.3em] font-bold mb-8 flex items-center gap-3"
                   >
-                    <div className="w-12 h-px bg-gradient-to-r from-blue-600 to-cyan-600"></div>
+                    <div className="w-12 h-px bg-blue-600"></div>
                     Transporte · Patagonia Aysén
                   </motion.div>
 
@@ -284,7 +274,7 @@ export default function HomePage() {
                       initial={{ opacity: 0, y: 50, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       transition={{ duration: 0.8, delay: 0.75, ease: [0.16, 1, 0.3, 1] }}
-                      className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 animate-gradient"
+                      className="block text-blue-600"
                     >
                       Aysén
                     </motion.span>
@@ -309,7 +299,7 @@ export default function HomePage() {
                     <motion.div
                       whileHover={{ scale: 1.03, y: -4 }}
                       transition={{ duration: 0.3 }}
-                      className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl border border-blue-100/50 backdrop-blur-sm shadow-lg shadow-blue-100/20"
+                      className="p-6 bg-blue-50 rounded-2xl border border-blue-100 backdrop-blur-sm shadow-lg"
                     >
                       <div className="text-3xl font-black text-blue-600 mb-1">16 · 11</div>
                       <div className="text-xs font-bold text-blue-900 uppercase tracking-wider">Pasajeros</div>
@@ -317,10 +307,10 @@ export default function HomePage() {
                     <motion.div
                       whileHover={{ scale: 1.03, y: -4 }}
                       transition={{ duration: 0.3 }}
-                      className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-100/50 backdrop-blur-sm shadow-lg shadow-green-100/20"
+                      className="p-6 bg-gray-50 rounded-2xl border border-gray-200 backdrop-blur-sm shadow-lg"
                     >
-                      <div className="text-sm font-black text-green-900 mb-1">Nov — Mar</div>
-                      <div className="text-xs font-bold text-green-700 uppercase tracking-wider">Temporada</div>
+                      <div className="text-sm font-black text-gray-900 mb-1">Nov — Mar</div>
+                      <div className="text-xs font-bold text-gray-700 uppercase tracking-wider">Temporada</div>
                     </motion.div>
                   </motion.div>
                 </motion.div>
@@ -339,9 +329,8 @@ export default function HomePage() {
                       rel="noopener noreferrer"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="group relative px-8 py-5 bg-gray-900 text-white rounded-2xl font-bold overflow-hidden flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl transition-shadow duration-300"
+                      className="group relative px-8 py-5 bg-gray-900 hover:bg-blue-600 text-white rounded-2xl font-bold overflow-hidden flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl transition-all duration-300"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       <span className="relative z-10">WhatsApp</span>
                       <svg className="relative z-10 w-5 h-5 transition-transform group-hover:translate-x-2 duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -362,13 +351,13 @@ export default function HomePage() {
                 </motion.div>
               </motion.div>
 
-              {/* Right: Image - 5 columns with Parallax */}
+              {/* Right: Image - 6 columns with Parallax */}
               <motion.div
                 style={{ y: imageY, scale: heroScale }}
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1.2, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="lg:col-span-5"
+                className="lg:col-span-6"
               >
                 <div className="relative h-[500px] md:h-[700px] rounded-3xl overflow-hidden shadow-2xl">
                   <Image
@@ -398,10 +387,7 @@ export default function HomePage() {
         </section>
 
         {/* Tours Section - Bento Grid with Reveal Transition */}
-        <section className="relative py-40 md:py-52 px-8 md:px-16 bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden" id="tours">
-
-          {/* Decorative gradient orbs */}
-          <div className="absolute top-40 left-1/4 w-96 h-96 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full blur-3xl"></div>
+        <section className="relative py-40 md:py-52 px-8 md:px-16 bg-gray-50 overflow-hidden" id="tours">
 
           <div className="max-w-[1600px] mx-auto relative z-10">
 
@@ -418,7 +404,7 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, scaleX: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="w-16 h-1 bg-gradient-to-r from-blue-600 to-cyan-600 mb-8 origin-left"
+                className="w-16 h-1 bg-blue-600 mb-8 origin-left"
               />
               <h2 className="text-[clamp(2.5rem,7vw,6rem)] font-black text-gray-900 leading-[0.85] tracking-tighter mb-8">
                 <motion.span
@@ -506,11 +492,10 @@ export default function HomePage() {
         </section>
 
         {/* Footer - Cinematic */}
-        <footer className="relative py-32 md:py-40 px-8 md:px-16 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
+        <footer className="relative py-32 md:py-40 px-8 md:px-16 bg-white overflow-hidden">
 
           {/* Decorative elements */}
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-          <div className="absolute bottom-20 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-blue-500/5 to-cyan-500/5 rounded-full blur-3xl"></div>
+          <div className="absolute top-0 left-0 right-0 h-px bg-gray-200"></div>
 
           <div className="max-w-[1600px] mx-auto relative z-10">
 
@@ -531,7 +516,7 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, scaleX: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: 0.2 }}
-                  className="w-20 h-1 bg-gradient-to-r from-blue-600 to-cyan-600 mb-8 origin-left"
+                  className="w-20 h-1 bg-blue-600 mb-8 origin-left"
                 />
                 <p className="text-lg md:text-xl text-gray-600 leading-relaxed font-light mb-8">
                   Transporte especializado desde Coyhaique hacia los destinos más icónicos de la Patagonia chilena.
@@ -584,7 +569,7 @@ export default function HomePage() {
                         href="#"
                         whileHover={{ scale: 1.1, y: -4 }}
                         whileTap={{ scale: 0.95 }}
-                        className="group w-14 h-14 bg-gradient-to-br from-gray-100 to-gray-50 hover:from-blue-600 hover:to-cyan-600 text-gray-600 hover:text-white rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm hover:shadow-lg"
+                        className="group w-14 h-14 bg-gray-100 hover:bg-blue-600 text-gray-600 hover:text-white rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm hover:shadow-lg"
                       >
                         <svg className="w-6 h-6 transition-transform group-hover:scale-110 duration-300" fill="currentColor" viewBox="0 0 24 24">
                           <path d={social.path} />
@@ -612,7 +597,7 @@ export default function HomePage() {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-6 py-3 bg-gray-900 hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-600 text-white rounded-xl font-bold transition-all duration-300"
+                      className="px-6 py-3 bg-gray-900 hover:bg-blue-600 text-white rounded-xl font-bold transition-all duration-300"
                     >
                       →
                     </motion.button>
