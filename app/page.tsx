@@ -270,7 +270,7 @@ export default function HomePage() {
             <TourCard
               title="Full Mármol desde Puerto Sánchez"
               description="Navegación completa por las Cuevas y Capillas de Mármol. Incluye recorrido por Catedral de Mármol y zonas exclusivas."
-              tags={["Navegación", "Día Completo"}}
+              tags={["Navegación", "Día Completo"]}
               image="/images/tours/puerto-sanchez.jpg"
               gradient="from-blue-500 via-violet-600 to-purple-600"
               className="md:col-span-5 min-h-[320px]"
