@@ -88,136 +88,40 @@ const TourCard = ({
   );
 };
 
-// Professional Navigation Icons
-const NavIcon = ({ type, className = "" }: { type: string; className?: string }) => {
-  const icons = {
-    home: (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-      </svg>
-    ),
-    tours: (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-      </svg>
-    ),
-    contact: (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-      </svg>
-    ),
-    login: (
-      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-      </svg>
-    ),
-  };
-
-  return icons[type as keyof typeof icons] || null;
-};
-
-// Advanced Side Navigation
-const SideNav = ({ activeSection, scrollProgress }: { activeSection: string; scrollProgress: number }) => {
-  const navItems = [
-    { id: 'inicio', label: 'Inicio', icon: 'home' },
-    { id: 'tours', label: 'Nuestros Tours', icon: 'tours' },
-    { id: 'contacto', label: 'Contacto', icon: 'contact' },
-  ];
-
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      const offsetTop = element.offsetTop - 80;
-      window.scrollTo({ top: offsetTop, behavior: 'smooth' });
-    }
-  };
-
+// GitHub-style Vertical Graph Line
+const VerticalGraph = ({ scrollProgress }: { scrollProgress: number }) => {
   return (
-    <motion.nav
-      initial={{ x: -100, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed left-0 top-0 h-screen w-20 lg:w-72 bg-white/80 backdrop-blur-xl border-r border-gray-200/50 z-50 flex flex-col"
-    >
-      {/* Scroll Progress Indicator */}
-      <div className="absolute top-0 left-0 w-1 h-full bg-gray-100">
+    <div className="fixed left-8 top-1/2 -translate-y-1/2 z-50 hidden md:block">
+      <div className="flex flex-col items-center gap-3">
+        {/* Dots representing sections */}
+        {[0, 33, 66, 100].map((threshold, i) => (
+          <motion.div
+            key={i}
+            className={`w-2 h-2 rounded-sm transition-all duration-300 ${
+              scrollProgress >= threshold
+                ? 'bg-gradient-to-b from-blue-600 to-cyan-600 scale-100'
+                : 'bg-gray-300 scale-75'
+            }`}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: scrollProgress >= threshold ? 1 : 0.75 }}
+            transition={{ delay: i * 0.1 }}
+          />
+        ))}
+      </div>
+
+      {/* Vertical line */}
+      <div className="absolute left-1/2 top-0 -translate-x-1/2 w-px h-full -z-10">
+        <div className="w-full h-full bg-gray-200" />
         <motion.div
-          className="w-full bg-gradient-to-b from-blue-600 to-cyan-600"
+          className="absolute top-0 left-0 w-full bg-gradient-to-b from-blue-600 to-cyan-600"
           style={{ height: `${scrollProgress}%` }}
         />
       </div>
-
-      {/* Logo */}
-      <div className="p-6 border-b border-gray-200/50">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-600/20">
-            <span className="text-xl font-black text-white">J&P</span>
-          </div>
-          <div className="hidden lg:block">
-            <h2 className="text-lg font-black text-gray-900 tracking-tight">J&P Turismo</h2>
-            <p className="text-xs text-gray-500 font-medium">Patagonia Aysén</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Items */}
-      <div className="flex-1 py-8 px-4 overflow-y-auto">
-        <div className="space-y-1">
-          {navItems.map((item, index) => {
-            const isActive = activeSection === item.id;
-            return (
-              <motion.button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-300 group relative ${
-                  isActive
-                    ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-700'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-                whileHover={{ x: 4 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                {/* Active Indicator */}
-                {isActive && (
-                  <motion.div
-                    layoutId="activeIndicator"
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-blue-600 to-cyan-600 rounded-r-full"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-
-                <NavIcon
-                  type={item.icon}
-                  className={`w-5 h-5 transition-colors ${isActive ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-600'}`}
-                />
-                <span className="hidden lg:block font-semibold text-sm tracking-tight">{item.label}</span>
-
-                {/* Item Number */}
-                <span className={`hidden lg:block ml-auto text-xs font-bold ${isActive ? 'text-blue-400' : 'text-gray-300'}`}>
-                  0{index + 1}
-                </span>
-              </motion.button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="p-4 border-t border-gray-200/50">
-        <Link
-          href="/login"
-          className="hidden lg:flex items-center gap-3 px-4 py-3 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all duration-300 group"
-        >
-          <NavIcon type="login" className="w-4 h-4" />
-          <span className="font-medium">Acceso operadores</span>
-        </Link>
-      </div>
-    </motion.nav>
+    </div>
   );
 };
 
 export default function HomePage() {
-  const [activeSection, setActiveSection] = useState('inicio');
   const [scrollProgress, setScrollProgress] = useState(0);
   const heroRef = useRef(null);
 
@@ -230,30 +134,14 @@ export default function HomePage() {
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.95]);
   const y = useTransform(scrollYProgress, [0, 1], [0, 100]);
 
-  // Scroll spy and progress
+  // Scroll progress
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['inicio', 'tours', 'contacto'];
-      const scrollPosition = window.scrollY + 200;
-
-      // Calculate scroll progress
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
       const scrolled = window.scrollY;
       const progress = (scrolled / (documentHeight - windowHeight)) * 100;
       setScrollProgress(Math.min(progress, 100));
-
-      // Update active section
-      for (const sectionId of sections) {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(sectionId);
-            break;
-          }
-        }
-      }
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -263,10 +151,31 @@ export default function HomePage() {
 
   return (
     <div className="bg-gray-50">
-      <SideNav activeSection={activeSection} scrollProgress={scrollProgress} />
+      <VerticalGraph scrollProgress={scrollProgress} />
+
+      {/* Minimal Header */}
+      <header className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-200/50">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
+              <span className="text-lg font-black text-white">J&P</span>
+            </div>
+            <div>
+              <h1 className="text-lg font-black text-gray-900 tracking-tight">J&P Turismo</h1>
+              <p className="text-xs text-gray-500 font-medium">Patagonia Aysén</p>
+            </div>
+          </div>
+          <Link
+            href="/login"
+            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all duration-300 font-medium"
+          >
+            Acceso operadores
+          </Link>
+        </div>
+      </header>
 
       {/* Main Content */}
-      <main className="ml-20 lg:ml-72">
+      <main className="pt-20">
         {/* Hero Section */}
         <section id="inicio" ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50">
           {/* Abstract Background */}
