@@ -86,4 +86,26 @@
   ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(to bottom, #1d4ed8, #0891b2);
   }
+
+  /* Hide default cursor on desktop */
+  @media (min-width: 768px) {
+    * {
+      cursor: none !important;
+    }
+
+    a, button, input, textarea, select {
+      cursor: none !important;
+    }
+  }
+
+  /* Text selection styling */
+  ::selection {
+    background-color: #06b6d4;
+    color: white;
+  }
+
+  ::-moz-selection {
+    background-color: #06b6d4;
+    color: white;
+  }
 }
