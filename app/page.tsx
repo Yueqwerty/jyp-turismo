@@ -167,109 +167,184 @@ export default function HomePage() {
       {/* Main Content */}
       <main className="pt-20">
         {/* Hero Bento Section */}
-        <section id="inicio" ref={heroRef} className="relative min-h-screen py-16 px-6 md:px-12 bg-white">
+        <section id="inicio" className="relative py-8 px-6 md:px-12 bg-gray-50">
           <div className="max-w-[1600px] mx-auto">
-            {/* Bento Grid Hero */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
 
-              {/* Main Hero Text Card */}
+              {/* Grid de imágenes - 3 columnas */}
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="md:col-span-5 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-3xl p-12 flex flex-col justify-between min-h-[500px] relative overflow-hidden"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+                className="md:col-span-3 grid grid-cols-2 gap-4"
               >
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-
-                <div className="relative z-10">
-                  <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/20 backdrop-blur-md border border-white/30 text-white rounded-lg text-xs font-bold uppercase tracking-wider mb-6">
-                    <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
-                    Región de Aysén
-                  </span>
-
-                  <h1 className="text-5xl md:text-6xl font-black text-white mb-6 leading-[1.1] tracking-tight">
-                    Descubre la<br />Patagonia Chilena
-                  </h1>
-
-                  <p className="text-lg text-white/90 leading-relaxed font-light mb-8">
-                    Glaciares milenarios, lagos turquesa y naturaleza virgen en el corazón de la Patagonia de Aysén
-                  </p>
-
-                  <a
-                    href="#tours"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-xl font-bold hover:scale-105 transition-all duration-300 shadow-lg"
-                  >
-                    <span>Ver tours</span>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                  </a>
+                <div className="col-span-2 relative h-[240px] rounded-2xl overflow-hidden group">
+                  <Image src="/images/tours/capillas-marmol.jpg" alt="Capillas de Mármol" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
-
-                <div className="relative z-10 flex items-center gap-6 pt-8 border-t border-white/20">
-                  <div>
-                    <div className="text-3xl font-black text-white">15+</div>
-                    <div className="text-sm text-white/80 font-medium">Años</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-black text-white">8</div>
-                    <div className="text-sm text-white/80 font-medium">Tours</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-black text-white">2K+</div>
-                    <div className="text-sm text-white/80 font-medium">Clientes</div>
-                  </div>
+                <div className="relative h-[180px] rounded-2xl overflow-hidden group">
+                  <Image src="/images/tours/queulat.jpg" alt="Queulat" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                </div>
+                <div className="relative h-[180px] rounded-2xl overflow-hidden group">
+                  <Image src="/images/tours/ventisqueros.jpg" alt="Ventisqueros" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
               </motion.div>
 
-              {/* Featured Image Card */}
+              {/* Info principal - 4 columnas */}
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.1 }}
-                className="md:col-span-7 relative overflow-hidden rounded-3xl min-h-[500px] group cursor-pointer"
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="md:col-span-4 space-y-4"
+              >
+                {/* Header */}
+                <div className="bg-white rounded-2xl p-8 border border-gray-200">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h1 className="text-4xl font-black text-gray-900 mb-2">Aysén</h1>
+                      <p className="text-gray-600">XI Región, Chile</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm text-gray-500">Temporada alta</div>
+                      <div className="text-lg font-bold text-gray-900">Nov - Mar</div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
+                    <div>
+                      <div className="text-2xl font-black text-gray-900">8</div>
+                      <div className="text-xs text-gray-500">Tours activos</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-black text-gray-900">12°C</div>
+                      <div className="text-xs text-gray-500">Temp. promedio</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-black text-gray-900">4-8h</div>
+                      <div className="text-xs text-gray-500">Duración típica</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick access */}
+                <div className="grid grid-cols-2 gap-4">
+                  <a href="#tours" className="bg-blue-600 hover:bg-blue-700 rounded-2xl p-6 text-white transition-colors group">
+                    <div className="text-sm mb-2">Navegación</div>
+                    <div className="text-xl font-black mb-1">Glaciares</div>
+                    <div className="text-sm text-blue-100">3 tours disponibles</div>
+                  </a>
+                  <a href="#tours" className="bg-emerald-600 hover:bg-emerald-700 rounded-2xl p-6 text-white transition-colors group">
+                    <div className="text-sm mb-2">Trekking</div>
+                    <div className="text-xl font-black mb-1">Montaña</div>
+                    <div className="text-sm text-emerald-100">2 tours disponibles</div>
+                  </a>
+                </div>
+              </motion.div>
+
+              {/* Imagen grande destacada - 5 columnas */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="md:col-span-5 relative rounded-2xl overflow-hidden min-h-[460px] group"
               >
                 <Image
                   src="/images/tours/laguna-san-rafael.jpg"
-                  alt="Glaciar San Rafael - Patagonia Aysén"
+                  alt="Glaciar San Rafael"
                   fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0"></div>
-                <div className="absolute bottom-8 left-8 right-8 text-white z-10">
-                  <span className="inline-block px-3 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-xs font-bold uppercase tracking-wider mb-3">
-                    Tour destacado
-                  </span>
-                  <h3 className="text-3xl font-black mb-2">Laguna San Rafael</h3>
-                  <p className="text-white/90">Glaciar milenario del Campo de Hielo Norte</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded text-xs font-bold">MÁS POPULAR</span>
+                    <span className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded text-xs">Día completo</span>
+                  </div>
+                  <h2 className="text-3xl font-black mb-2">Glaciar San Rafael</h2>
+                  <p className="text-white/90 mb-4">Campo de Hielo Norte • Navegación</p>
+                  <div className="flex items-center gap-4 text-sm">
+                    <div className="flex items-center gap-1">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                      </svg>
+                      <span>8-10 hrs</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                      </svg>
+                      <span>4-30 personas</span>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
-            </div>
 
-            {/* Secondary Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              {[
-                { icon: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z', title: 'Guías expertos', desc: 'Locales certificados' },
-                { icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', title: '100% seguro', desc: 'Equipamiento certificado' },
-                { icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', title: 'Flexibilidad', desc: 'Tours personalizables' },
-                { icon: 'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z', title: 'Experiencias únicas', desc: 'Lugares exclusivos' }
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 + i * 0.1 }}
-                  className="bg-gray-50 rounded-2xl p-6 hover:bg-white hover:shadow-lg transition-all duration-300 border border-gray-100"
-                >
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
+              {/* Información práctica - 8 columnas */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="md:col-span-8 grid grid-cols-4 gap-4"
+              >
+                <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                  <div className="text-sm text-gray-500 mb-2">Acceso</div>
+                  <div className="text-lg font-bold text-gray-900 mb-1">Balmaceda</div>
+                  <div className="text-xs text-gray-600">Aeropuerto más cercano</div>
+                </div>
+                <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                  <div className="text-sm text-gray-500 mb-2">Clima</div>
+                  <div className="text-lg font-bold text-gray-900 mb-1">Variable</div>
+                  <div className="text-xs text-gray-600">Lleva capas de ropa</div>
+                </div>
+                <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                  <div className="text-sm text-gray-500 mb-2">Nivel</div>
+                  <div className="text-lg font-bold text-gray-900 mb-1">Todos</div>
+                  <div className="text-xs text-gray-600">Fácil a avanzado</div>
+                </div>
+                <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                  <div className="text-sm text-gray-500 mb-2">Reserva</div>
+                  <div className="text-lg font-bold text-gray-900 mb-1">Anticipada</div>
+                  <div className="text-xs text-gray-600">7-15 días antes</div>
+                </div>
+              </motion.div>
+
+              {/* Tours rápidos - 4 columnas */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="md:col-span-4 bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 text-white"
+              >
+                <div className="text-sm text-gray-400 mb-4">Destacados</div>
+                <div className="space-y-3">
+                  <a href="#tours" className="flex items-center justify-between p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-colors">
+                    <div>
+                      <div className="font-bold">Capillas de Mármol</div>
+                      <div className="text-xs text-gray-400">Medio día</div>
+                    </div>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
-                  </div>
-                  <h4 className="text-gray-900 font-bold mb-1">{item.title}</h4>
-                  <p className="text-sm text-gray-600">{item.desc}</p>
-                </motion.div>
-              ))}
+                  </a>
+                  <a href="#tours" className="flex items-center justify-between p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-colors">
+                    <div>
+                      <div className="font-bold">Carretera Austral</div>
+                      <div className="text-xs text-gray-400">3-5 días</div>
+                    </div>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </a>
+                  <a href="#tours" className="flex items-center justify-between p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-colors">
+                    <div>
+                      <div className="font-bold">Pesca deportiva</div>
+                      <div className="text-xs text-gray-400">Día completo</div>
+                    </div>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </a>
+                </div>
+              </motion.div>
+
             </div>
           </div>
         </section>
