@@ -108,9 +108,9 @@ export default function MessagesPage() {
             <div className="flex items-center gap-6">
               <Link href="/" className="flex items-center gap-3 group">
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <span className="text-lg font-black text-white">JYP</span>
+                  <span className="text-lg font-black text-white">J&P</span>
                 </div>
-                <span className="text-xl font-black text-white">JYP Turismo</span>
+                <span className="text-xl font-black text-white">J&P Turismo</span>
               </Link>
               <div className="h-6 w-px bg-white/10"></div>
               <h1 className="text-lg font-semibold text-gray-300">Centro de Mensajes</h1>
