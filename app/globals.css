@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --whatsapp: #25D366;
+    --messenger: #0084FF;
+    --instagram: #C13584;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-full font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
+
+  .btn-secondary {
+    @apply border-2 border-white text-white px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-purple-600 transition-all duration-300;
+  }
+
+  .channel-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white;
+  }
+
+  .channel-whatsapp {
+    background-color: var(--whatsapp);
+  }
+
+  .channel-messenger {
+    background-color: var(--messenger);
+  }
+
+  .channel-instagram {
+    background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+  }
+
+  .message-card {
+    @apply bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+
+  .feature-card {
+    @apply bg-white rounded-xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2;
+  }
+}

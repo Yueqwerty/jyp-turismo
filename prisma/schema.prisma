@@ -1,0 +1,127 @@
+// Prisma schema for messaging platform
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MessageChannel {
+  WHATSAPP
+  MESSENGER
+  INSTAGRAM
+}
+
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+  LOCATION
+  CONTACT
+  STICKER
+}
+
+enum MessageStatus {
+  PENDING
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+model Contact {
+  id                String         @id @default(cuid())
+  externalId        String
+  channel           MessageChannel
+  displayName       String
+  phoneNumber       String?
+  email             String?
+  profilePictureUrl String?
+  metadata          Json?
+  isActive          Boolean        @default(true)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  conversations Conversation[]
+
+  @@unique([externalId, channel])
+  @@index([externalId])
+  @@index([channel])
+}
+
+model Conversation {
+  id                     String         @id @default(cuid())
+  externalConversationId String         @unique
+  channel                MessageChannel
+  contactId              String
+  subject                String?
+  isActive               Boolean        @default(true)
+  lastMessageAt          DateTime?
+  unreadCount            Int            @default(0)
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+
+  contact  Contact   @relation(fields: [contactId], references: [id], onDelete: Restrict)
+  messages Message[]
+
+  @@index([contactId])
+  @@index([channel])
+  @@index([lastMessageAt])
+}
+
+model Message {
+  id                  String           @id @default(cuid())
+  externalMessageId   String           @unique
+  conversationId      String
+  channel             MessageChannel
+  direction           MessageDirection
+  type                MessageType
+  status              MessageStatus
+  textContent         String?
+  senderName          String
+  senderExternalId    String
+  recipientName       String
+  recipientExternalId String
+  sentAt              DateTime
+  deliveredAt         DateTime?
+  readAt              DateTime?
+  metadata            Json?
+  errorMessage        String?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  conversation Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  attachments  Attachment[]
+
+  @@index([conversationId])
+  @@index([channel])
+  @@index([sentAt])
+}
+
+model Attachment {
+  id           String      @id @default(cuid())
+  messageId    String
+  type         MessageType
+  fileName     String
+  mimeType     String
+  fileSize     Int
+  fileUrl      String
+  thumbnailUrl String?
+  externalUrl  String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([messageId])
+}

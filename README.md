@@ -1,57 +1,58 @@
 # JYP Turismo - Central de Mensajería Unificada
 
-Plataforma profesional para centralizar mensajes de WhatsApp Business, Facebook Messenger e Instagram en una sola interfaz desarrollada con C# Blazor Server.
+Plataforma profesional para centralizar mensajes de WhatsApp Business, Facebook Messenger e Instagram desarrollada con Next.js 14 y desplegable en Vercel.
 
 ## Características Principales
 
 - **Centralización Total**: Gestiona mensajes de WhatsApp Business, Messenger e Instagram desde una única plataforma
-- **Tiempo Real**: Actualizaciones instantáneas con SignalR
-- **Arquitectura Profesional**: Diseño en capas con separación de responsabilidades
-- **Seguridad Avanzada**: Verificación de firmas de webhooks y cifrado de datos
-- **Escalable**: Preparado para crecer con tu negocio
-- **API Oficial de Meta**: Integración directa con las APIs oficiales
+- **Tiempo Real**: Actualizaciones serverless con Next.js
+- **Arquitectura Profesional**: Next.js 14 App Router con TypeScript y Prisma ORM
+- **Seguridad Avanzada**: Verificación de firmas de webhooks HMAC SHA-256
+- **Escalable**: Arquitectura serverless lista para producción
+- **Deploy en Vercel**: Un solo click para deployment
 
 ## Tecnologías Utilizadas
 
-- **Backend**: C# .NET 8.0
-- **Framework**: Blazor Server
-- **ORM**: Entity Framework Core 8.0
-- **Base de Datos**: SQL Server
-- **Tiempo Real**: SignalR
+- **Framework**: Next.js 14 con App Router
+- **Lenguaje**: TypeScript
+- **ORM**: Prisma
+- **Base de Datos**: PostgreSQL (Vercel Postgres compatible)
+- **Estilos**: Tailwind CSS
 - **APIs**: Meta Graph API (WhatsApp, Messenger, Instagram)
+- **Deployment**: Vercel
 
 ## Arquitectura del Proyecto
 
 ```
-JypTurismo/
-├── src/
-│   ├── JypTurismo.Core/           # Entidades y contratos
-│   │   ├── Entities/              # Entidades de dominio
-│   │   ├── Enums/                 # Enumeraciones
-│   │   └── Interfaces/            # Interfaces de servicios
-│   │
-│   ├── JypTurismo.Application/    # Lógica de negocio
-│   │
-│   ├── JypTurismo.Infrastructure/ # Implementaciones
-│   │   ├── Data/                  # DbContext y configuraciones
-│   │   ├── Repositories/          # Repositorios y UnitOfWork
-│   │   └── Services/              # Servicios de integración
-│   │
-│   └── JypTurismo.Web/            # Capa de presentación
-│       ├── Controllers/           # Controladores de API
-│       ├── Hubs/                  # SignalR Hubs
-│       ├── Pages/                 # Páginas Blazor
-│       └── Components/            # Componentes reutilizables
+jyp-turismo/
+├── app/
+│   ├── api/webhooks/           # API Routes para webhooks
+│   │   ├── whatsapp/
+│   │   ├── messenger/
+│   │   └── instagram/
+│   ├── messages/               # Página de mensajes
+│   ├── layout.tsx              # Layout principal
+│   ├── page.tsx                # Landing page
+│   └── globals.css             # Estilos globales
+├── lib/
+│   ├── prisma.ts               # Cliente de Prisma
+│   └── services/               # Servicios de integración
+│       ├── whatsapp.ts
+│       ├── messenger.ts
+│       └── instagram.ts
+├── prisma/
+│   └── schema.prisma           # Schema de base de datos
+└── vercel.json                 # Configuración de Vercel
 ```
 
 ## Requisitos Previos
 
-- .NET 8.0 SDK
-- SQL Server (LocalDB o versión completa)
-- Visual Studio 2022 o Rider (opcional)
+- Node.js 18.17.0 o superior
+- PostgreSQL (local o cloud)
 - Cuenta de Meta Business con acceso a las APIs
+- Cuenta de Vercel (para deployment)
 
-## Configuración
+## Configuración Local
 
 ### 1. Clonar el Repositorio
 
@@ -60,77 +61,151 @@ git clone https://github.com/Yueqwerty/jyp-turismo.git
 cd jyp-turismo
 ```
 
-### 2. Configurar Variables de Entorno
+### 2. Instalar Dependencias
 
-Copia el archivo `.env.example` a `.env` y configura tus credenciales:
+```bash
+npm install
+```
+
+### 3. Configurar Variables de Entorno
+
+Copia el archivo `.env.example` a `.env`:
 
 ```bash
 cp .env.example .env
 ```
 
-Edita el archivo `.env` con tus credenciales de Meta:
+Edita `.env` con tus credenciales:
 
-- **WhatsApp Business**: Obtén tokens desde Meta Business Manager
-- **Messenger**: Configura una aplicación de Facebook
-- **Instagram**: Vincula tu cuenta de Instagram Business
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/jypturismo?schema=public"
 
-### 3. Configurar Base de Datos
+WHATSAPP_ACCESS_TOKEN=your_token
+WHATSAPP_PHONE_NUMBER_ID=your_id
+WHATSAPP_APP_SECRET=your_secret
+WHATSAPP_VERIFY_TOKEN=your_verify_token
 
-Actualiza la cadena de conexión en `appsettings.json`:
+MESSENGER_ACCESS_TOKEN=your_token
+MESSENGER_APP_SECRET=your_secret
+MESSENGER_VERIFY_TOKEN=your_verify_token
 
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=JypTurismoDb;Trusted_Connection=True"
-  }
-}
+INSTAGRAM_ACCESS_TOKEN=your_token
+INSTAGRAM_APP_SECRET=your_secret
+INSTAGRAM_VERIFY_TOKEN=your_verify_token
 ```
 
-### 4. Aplicar Migraciones
+### 4. Configurar Base de Datos
 
 ```bash
-cd src/JypTurismo.Web
-dotnet ef database update --project ../JypTurismo.Infrastructure
+# Generar cliente de Prisma
+npx prisma generate
+
+# Ejecutar migraciones
+npx prisma db push
 ```
 
-### 5. Ejecutar la Aplicación
+### 5. Ejecutar en Desarrollo
 
 ```bash
-dotnet run
+npm run dev
 ```
 
-La aplicación estará disponible en `https://localhost:5001`
+La aplicación estará disponible en `http://localhost:3000`
+
+## Deploy en Vercel
+
+### Opción 1: Deploy con GitHub (Recomendado)
+
+1. Haz push de tu código a GitHub
+2. Visita [vercel.com](https://vercel.com)
+3. Click en "Add New Project"
+4. Importa tu repositorio de GitHub
+5. Vercel detectará automáticamente Next.js
+6. Configura las variables de entorno en el panel de Vercel
+7. Click en "Deploy"
+
+### Opción 2: Deploy con Vercel CLI
+
+```bash
+# Instalar Vercel CLI
+npm i -g vercel
+
+# Login
+vercel login
+
+# Deploy
+vercel
+```
+
+### Variables de Entorno en Vercel
+
+Ve a tu proyecto en Vercel → Settings → Environment Variables y agrega:
+
+- `DATABASE_URL` (de Vercel Postgres o tu proveedor)
+- `WHATSAPP_ACCESS_TOKEN`
+- `WHATSAPP_PHONE_NUMBER_ID`
+- `WHATSAPP_APP_SECRET`
+- `WHATSAPP_VERIFY_TOKEN`
+- `MESSENGER_ACCESS_TOKEN`
+- `MESSENGER_APP_SECRET`
+- `MESSENGER_VERIFY_TOKEN`
+- `INSTAGRAM_ACCESS_TOKEN`
+- `INSTAGRAM_APP_SECRET`
+- `INSTAGRAM_VERIFY_TOKEN`
+
+## Configuración de Base de Datos en Vercel
+
+### Usar Vercel Postgres
+
+1. En tu proyecto de Vercel, ve a Storage
+2. Click en "Create Database"
+3. Selecciona "Postgres"
+4. Vercel creará automáticamente la variable `DATABASE_URL`
+5. Ejecuta las migraciones:
+
+```bash
+vercel env pull .env.local
+npx prisma db push
+```
+
+### Alternativas de Base de Datos
+
+- **Supabase**: PostgreSQL gratis con 500MB
+- **Neon**: PostgreSQL serverless con tier gratuito
+- **PlanetScale**: MySQL compatible (requiere ajustes en schema.prisma)
 
 ## Configuración de Webhooks
 
+Una vez desplegado en Vercel, configura los webhooks en Meta:
+
 ### WhatsApp Business
 
-1. Accede a Meta Business Manager
-2. Configura el webhook en tu aplicación de WhatsApp
-3. URL del webhook: `https://tudominio.com/api/webhooks/whatsapp`
-4. Eventos a suscribirse: `messages`
+1. Meta Business Manager → WhatsApp → Configuration
+2. Webhook URL: `https://tu-dominio.vercel.app/api/webhooks/whatsapp`
+3. Verify Token: El que configuraste en `WHATSAPP_VERIFY_TOKEN`
+4. Suscríbete a: `messages`
 
 ### Messenger
 
-1. Crea una aplicación de Facebook
-2. Configura el webhook
-3. URL del webhook: `https://tudominio.com/api/webhooks/messenger`
-4. Eventos: `messages`, `messaging_postbacks`
+1. Meta App Dashboard → Messenger → Settings
+2. Webhook URL: `https://tu-dominio.vercel.app/api/webhooks/messenger`
+3. Verify Token: El que configuraste en `MESSENGER_VERIFY_TOKEN`
+4. Suscríbete a: `messages`, `messaging_postbacks`
 
 ### Instagram
 
-1. Vincula tu cuenta de Instagram Business
-2. Configura el webhook
-3. URL del webhook: `https://tudominio.com/api/webhooks/instagram`
-4. Eventos: `messages`, `messaging_postbacks`
+1. Meta App Dashboard → Instagram → Configuration
+2. Webhook URL: `https://tu-dominio.vercel.app/api/webhooks/instagram`
+3. Verify Token: El que configuraste en `INSTAGRAM_VERIFY_TOKEN`
+4. Suscríbete a: `messages`, `messaging_postbacks`
 
 ## Estructura de la Base de Datos
 
-### Entidades Principales
+### Modelos Principales
 
-- **Message**: Mensajes centralizados de todos los canales
+- **Contact**: Contactos de clientes en cada canal
 - **Conversation**: Hilos de conversación
-- **Contact**: Contactos de clientes
+- **Message**: Mensajes centralizados de todos los canales
 - **Attachment**: Archivos adjuntos (imágenes, videos, documentos)
 
 ## Endpoints de API
@@ -146,65 +221,58 @@ La aplicación estará disponible en `https://localhost:5001`
 - Verificación de firmas HMAC SHA-256 para todos los webhooks
 - Validación de tokens de verificación
 - Conexiones HTTPS obligatorias
-- Sanitización de entrada de datos
-- Protección contra inyección SQL mediante Entity Framework Core
+- Sanitización de entrada con Prisma
+- Variables de entorno seguras
 
-## Mejores Prácticas Implementadas
-
-### Código
-
-- Documentación XML completa
-- Arquitectura en capas (Clean Architecture)
-- Patrón Repository y Unit of Work
-- Inyección de dependencias
-- Logging estructurado
-- Manejo de errores centralizado
-
-### Performance
-
-- Conexión a base de datos con retry automático
-- Compresión de respuestas HTTP
-- SignalR con reconexión automática
-- Lazy loading de datos
-
-## Desarrollo
-
-### Agregar Nuevas Migraciones
+## Scripts Disponibles
 
 ```bash
-cd src/JypTurismo.Infrastructure
-dotnet ef migrations add NombreMigracion --startup-project ../JypTurismo.Web
+npm run dev         # Inicia servidor de desarrollo
+npm run build       # Construye para producción
+npm start           # Inicia servidor de producción
+npm run lint        # Ejecuta el linter
 ```
 
-### Ejecutar Tests
+## Comandos de Prisma
 
 ```bash
-dotnet test
+npx prisma generate     # Genera el cliente de Prisma
+npx prisma db push      # Sincroniza schema con la base de datos
+npx prisma studio       # Abre interfaz visual de la BD
+npx prisma migrate dev  # Crea nueva migración
 ```
 
-## Despliegue
+## Troubleshooting
 
-### Azure App Service
+### Error: No DATABASE_URL
 
-1. Publica la aplicación desde Visual Studio o CLI
-2. Configura las variables de entorno en Azure
-3. Configura la cadena de conexión a SQL Azure
-4. Habilita HTTPS y dominios personalizados
+Asegúrate de que la variable `DATABASE_URL` esté configurada en `.env` o en Vercel.
 
-### Docker
+### Error de Prisma en Build
 
-```bash
-docker build -t jypturismo .
-docker run -p 5000:80 jypturismo
-```
+Ejecuta `npx prisma generate` antes de hacer build.
+
+### Webhooks no funcionan
+
+1. Verifica que las URLs de webhook sean HTTPS
+2. Confirma que los tokens de verificación coincidan
+3. Revisa los logs en Vercel Dashboard
+
+## Costos Estimados
+
+- **Vercel**: Gratis para proyectos hobby
+- **Vercel Postgres**: Gratis hasta 256MB
+- **Alternativas de BD gratuitas**: Supabase, Neon, Railway
+
+Total: **$0/mes** para empezar (con limitaciones de uso)
 
 ## Contribución
 
-Las contribuciones son bienvenidas. Por favor:
+Las contribuciones son bienvenidas:
 
 1. Fork el repositorio
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+2. Crea una rama (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add AmazingFeature'`)
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
@@ -224,12 +292,12 @@ Para soporte técnico o preguntas:
 - [ ] Panel de analytics y métricas
 - [ ] Respuestas automáticas con IA
 - [ ] Integración con CRM
-- [ ] Aplicación móvil
 - [ ] Sistema de etiquetas y categorías
 - [ ] Plantillas de mensajes
 - [ ] Asignación de agentes
-- [ ] Horarios de atención
+- [ ] Notificaciones push
+- [ ] Exportación de conversaciones
 
 ---
 
-Desarrollado con profesionalismo por el equipo de JYP Turismo
+Desarrollado con profesionalismo usando Next.js 14, Prisma, PostgreSQL y Tailwind CSS
