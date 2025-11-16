@@ -12,7 +12,7 @@ export class WhatsAppService {
   private baseUrl: string;
 
   constructor() {
-    this.accessToken = process.env.WHATSAPP_ACCESS_TOKEN || '';
+    this.accessToken = process.env.META_ACCESS_TOKEN || process.env.WHATSAPP_ACCESS_TOKEN || '';
     this.phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID || '';
     this.appSecret = process.env.WHATSAPP_APP_SECRET || '';
     this.baseUrl = `https://graph.facebook.com/${this.apiVersion}`;
