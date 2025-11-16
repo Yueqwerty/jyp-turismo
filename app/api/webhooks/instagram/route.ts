@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     const body = await request.text();
     const signature = request.headers.get('x-hub-signature-256') || '';
 
-    console.log('📨 Instagram webhook received');
+    console.log('📨 Instagram webhook received - v2');
 
     // TEMPORAL: Instagram parece usar App Secret diferente
     // TODO: Investigar App Secret correcto para Instagram
