@@ -69,32 +69,32 @@
     scroll-behavior: smooth;
   }
 
-  /* Custom scrollbar */
+  /* Minimal scrollbar (inspired by Amrit Palace) */
   ::-webkit-scrollbar {
-    width: 10px;
+    width: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, #2563eb, #06b6d4);
-    border-radius: 5px;
+    background: #2563eb;
+    border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(to bottom, #1d4ed8, #0891b2);
+    background: #1d4ed8;
   }
 
-  /* Text selection styling */
+  /* Text selection styling - monocromático */
   ::selection {
-    background-color: #06b6d4;
+    background-color: #2563eb;
     color: white;
   }
 
   ::-moz-selection {
-    background-color: #06b6d4;
+    background-color: #2563eb;
     color: white;
   }
 }

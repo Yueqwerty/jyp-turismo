@@ -5,37 +5,9 @@ import Image from 'next/image';
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import { useState, useRef } from 'react';
 
-// Magnetic Button Component
-const MagneticButton = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    x.set((e.clientX - centerX) * 0.15);
-    y.set((e.clientY - centerY) * 0.15);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
-  return (
-    <motion.div
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ x, y }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
+// Simple wrapper (removed heavy MagneticButton with useMotionValue)
+const SimpleWrapper = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
+  return <div className={className}>{children}</div>;
 };
 
 const TourCard = ({
@@ -166,13 +138,9 @@ export default function HomePage() {
       >
         <div className="max-w-[1600px] mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
-            <motion.div
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              transition={{ duration: 0.3 }}
-              className="w-11 h-11 bg-gradient-to-br from-gray-900 to-gray-700 rounded-2xl flex items-center justify-center shadow-lg"
-            >
+            <div className="w-11 h-11 bg-gray-900 rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-blue-600 transition-colors duration-300">
               <span className="text-lg font-black text-white">J&P</span>
-            </motion.div>
+            </div>
             <span className="text-lg font-black text-gray-900 tracking-tight group-hover:text-blue-600 transition-colors duration-300">J&P Turismo</span>
           </Link>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -271,39 +239,31 @@ export default function HomePage() {
                   </motion.div>
                 </motion.div>
 
-                {/* CTA Buttons - Magnetic Effect */}
+                {/* CTA Buttons */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.6 }}
                   className="flex flex-col sm:flex-row gap-4 max-w-xl"
                 >
-                  <MagneticButton className="flex-1">
-                    <motion.a
-                      href="https://wa.me/56XXXXXXXXX"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-full group relative px-8 py-4 bg-gray-900 hover:bg-blue-600 text-white rounded-2xl font-bold overflow-hidden flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl transition-all duration-300"
-                    >
-                      <span className="relative z-10">WhatsApp</span>
-                      <svg className="relative z-10 w-5 h-5 transition-transform group-hover:translate-x-2 duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </motion.a>
-                  </MagneticButton>
+                  <a
+                    href="https://wa.me/56XXXXXXXXX"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 group relative px-8 py-4 bg-gray-900 hover:bg-blue-600 text-white rounded-2xl font-bold flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl transition-all duration-300"
+                  >
+                    <span>WhatsApp</span>
+                    <svg className="w-5 h-5 transition-transform group-hover:translate-x-1 duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </a>
 
-                  <MagneticButton className="flex-1">
-                    <motion.a
-                      href="tel:+56XXXXXXXXX"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-full px-8 py-4 bg-white border-2 border-gray-200 text-gray-900 rounded-2xl font-bold hover:border-gray-900 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl"
-                    >
-                      +56 9 XXXX XXXX
-                    </motion.a>
-                  </MagneticButton>
+                  <a
+                    href="tel:+56XXXXXXXXX"
+                    className="flex-1 px-8 py-4 bg-white border-2 border-gray-200 text-gray-900 rounded-2xl font-bold hover:border-gray-900 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl"
+                  >
+                    +56 9 XXXX XXXX
+                  </a>
                 </motion.div>
               </motion.div>
 
@@ -322,6 +282,7 @@ export default function HomePage() {
                     fill
                     className="object-cover"
                     priority
+                    fetchPriority="high"
                     quality={85}
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
@@ -393,7 +354,7 @@ export default function HomePage() {
                 description="Navegación hacia el glaciar más accesible del Campo de Hielo Norte. 3 horas desde Puerto Chacabuco."
                 tags={["Día completo", "Navegación", "380 km"]}
                 image="/images/tours/laguna-san-rafael.jpg"
-                gradient="from-blue-600 to-cyan-600"
+                gradient="from-blue-600 to-blue-700"
                 className="md:col-span-7 md:row-span-2 min-h-[600px]"
                 featured
               />
@@ -402,7 +363,7 @@ export default function HomePage() {
                 title="Capillas de Mármol"
                 tags={["Puerto Tranquilo", "45 min"]}
                 image="/images/tours/capillas-marmol.jpg"
-                gradient="from-cyan-500 to-blue-600"
+                gradient="from-gray-700 to-gray-800"
                 className="md:col-span-5 min-h-[290px]"
               />
 
@@ -410,7 +371,7 @@ export default function HomePage() {
                 title="Parque Queulat"
                 tags={["Ventisquero Colgante", "2.5 hrs"]}
                 image="/images/tours/queulat.jpg"
-                gradient="from-emerald-600 to-green-700"
+                gradient="from-gray-600 to-gray-700"
                 className="md:col-span-5 min-h-[290px]"
               />
 
@@ -418,7 +379,7 @@ export default function HomePage() {
                 title="Ensenada Pérez"
                 tags={["Fiordos"]}
                 image="/images/tours/ensenada-perez.jpg"
-                gradient="from-slate-700 to-slate-900"
+                gradient="from-gray-800 to-gray-900"
                 className="md:col-span-5 min-h-[360px]"
               />
 
@@ -426,7 +387,7 @@ export default function HomePage() {
                 title="Carretera Austral"
                 tags={["Multi-día"]}
                 image="/images/tours/carretera-austral.jpg"
-                gradient="from-green-600 to-teal-700"
+                gradient="from-blue-700 to-blue-800"
                 className="md:col-span-7 min-h-[360px]"
               />
 
@@ -434,7 +395,7 @@ export default function HomePage() {
                 title="Ventisqueros"
                 tags={["Trekking"]}
                 image="/images/tours/ventisqueros.jpg"
-                gradient="from-cyan-600 to-blue-800"
+                gradient="from-gray-700 to-gray-900"
                 className="md:col-span-4 min-h-[320px]"
               />
 
@@ -442,7 +403,7 @@ export default function HomePage() {
                 title="Pesca Deportiva"
                 tags={["Medio día"]}
                 image="/images/tours/pesca-deportiva.jpg"
-                gradient="from-orange-600 to-red-600"
+                gradient="from-blue-800 to-blue-900"
                 className="md:col-span-8 min-h-[320px]"
               />
             </div>
