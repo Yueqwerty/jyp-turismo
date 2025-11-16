@@ -33,8 +33,11 @@ export async function POST(request: NextRequest) {
     const body = await request.text();
     const signature = request.headers.get('x-hub-signature-256') || '';
 
+    console.log('📨 Messenger webhook received');
+
+    // Verificar firma de seguridad
     if (!messengerService.verifyWebhookSignature(body, signature)) {
-      console.warn('Messenger webhook signature verification failed');
+      console.warn('❌ Messenger webhook signature verification failed');
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
@@ -101,6 +104,15 @@ export async function POST(request: NextRequest) {
       messageType = attachmentType.toUpperCase();
     }
 
+    // Verificar si el mensaje ya existe (evitar duplicados)
+    const existingMessage = await prisma.message.findUnique({
+      where: { externalMessageId },
+    });
+
+    if (existingMessage) {
+      return NextResponse.json({ success: true, duplicate: true });
+    }
+
     const message = await prisma.message.create({
       data: {
         externalMessageId,
@@ -127,10 +139,10 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log('Messenger message processed successfully:', externalMessageId);
+    console.log('✅ Messenger message processed:', externalMessageId);
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error processing Messenger webhook:', error);
+    console.error('❌ Error processing Messenger webhook:', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

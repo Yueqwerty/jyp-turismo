@@ -33,8 +33,11 @@ export async function POST(request: NextRequest) {
     const body = await request.text();
     const signature = request.headers.get('x-hub-signature-256') || '';
 
+    console.log('📨 Instagram webhook received');
+
+    // Verificar firma de seguridad
     if (!instagramService.verifyWebhookSignature(body, signature)) {
-      console.warn('Instagram webhook signature verification failed');
+      console.warn('❌ Instagram webhook signature verification failed');
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
@@ -101,6 +104,15 @@ export async function POST(request: NextRequest) {
       messageType = attachmentType.toUpperCase();
     }
 
+    // Verificar si el mensaje ya existe (evitar duplicados)
+    const existingMessage = await prisma.message.findUnique({
+      where: { externalMessageId },
+    });
+
+    if (existingMessage) {
+      return NextResponse.json({ success: true, duplicate: true });
+    }
+
     const message = await prisma.message.create({
       data: {
         externalMessageId,
@@ -127,10 +139,10 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log('Instagram message processed successfully:', externalMessageId);
+    console.log('✅ Instagram message processed:', externalMessageId);
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error processing Instagram webhook:', error);
+    console.error('❌ Error processing Instagram webhook:', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
