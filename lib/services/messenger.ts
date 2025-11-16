@@ -11,8 +11,8 @@ export class MessengerService {
   private baseUrl: string;
 
   constructor() {
-    this.accessToken = process.env.MESSENGER_ACCESS_TOKEN || '';
-    this.appSecret = process.env.MESSENGER_APP_SECRET || '';
+    this.accessToken = process.env.META_ACCESS_TOKEN || process.env.MESSENGER_PAGE_ACCESS_TOKEN || '';
+    this.appSecret = process.env.WHATSAPP_APP_SECRET || '';
     this.baseUrl = `https://graph.facebook.com/${this.apiVersion}`;
   }
 

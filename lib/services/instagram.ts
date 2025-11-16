@@ -11,8 +11,8 @@ export class InstagramService {
   private baseUrl: string;
 
   constructor() {
-    this.accessToken = process.env.INSTAGRAM_ACCESS_TOKEN || '';
-    this.appSecret = process.env.INSTAGRAM_APP_SECRET || '';
+    this.accessToken = process.env.META_ACCESS_TOKEN || process.env.INSTAGRAM_ACCESS_TOKEN || '';
+    this.appSecret = process.env.WHATSAPP_APP_SECRET || '';
     this.baseUrl = `https://graph.facebook.com/${this.apiVersion}`;
   }
 
