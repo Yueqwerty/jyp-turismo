@@ -157,7 +157,7 @@ export default function HomePage() {
       {/* Main Content */}
       <main>
         {/* Hero Section - Cinematic with Multilayer Parallax */}
-        <section ref={heroRef} className="relative min-h-screen flex items-center px-8 md:px-16 py-48 md:py-56 overflow-hidden bg-white">
+        <section ref={heroRef} className="relative min-h-screen flex items-center px-8 md:px-16 py-48 md:py-56 overflow-hidden bg-white" style={{ position: 'relative' }}>
 
           <motion.div
             style={{ y: heroY, opacity: heroOpacity }}
