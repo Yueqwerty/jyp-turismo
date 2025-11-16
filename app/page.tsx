@@ -255,7 +255,7 @@ export default function HomePage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.8, delay: 0.5 }}
-                    className="text-xs text-gray-400 uppercase tracking-[0.3em] font-bold mb-8 flex items-center gap-3"
+                    className="text-xs text-gray-500 uppercase tracking-[0.3em] font-bold mb-8 flex items-center gap-3"
                   >
                     <div className="w-12 h-px bg-blue-600"></div>
                     Transporte · Patagonia Aysén
@@ -366,6 +366,8 @@ export default function HomePage() {
                     fill
                     className="object-cover"
                     priority
+                    quality={85}
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                   {/* Gradient overlay for depth */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
@@ -558,7 +560,7 @@ export default function HomePage() {
                 className="flex flex-col justify-end items-start md:items-end gap-8"
               >
                 <div>
-                  <p className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-6">Síguenos</p>
+                  <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-6">Síguenos</p>
                   <div className="flex gap-4">
                     {[
                       { name: 'Facebook', path: 'M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z' },
@@ -567,11 +569,12 @@ export default function HomePage() {
                       <motion.a
                         key={i}
                         href="#"
+                        aria-label={`Síguenos en ${social.name}`}
                         whileHover={{ scale: 1.1, y: -4 }}
                         whileTap={{ scale: 0.95 }}
                         className="group w-14 h-14 bg-gray-100 hover:bg-blue-600 text-gray-600 hover:text-white rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm hover:shadow-lg"
                       >
-                        <svg className="w-6 h-6 transition-transform group-hover:scale-110 duration-300" fill="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6 transition-transform group-hover:scale-110 duration-300" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                           <path d={social.path} />
                         </svg>
                       </motion.a>
@@ -587,16 +590,18 @@ export default function HomePage() {
                   transition={{ duration: 0.8, delay: 0.6 }}
                   className="w-full max-w-md"
                 >
-                  <p className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Newsletter</p>
+                  <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Newsletter</p>
                   <div className="flex gap-3">
                     <input
                       type="email"
                       placeholder="Tu email"
+                      aria-label="Email para newsletter"
                       className="flex-1 px-5 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:outline-none transition-colors duration-300 text-sm"
                     />
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
+                      aria-label="Suscribirse al newsletter"
                       className="px-6 py-3 bg-gray-900 hover:bg-blue-600 text-white rounded-xl font-bold transition-all duration-300"
                     >
                       →
