@@ -122,6 +122,16 @@ export async function POST(request: NextRequest) {
       textContent = messageData.text?.body || null;
     }
 
+    // Verificar si el mensaje ya existe (evitar duplicados)
+    const existingMessage = await prisma.message.findUnique({
+      where: { externalMessageId },
+    });
+
+    if (existingMessage) {
+      console.log('♻️ Message already exists, skipping:', externalMessageId);
+      return NextResponse.json({ success: true, duplicate: true, messageId: existingMessage.id });
+    }
+
     const message = await prisma.message.create({
       data: {
         externalMessageId,
