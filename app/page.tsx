@@ -56,77 +56,34 @@ const TourCard = ({
   featured?: boolean;
 }) => {
   const [imgError, setImgError] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: cardRef,
-    offset: ["start end", "end start"]
-  });
-
-  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.2, 1, 1.1]);
-  const imageY = useTransform(scrollYProgress, [0, 1], [50, -50]);
-
-  // Subtle 3D Tilt Effect
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateXValue = ((y - centerY) / centerY) * -3;
-    const rotateYValue = ((x - centerX) / centerX) * 3;
-    setRotateX(rotateXValue);
-    setRotateY(rotateYValue);
-  };
-
-  const handleMouseLeave = () => {
-    setRotateX(0);
-    setRotateY(0);
-  };
 
   return (
     <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, y: 60 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        transformStyle: 'preserve-3d',
-        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-      }}
-      className={`group relative overflow-hidden rounded-3xl cursor-pointer transition-transform duration-300 ${className}`}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className={`group relative overflow-hidden rounded-3xl cursor-pointer hover:scale-[1.02] transition-transform duration-300 ${className}`}
     >
-      {/* Background Image with Parallax */}
-      <motion.div
-        className="absolute inset-0"
-        style={{ y: imageY }}
-      >
+      {/* Background Image */}
+      <div className="absolute inset-0">
         {image && !imgError ? (
           <>
-            <motion.div
-              style={{ scale: imageScale }}
-              className="w-full h-full"
-            >
-              <Image
-                src={image}
-                alt={title}
-                fill
-                className="object-cover"
-                onError={() => setImgError(true)}
-              />
-            </motion.div>
+            <Image
+              src={image}
+              alt={title}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              onError={() => setImgError(true)}
+              quality={80}
+              sizes={featured ? "(max-width: 768px) 100vw, 58vw" : "(max-width: 768px) 100vw, 42vw"}
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10"></div>
           </>
         ) : (
           <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`} />
         )}
-      </motion.div>
+      </div>
 
       {/* Glassmorphic overlay on hover */}
       <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 backdrop-blur-0 group-hover:backdrop-blur-sm transition-all duration-700"></div>
@@ -186,12 +143,11 @@ export default function HomePage() {
   });
 
   // Cinematic parallax layers
-  const heroY = useTransform(heroScrollProgress, [0, 1], [0, 200]);
-  const heroOpacity = useTransform(heroScrollProgress, [0, 0.5, 1], [1, 0.8, 0]);
-  const heroScale = useTransform(heroScrollProgress, [0, 1], [1, 1.1]);
-  const textY = useTransform(heroScrollProgress, [0, 1], [0, -100]);
-  const imageY = useTransform(heroScrollProgress, [0, 1], [0, 150]);
-  const floatingY = useTransform(heroScrollProgress, [0, 1], [0, -250]);
+  const heroY = useTransform(heroScrollProgress, [0, 1], [0, 150]);
+  const heroOpacity = useTransform(heroScrollProgress, [0, 0.5, 1], [1, 0.9, 0]);
+  const heroScale = useTransform(heroScrollProgress, [0, 1], [1, 1.05]);
+  const textY = useTransform(heroScrollProgress, [0, 1], [0, -80]);
+  const imageY = useTransform(heroScrollProgress, [0, 1], [0, 100]);
 
   return (
     <div className="bg-white" ref={containerRef}>
@@ -205,7 +161,7 @@ export default function HomePage() {
       <motion.header
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-2xl border-b border-gray-200/50 shadow-sm"
       >
         <div className="max-w-[1600px] mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
@@ -247,14 +203,14 @@ export default function HomePage() {
                 className="lg:col-span-6 space-y-12"
               >
                 <motion.div
-                  initial={{ opacity: 0, y: 40 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
                     className="text-xs text-gray-500 uppercase tracking-[0.3em] font-bold mb-8 flex items-center gap-3"
                   >
                     <div className="w-12 h-px bg-blue-600"></div>
@@ -263,17 +219,17 @@ export default function HomePage() {
 
                   <h1 className="text-[clamp(3.5rem,10vw,9rem)] font-black text-gray-900 leading-[0.85] tracking-tighter mb-10">
                     <motion.span
-                      initial={{ opacity: 0, y: 50 }}
+                      initial={{ opacity: 0, y: 40 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                      transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
                       className="block"
                     >
                       Explora
                     </motion.span>
                     <motion.span
-                      initial={{ opacity: 0, y: 50, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ duration: 0.8, delay: 0.75, ease: [0.16, 1, 0.3, 1] }}
+                      initial={{ opacity: 0, y: 40 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
                       className="block text-blue-600"
                     >
                       Aysén
@@ -281,9 +237,9 @@ export default function HomePage() {
                   </h1>
 
                   <motion.p
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.9 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
                     className="text-xl md:text-2xl text-gray-600 leading-relaxed max-w-xl font-light mb-10"
                   >
                     Conectamos Coyhaique con los glaciares del Campo de Hielo Norte, las Capillas de Mármol y toda la Carretera Austral.
@@ -291,9 +247,9 @@ export default function HomePage() {
 
                   {/* Info Cards - Bento Style with Glassmorphism */}
                   <motion.div
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 1.1 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
                     className="grid grid-cols-2 gap-4 mb-10"
                   >
                     <motion.div
@@ -317,9 +273,9 @@ export default function HomePage() {
 
                 {/* CTA Buttons - Magnetic Effect */}
                 <motion.div
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 1.2 }}
+                  transition={{ duration: 0.5, delay: 0.6 }}
                   className="flex flex-col sm:flex-row gap-4 max-w-xl"
                 >
                   <MagneticButton className="flex-1">
@@ -354,9 +310,9 @@ export default function HomePage() {
               {/* Right: Image - 6 columns with Parallax */}
               <motion.div
                 style={{ y: imageY, scale: heroScale }}
-                initial={{ opacity: 0, x: 50 }}
+                initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 1.2, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
                 className="lg:col-span-6"
               >
                 <div className="relative h-[500px] md:h-[700px] rounded-3xl overflow-hidden shadow-2xl">
@@ -374,9 +330,9 @@ export default function HomePage() {
 
                   {/* Glassmorphic badge */}
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.8, delay: 1.5 }}
+                    transition={{ duration: 0.5, delay: 0.7 }}
                     className="absolute bottom-8 right-8 px-5 py-3 bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20"
                   >
                     <p className="text-white text-sm font-bold">Campo de Hielo Norte</p>
@@ -395,35 +351,35 @@ export default function HomePage() {
 
             {/* Section Header with Stagger Animation */}
             <motion.div
-              initial={{ opacity: 0, y: 60 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               className="mb-24 max-w-3xl"
             >
               <motion.div
                 initial={{ opacity: 0, scaleX: 0 }}
                 whileInView={{ opacity: 1, scaleX: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.2 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
                 className="w-16 h-1 bg-blue-600 mb-8 origin-left"
               />
               <h2 className="text-[clamp(2.5rem,7vw,6rem)] font-black text-gray-900 leading-[0.85] tracking-tighter mb-8">
                 <motion.span
-                  initial={{ opacity: 0, y: 40 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.3 }}
+                  transition={{ duration: 0.5, delay: 0.15 }}
                   className="block"
                 >
                   Rutas
                 </motion.span>
               </h2>
               <motion.p
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.5 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
                 className="text-xl md:text-2xl text-gray-600 leading-relaxed font-light"
               >
                 Desde Puerto Tranquilo hasta el Parque Queulat. Descubre glaciares milenarios, formaciones de mármol y bosques nativos.
@@ -504,10 +460,10 @@ export default function HomePage() {
             <div className="grid md:grid-cols-2 gap-20 lg:gap-32 mb-28">
               {/* Left: Brand */}
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 0.5 }}
                 className="max-w-md"
               >
                 <div className="text-[clamp(3rem,6vw,5rem)] font-black text-gray-900 mb-6 leading-[0.9] tracking-tighter">
@@ -517,7 +473,7 @@ export default function HomePage() {
                   initial={{ opacity: 0, scaleX: 0 }}
                   whileInView={{ opacity: 1, scaleX: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
                   className="w-20 h-1 bg-blue-600 mb-8 origin-left"
                 />
                 <p className="text-lg md:text-xl text-gray-600 leading-relaxed font-light mb-8">
@@ -526,10 +482,10 @@ export default function HomePage() {
 
                 {/* Contact Info */}
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.4 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
                   className="space-y-3"
                 >
                   <a href="mailto:contacto@jypturismo.cl" className="flex items-center gap-3 text-gray-600 hover:text-blue-600 transition-colors duration-300 group">
@@ -553,10 +509,10 @@ export default function HomePage() {
 
               {/* Right: Social Links */}
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.2 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
                 className="flex flex-col justify-end items-start md:items-end gap-8"
               >
                 <div>
@@ -584,10 +540,10 @@ export default function HomePage() {
 
                 {/* Newsletter */}
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
                   className="w-full max-w-md"
                 >
                   <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Newsletter</p>
@@ -616,7 +572,7 @@ export default function HomePage() {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.4 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
               className="pt-10 border-t border-gray-200/80"
             >
               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
