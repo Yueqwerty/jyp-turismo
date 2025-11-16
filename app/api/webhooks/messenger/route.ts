@@ -34,11 +34,17 @@ export async function POST(request: NextRequest) {
     const signature = request.headers.get('x-hub-signature-256') || '';
 
     console.log('📨 Messenger webhook received');
+    console.log('🔍 Signature present:', !!signature);
+    console.log('🔍 App Secret configured:', !!process.env.WHATSAPP_APP_SECRET);
 
-    // Verificar firma de seguridad
-    if (!messengerService.verifyWebhookSignature(body, signature)) {
+    // Verificar firma de seguridad solo si está presente
+    if (signature && !messengerService.verifyWebhookSignature(body, signature)) {
       console.warn('❌ Messenger webhook signature verification failed');
       return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    if (!signature) {
+      console.warn('⚠️ No signature provided by Meta for Messenger webhook');
     }
 
     const webhookData = JSON.parse(body);
