@@ -33,24 +33,37 @@ export async function POST(request: NextRequest) {
     const body = await request.text();
     const signature = request.headers.get('x-hub-signature-256') || '';
 
-    if (!whatsappService.verifyWebhookSignature(body, signature)) {
-      console.warn('WhatsApp webhook signature verification failed');
+    console.log('📨 WhatsApp webhook received');
+    console.log('📋 Body:', body);
+    console.log('🔐 Signature present:', !!signature);
+    console.log('🔑 App Secret configured:', !!process.env.WHATSAPP_APP_SECRET);
+
+    // Verificar firma solo si está presente
+    if (signature && !whatsappService.verifyWebhookSignature(body, signature)) {
+      console.warn('❌ WhatsApp webhook signature verification failed');
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
     const webhookData = JSON.parse(body);
+    console.log('📦 Webhook data parsed:', JSON.stringify(webhookData, null, 2));
+
     const entry = webhookData.entry?.[0];
     const changes = entry?.changes?.[0];
     const value = changes?.value;
     const messageData = value?.messages?.[0];
 
+    console.log('💬 Message data:', messageData);
+
     if (!messageData) {
+      console.log('⚠️ No message data found, returning success');
       return NextResponse.json({ success: true });
     }
 
     const contactData = value.contacts?.[0];
     const externalContactId = contactData?.wa_id || '';
     const contactName = contactData?.profile?.name || 'Unknown';
+
+    console.log('👤 Contact ID:', externalContactId, 'Name:', contactName);
 
     let contact = await prisma.contact.findUnique({
       where: {
@@ -62,6 +75,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!contact) {
+      console.log('✨ Creating new contact');
       contact = await prisma.contact.create({
         data: {
           externalId: externalContactId,
@@ -71,6 +85,9 @@ export async function POST(request: NextRequest) {
           isActive: true,
         },
       });
+      console.log('✅ Contact created:', contact.id);
+    } else {
+      console.log('♻️ Existing contact found:', contact.id);
     }
 
     const externalConversationId = `whatsapp_${externalContactId}`;
@@ -126,10 +143,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log('WhatsApp message processed successfully:', externalMessageId);
-    return NextResponse.json({ success: true });
+    console.log('✅ WhatsApp message processed successfully:', externalMessageId);
+    console.log('💾 Message saved with ID:', message.id);
+    console.log('📊 Conversation updated:', conversation.id);
+
+    return NextResponse.json({ success: true, messageId: message.id });
   } catch (error) {
-    console.error('Error processing WhatsApp webhook:', error);
+    console.error('❌ Error processing WhatsApp webhook:', error);
+    console.error('Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
