@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
@@ -13,35 +13,18 @@ interface Message {
   preview: string;
   timestamp: Date;
   unread: boolean;
+  conversationId: string;
+  externalId: string;
 }
 
-// Mock data - esto se reemplazará con datos reales de Prisma
-const mockMessages: Message[] = [
-  {
-    id: '1',
-    channel: 'WHATSAPP',
-    senderName: 'María González',
-    preview: 'Hola, quisiera información sobre el tour a Laguna San Rafael...',
-    timestamp: new Date(Date.now() - 1000 * 60 * 5),
-    unread: true,
-  },
-  {
-    id: '2',
-    channel: 'INSTAGRAM',
-    senderName: 'Carlos Pérez',
-    preview: '¿Tienen disponibilidad para el próximo fin de semana?',
-    timestamp: new Date(Date.now() - 1000 * 60 * 30),
-    unread: true,
-  },
-  {
-    id: '3',
-    channel: 'MESSENGER',
-    senderName: 'Ana Martínez',
-    preview: 'Muchas gracias por la información',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
-    unread: false,
-  },
-];
+interface ConversationMessage {
+  id: string;
+  type: string;
+  text: string | null;
+  direction: 'INBOUND' | 'OUTBOUND';
+  sentAt: string;
+  senderName: string;
+}
 
 const ChannelIcon = ({ channel }: { channel: 'WHATSAPP' | 'MESSENGER' | 'INSTAGRAM' }) => {
   switch (channel) {
@@ -87,10 +70,65 @@ const formatTimestamp = (date: Date) => {
 export default function MessagesPage() {
   const [selectedChannel, setSelectedChannel] = useState<Channel>('ALL');
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [conversationMessages, setConversationMessages] = useState<ConversationMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [conversationLoading, setConversationLoading] = useState(false);
 
-  const filteredMessages = selectedChannel === 'ALL'
-    ? mockMessages
-    : mockMessages.filter(m => m.channel === selectedChannel);
+  // Cargar mensajes al montar el componente
+  useEffect(() => {
+    fetchMessages();
+  }, [selectedChannel]);
+
+  // Cargar conversación al seleccionar mensaje
+  useEffect(() => {
+    if (selectedMessage) {
+      fetchConversation(selectedMessage);
+    }
+  }, [selectedMessage]);
+
+  const fetchMessages = async () => {
+    try {
+      setLoading(true);
+      const url = selectedChannel === 'ALL'
+        ? '/api/messages'
+        : `/api/messages?channel=${selectedChannel}`;
+
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.success) {
+        // Convertir timestamp strings a Date objects
+        const formattedMessages = data.messages.map((msg: any) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp),
+        }));
+        setMessages(formattedMessages);
+      }
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchConversation = async (conversationId: string) => {
+    try {
+      setConversationLoading(true);
+      const response = await fetch(`/api/conversations/${conversationId}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setConversationMessages(data.conversation.messages);
+      }
+    } catch (error) {
+      console.error('Error fetching conversation:', error);
+    } finally {
+      setConversationLoading(false);
+    }
+  };
+
+  const filteredMessages = messages;
 
   const channels: { id: Channel; label: string }[] = [
     { id: 'ALL', label: 'Todos' },
@@ -147,7 +185,7 @@ export default function MessagesPage() {
             <div className="flex items-start justify-between mb-4">
               <div>
                 <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">Total</p>
-                <p className="text-4xl font-black text-gray-900">{mockMessages.length}</p>
+                <p className="text-4xl font-black text-gray-900">{messages.length}</p>
               </div>
               <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center">
                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,7 +205,7 @@ export default function MessagesPage() {
             <div className="flex items-start justify-between mb-4">
               <div>
                 <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">Sin leer</p>
-                <p className="text-4xl font-black text-gray-900">{mockMessages.filter(m => m.unread).length}</p>
+                <p className="text-4xl font-black text-gray-900">{messages.filter(m => m.unread).length}</p>
               </div>
               <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center">
                 <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -248,7 +286,17 @@ export default function MessagesPage() {
 
               {/* Messages List */}
               <div className="max-h-[600px] overflow-y-auto">
-                {filteredMessages.map((message, index) => (
+                {loading ? (
+                  <div className="p-12 flex justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+                  </div>
+                ) : filteredMessages.length === 0 ? (
+                  <div className="p-12 text-center text-gray-400">
+                    <p className="text-lg font-medium">No hay mensajes</p>
+                    <p className="text-sm mt-2">Los mensajes aparecerán aquí cuando los clientes te escriban</p>
+                  </div>
+                ) : (
+                  filteredMessages.map((message, index) => (
                   <motion.div
                     key={message.id}
                     initial={{ opacity: 0, x: -20 }}
@@ -285,7 +333,8 @@ export default function MessagesPage() {
                       </div>
                     </div>
                   </motion.div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -298,34 +347,60 @@ export default function MessagesPage() {
                   {/* Message Header */}
                   <div className="p-8 border-b border-gray-200">
                     <div className="flex items-center gap-4">
-                      <ChannelIcon channel={mockMessages.find(m => m.id === selectedMessage)!.channel} />
-                      <div className="flex-1">
-                        <h2 className="text-2xl font-black text-gray-900 tracking-tight">
-                          {mockMessages.find(m => m.id === selectedMessage)!.senderName}
-                        </h2>
-                        <p className="text-sm font-medium text-gray-400 uppercase tracking-wider">
-                          {mockMessages.find(m => m.id === selectedMessage)!.channel}
-                        </p>
-                      </div>
+                      {messages.find(m => m.id === selectedMessage) && (
+                        <>
+                          <ChannelIcon channel={messages.find(m => m.id === selectedMessage)!.channel} />
+                          <div className="flex-1">
+                            <h2 className="text-2xl font-black text-gray-900 tracking-tight">
+                              {messages.find(m => m.id === selectedMessage)!.senderName}
+                            </h2>
+                            <p className="text-sm font-medium text-gray-400 uppercase tracking-wider">
+                              {messages.find(m => m.id === selectedMessage)!.channel}
+                            </p>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
 
                   {/* Messages */}
-                  <div className="flex-1 p-8 overflow-y-auto bg-gray-50">
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="flex justify-start"
-                    >
-                      <div className="bg-white rounded-3xl rounded-tl-md px-6 py-4 max-w-md shadow-sm border border-gray-200">
-                        <p className="text-gray-900 mb-2">
-                          {mockMessages.find(m => m.id === selectedMessage)!.preview}
-                        </p>
-                        <span className="text-xs text-gray-400 font-medium">
-                          {formatTimestamp(mockMessages.find(m => m.id === selectedMessage)!.timestamp)}
-                        </span>
+                  <div className="flex-1 p-8 overflow-y-auto bg-gray-50 space-y-4">
+                    {conversationLoading ? (
+                      <div className="flex justify-center items-center h-full">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
                       </div>
-                    </motion.div>
+                    ) : conversationMessages.length > 0 ? (
+                      conversationMessages.map((msg, index) => (
+                        <motion.div
+                          key={msg.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          className={`flex ${msg.direction === 'OUTBOUND' ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div
+                            className={`rounded-3xl px-6 py-4 max-w-md shadow-sm border ${
+                              msg.direction === 'OUTBOUND'
+                                ? 'bg-gray-900 text-white border-gray-900 rounded-tr-md'
+                                : 'bg-white text-gray-900 border-gray-200 rounded-tl-md'
+                            }`}
+                          >
+                            <p className="mb-2">{msg.text || `[${msg.type}]`}</p>
+                            <span
+                              className={`text-xs font-medium ${
+                                msg.direction === 'OUTBOUND' ? 'text-gray-400' : 'text-gray-400'
+                              }`}
+                            >
+                              {formatTimestamp(new Date(msg.sentAt))}
+                            </span>
+                          </div>
+                        </motion.div>
+                      ))
+                    ) : (
+                      <div className="flex justify-center items-center h-full text-gray-400">
+                        No hay mensajes en esta conversación
+                      </div>
+                    )}
                   </div>
 
                   {/* Message Input */}
