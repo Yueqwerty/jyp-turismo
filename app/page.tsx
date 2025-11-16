@@ -299,17 +299,17 @@ export default function HomePage() {
                     <motion.div
                       whileHover={{ scale: 1.03, y: -4 }}
                       transition={{ duration: 0.3 }}
-                      className="p-6 bg-blue-50 rounded-2xl border border-blue-100 backdrop-blur-sm shadow-lg"
+                      className="p-6 bg-blue-50 rounded-2xl border border-blue-100 backdrop-blur-sm shadow-lg h-[110px] flex flex-col justify-center"
                     >
-                      <div className="text-3xl font-black text-blue-600 mb-1">16 · 11</div>
+                      <div className="text-2xl font-black text-blue-600 mb-1">16 · 11</div>
                       <div className="text-xs font-bold text-blue-900 uppercase tracking-wider">Pasajeros</div>
                     </motion.div>
                     <motion.div
                       whileHover={{ scale: 1.03, y: -4 }}
                       transition={{ duration: 0.3 }}
-                      className="p-6 bg-gray-50 rounded-2xl border border-gray-200 backdrop-blur-sm shadow-lg"
+                      className="p-6 bg-gray-50 rounded-2xl border border-gray-200 backdrop-blur-sm shadow-lg h-[110px] flex flex-col justify-center"
                     >
-                      <div className="text-sm font-black text-gray-900 mb-1">Nov — Mar</div>
+                      <div className="text-2xl font-black text-gray-900 mb-1">Nov — Mar</div>
                       <div className="text-xs font-bold text-gray-700 uppercase tracking-wider">Temporada</div>
                     </motion.div>
                   </motion.div>
@@ -322,14 +322,14 @@ export default function HomePage() {
                   transition={{ duration: 0.8, delay: 1.2 }}
                   className="flex flex-col sm:flex-row gap-4 max-w-xl"
                 >
-                  <MagneticButton>
+                  <MagneticButton className="flex-1">
                     <motion.a
                       href="https://wa.me/56XXXXXXXXX"
                       target="_blank"
                       rel="noopener noreferrer"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="group relative px-8 py-5 bg-gray-900 hover:bg-blue-600 text-white rounded-2xl font-bold overflow-hidden flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl transition-all duration-300"
+                      className="w-full group relative px-8 py-4 bg-gray-900 hover:bg-blue-600 text-white rounded-2xl font-bold overflow-hidden flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl transition-all duration-300"
                     >
                       <span className="relative z-10">WhatsApp</span>
                       <svg className="relative z-10 w-5 h-5 transition-transform group-hover:translate-x-2 duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -338,12 +338,12 @@ export default function HomePage() {
                     </motion.a>
                   </MagneticButton>
 
-                  <MagneticButton>
+                  <MagneticButton className="flex-1">
                     <motion.a
                       href="tel:+56XXXXXXXXX"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-8 py-5 bg-white border-2 border-gray-200 text-gray-900 rounded-2xl font-bold hover:border-gray-900 transition-all duration-300 text-center shadow-lg hover:shadow-xl"
+                      className="w-full px-8 py-4 bg-white border-2 border-gray-200 text-gray-900 rounded-2xl font-bold hover:border-gray-900 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl"
                     >
                       +56 9 XXXX XXXX
                     </motion.a>
