@@ -20,7 +20,7 @@ const TourCard = ({
   featured = false
 }: {
   title: string;
-  description: string;
+  description?: string;
   tags?: string[];
   image?: string;
   gradient: string;
