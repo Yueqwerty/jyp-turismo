@@ -24,7 +24,7 @@ interface HeroSection {
 interface Tour {
   id: string;
   title: string;
-  description?: string;
+  description?: string | null;
   tags: string[];
   image: string;
   gradient: string;
@@ -77,7 +77,7 @@ const TourCard = ({
   featured = false,
 }: {
   title: string;
-  description?: string;
+  description?: string | null;
   tags?: string[];
   image?: string;
   gradient: string;
