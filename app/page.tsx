@@ -43,11 +43,26 @@ async function getContent() {
       footerSettings = await prisma.footerSettings.create({ data: {} });
     }
 
+    // Map tours to match the client interface
+    const mappedTours = tours.map(tour => ({
+      id: tour.id,
+      title: tour.title,
+      description: tour.description,
+      tags: tour.tags,
+      image: tour.image,
+      gradient: tour.gradient,
+      colSpan: tour.colSpan,
+      rowSpan: tour.rowSpan,
+      minHeight: tour.minHeight,
+      featured: tour.featured,
+      order: tour.order,
+    }));
+
     return {
       siteSettings,
       heroSection,
       toursSection,
-      tours,
+      tours: mappedTours,
       footerSettings,
     };
   } catch (error) {
