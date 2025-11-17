@@ -52,11 +52,11 @@ interface FooterSettings {
 interface SiteSettings {
   logoText: string;
   companyName: string;
-  phone?: string;
-  whatsappNumber?: string;
-  email?: string;
-  facebookUrl?: string;
-  instagramUrl?: string;
+  phone?: string | null;
+  whatsappNumber?: string | null;
+  email?: string | null;
+  facebookUrl?: string | null;
+  instagramUrl?: string | null;
 }
 
 interface HomeClientProps {
