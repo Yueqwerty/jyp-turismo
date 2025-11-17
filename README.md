@@ -125,15 +125,23 @@ jyp-turismo/
 
 4. **Ejecutar migraciones de base de datos**
    ```bash
-   npx prisma migrate dev
+   npx prisma db push
    npx prisma generate
    ```
 
+   > **Nota**: Si usas Neon PostgreSQL (como está configurado), usa `npx prisma db push` en lugar de `npx prisma migrate dev`
+
 5. **Crear usuario administrador**
    ```bash
-   npx prisma studio
-   # Crear un User con rol ADMIN y password hasheado con bcrypt
+   npm run create-admin
    ```
+
+   El script te pedirá:
+   - Email
+   - Nombre (opcional)
+   - Contraseña
+
+   El usuario será creado automáticamente con rol ADMIN
 
 6. **Iniciar servidor de desarrollo**
    ```bash
@@ -164,7 +172,7 @@ jyp-turismo/
 
 4. **Ejecutar migraciones en producción**
    ```bash
-   npx prisma migrate deploy
+   npx prisma db push
    ```
 
 ## Uso del CMS
@@ -250,8 +258,10 @@ npm run dev          # Servidor de desarrollo
 npm run build        # Build para producción
 npm run start        # Servidor de producción
 npm run lint         # Linter
+npm run create-admin # Crear usuario administrador
 npx prisma studio    # Prisma Studio (DB GUI)
-npx prisma migrate dev  # Crear migración
+npx prisma db push   # Sincronizar schema con base de datos
+npx prisma generate  # Generar cliente Prisma
 ```
 
 ### Convenciones de código
