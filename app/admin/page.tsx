@@ -117,7 +117,7 @@ export default function AdminPage() {
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-          className="w-12 h-12 border-4 border-gray-200 border-t-blue-600 rounded-full"
+          className="w-12 h-12 border-4 border-gray-200 border-t-cyan-600 rounded-full"
         />
       </div>
     );
@@ -180,7 +180,7 @@ export default function AdminPage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setActiveModal('hero')}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all"
+              className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-lg shadow-cyan-600/25 hover:shadow-xl transition-all"
             >
               Editar Hero
             </motion.button>
@@ -195,7 +195,7 @@ export default function AdminPage() {
                 </div>
                 <h3 className="text-5xl font-black text-gray-900 leading-tight">
                   {content.heroSection.titleLine1}<br />
-                  <span className="text-blue-600">{content.heroSection.titleLine2}</span>
+                  <span className="bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-transparent">{content.heroSection.titleLine2}</span>
                 </h3>
                 <p className="text-lg text-gray-600">{content.heroSection.description}</p>
                 <div className="grid grid-cols-4 gap-3 pt-4">
@@ -221,11 +221,11 @@ export default function AdminPage() {
                       <div className="text-[10px] font-bold text-pink-900">Instagram</div>
                     </div>
                   )}
-                  <div className="p-3 bg-violet-50 rounded-xl flex flex-col items-center gap-1">
-                    <svg className="w-6 h-6 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="p-3 bg-cyan-50 rounded-xl flex flex-col items-center gap-1">
+                    <svg className="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
-                    <div className="text-[10px] font-bold text-violet-900">Correo</div>
+                    <div className="text-[10px] font-bold text-cyan-900">Correo</div>
                   </div>
                 </div>
               </div>
@@ -274,7 +274,7 @@ export default function AdminPage() {
                   setSelectedTour(null);
                   setActiveModal('tour');
                 }}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all"
+                className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-lg shadow-cyan-600/25 hover:shadow-xl transition-all"
               >
                 + Agregar Tour
               </motion.button>
@@ -302,7 +302,7 @@ export default function AdminPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                   {tour.featured && (
-                    <div className="absolute top-4 right-4 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full">
+                    <div className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-cyan-600 to-teal-600 text-white text-xs font-bold rounded-full">
                       Featured
                     </div>
                   )}
@@ -343,7 +343,7 @@ export default function AdminPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setActiveModal('footer')}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg"
+                className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-lg shadow-cyan-600/25"
               >
                 Editar
               </motion.button>
@@ -365,7 +365,7 @@ export default function AdminPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setActiveModal('settings')}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg"
+                className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-lg shadow-cyan-600/25"
               >
                 Editar
               </motion.button>
@@ -559,7 +559,7 @@ function HeroModal({
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all disabled:opacity-50"
+          className="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-lg shadow-cyan-600/25 transition-all disabled:opacity-50"
         >
           {saving ? 'Guardando...' : 'Guardar'}
         </button>
@@ -584,7 +584,7 @@ function TourModal({
       description: null,
       tags: [],
       image: '',
-      gradient: 'from-blue-600 to-blue-700',
+      gradient: 'from-cyan-600 to-teal-600',
       colSpan: 4,
       rowSpan: 1,
       minHeight: '320px',
@@ -674,11 +674,11 @@ function TourModal({
               onChange={(e) => setTagInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
               placeholder="Agregar tag..."
-              className="flex-1 px-4 py-2 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-600"
+              className="flex-1 px-4 py-2 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-cyan-600"
             />
             <button
               onClick={addTag}
-              className="px-4 py-2 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700"
+              className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-teal-600 text-white font-bold rounded-xl hover:from-cyan-700 hover:to-teal-700"
             >
               +
             </button>
@@ -687,10 +687,10 @@ function TourModal({
             {formData.tags.map((tag, i) => (
               <span
                 key={i}
-                className="px-3 py-1 bg-blue-100 text-blue-900 rounded-full text-sm font-bold flex items-center gap-2"
+                className="px-3 py-1 bg-cyan-100 text-cyan-900 rounded-full text-sm font-bold flex items-center gap-2"
               >
                 {tag}
-                <button onClick={() => removeTag(i)} className="text-blue-600 hover:text-blue-800">
+                <button onClick={() => removeTag(i)} className="text-cyan-600 hover:text-cyan-800">
                   ×
                 </button>
               </span>
@@ -741,11 +741,11 @@ function TourModal({
                   onChange={(e) => setPackageIncludeInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addPackageInclude())}
                   placeholder="Ej: Transporte incluido"
-                  className="flex-1 px-4 py-2 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-violet-600"
+                  className="flex-1 px-4 py-2 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-cyan-600"
                 />
                 <button
                   onClick={addPackageInclude}
-                  className="px-4 py-2 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-700"
+                  className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-teal-600 text-white font-bold rounded-xl hover:from-cyan-700 hover:to-teal-700"
                 >
                   +
                 </button>
@@ -754,10 +754,10 @@ function TourModal({
                 {(formData.packageIncludes || []).map((item, i) => (
                   <span
                     key={i}
-                    className="px-3 py-1 bg-violet-100 text-violet-900 rounded-full text-sm font-bold flex items-center gap-2"
+                    className="px-3 py-1 bg-cyan-100 text-cyan-900 rounded-full text-sm font-bold flex items-center gap-2"
                   >
                     {item}
-                    <button onClick={() => removePackageInclude(i)} className="text-violet-600 hover:text-violet-800">
+                    <button onClick={() => removePackageInclude(i)} className="text-cyan-600 hover:text-cyan-800">
                       ×
                     </button>
                   </span>
@@ -797,7 +797,7 @@ function TourModal({
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all disabled:opacity-50"
+          className="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-lg shadow-cyan-600/25 transition-all disabled:opacity-50"
         >
           {saving ? 'Guardando...' : 'Guardar'}
         </button>
@@ -859,7 +859,7 @@ function ToursSectionModal({
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all disabled:opacity-50"
+          className="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-lg shadow-cyan-600/25 transition-all disabled:opacity-50"
         >
           {saving ? 'Guardando...' : 'Guardar'}
         </button>
@@ -926,7 +926,7 @@ function FooterModal({
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all disabled:opacity-50"
+          className="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-lg shadow-cyan-600/25 transition-all disabled:opacity-50"
         >
           {saving ? 'Guardando...' : 'Guardar'}
         </button>
@@ -1009,7 +1009,7 @@ function SettingsModal({
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all disabled:opacity-50"
+          className="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-lg shadow-cyan-600/25 transition-all disabled:opacity-50"
         >
           {saving ? 'Guardando...' : 'Guardar'}
         </button>
