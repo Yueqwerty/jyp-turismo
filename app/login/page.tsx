@@ -28,7 +28,7 @@ export default function LoginPage() {
       if (result?.error) {
         setError('Credenciales inválidas. Por favor, verifica tu email y contraseña.');
       } else if (result?.ok) {
-        router.push('/messages');
+        router.push('/admin');
         router.refresh();
       }
     } catch (err) {
