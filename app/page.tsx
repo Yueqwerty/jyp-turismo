@@ -19,10 +19,10 @@ function getDefaultContent() {
       titleLine1: 'Explora',
       titleLine2: 'Aysén',
       description: 'Conectamos Coyhaique con los glaciares del Campo de Hielo Norte, las Capillas de Mármol y toda la Carretera Austral.',
-      infoCard1Title: '16 · 11',
-      infoCard1Subtitle: 'Pasajeros',
-      infoCard2Title: 'Nov — Mar',
-      infoCard2Subtitle: 'Temporada',
+      whatsappNumber: '+56912345678',
+      facebookUrl: null,
+      instagramUrl: null,
+      email: 'contacto@jypturismo.cl',
       heroImage: '/images/tours/laguna-san-rafael.jpg',
       heroImageAlt: 'Glaciar San Rafael',
       heroBadgeText: 'Campo de Hielo Norte',
@@ -196,6 +196,10 @@ async function getContent() {
       minHeight: tour.minHeight,
       featured: tour.featured,
       order: tour.order,
+      packageName: tour.packageName,
+      packagePrice: tour.packagePrice,
+      packageDuration: tour.packageDuration,
+      packageIncludes: tour.packageIncludes,
     }));
 
     return {
