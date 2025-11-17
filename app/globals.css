@@ -10,7 +10,9 @@
   }
 
   body {
-    @apply bg-gray-50 text-gray-900 font-sans antialiased;
+    @apply bg-black text-white font-sans antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -69,22 +71,22 @@
     scroll-behavior: smooth;
   }
 
-  /* Minimal scrollbar (inspired by Amrit Palace) */
+  /* Minimal scrollbar - dark theme */
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 10px;
   }
 
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.05);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #2563eb;
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #1d4ed8;
+    background: rgba(255, 255, 255, 0.3);
   }
 
   /* Text selection styling - monocromático */
