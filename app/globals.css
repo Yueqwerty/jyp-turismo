@@ -71,6 +71,12 @@
     scroll-behavior: smooth;
   }
 
+  /* 3D perspective for cards */
+  .perspective-1000 {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+  }
+
   /* Minimal scrollbar - dark theme */
   ::-webkit-scrollbar {
     width: 10px;
