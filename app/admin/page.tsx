@@ -27,7 +27,7 @@ interface HeroSection {
 interface Tour {
   id: string;
   title: string;
-  description?: string;
+  description?: string | null;
   tags: string[];
   image: string;
   gradient: string;
@@ -552,7 +552,7 @@ function TourModal({
     tour || {
       id: '',
       title: '',
-      description: '',
+      description: null,
       tags: [],
       image: '',
       gradient: 'from-blue-600 to-blue-700',
@@ -607,7 +607,7 @@ function TourModal({
         />
         <TextAreaField
           label="Descripción (opcional)"
-          value={formData.description || ''}
+          value={formData.description ?? ''}
           onChange={(value) => setFormData({ ...formData, description: value })}
         />
 
