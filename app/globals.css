@@ -66,9 +66,20 @@
     animation: gradient 8s ease infinite;
   }
 
-  /* Smooth scrolling */
+  /* Ultra-smooth scrolling with momentum */
+  * {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+  }
+
+  body {
+    overflow-x: hidden;
+    scroll-snap-type: y proximity;
   }
 
   /* 3D perspective for cards */
