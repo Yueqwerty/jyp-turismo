@@ -60,9 +60,9 @@ interface SiteSettings {
   companyName: string;
   metaTitle: string;
   metaDescription: string;
-  phone?: string;
-  whatsappNumber?: string;
-  email?: string;
+  phone?: string | null;
+  whatsappNumber?: string | null;
+  email?: string | null;
 }
 
 interface Content {
@@ -353,11 +353,11 @@ export default function AdminPage() {
               </div>
               <div>
                 <span className="text-xs text-gray-400 uppercase tracking-wider">Email</span>
-                <p className="text-sm font-bold text-gray-900">{content.siteSettings.email || 'No configurado'}</p>
+                <p className="text-sm font-bold text-gray-900">{content.siteSettings.email ?? 'No configurado'}</p>
               </div>
               <div>
                 <span className="text-xs text-gray-400 uppercase tracking-wider">Teléfono</span>
-                <p className="text-sm font-bold text-gray-900">{content.siteSettings.phone || 'No configurado'}</p>
+                <p className="text-sm font-bold text-gray-900">{content.siteSettings.phone ?? 'No configurado'}</p>
               </div>
             </div>
           </div>
@@ -861,17 +861,17 @@ function SettingsModal({
         <InputField
           label="Email"
           type="email"
-          value={formData.email || ''}
+          value={formData.email ?? ''}
           onChange={(value) => setFormData({ ...formData, email: value })}
         />
         <InputField
           label="Teléfono"
-          value={formData.phone || ''}
+          value={formData.phone ?? ''}
           onChange={(value) => setFormData({ ...formData, phone: value })}
         />
         <InputField
           label="WhatsApp"
-          value={formData.whatsappNumber || ''}
+          value={formData.whatsappNumber ?? ''}
           onChange={(value) => setFormData({ ...formData, whatsappNumber: value })}
         />
         <InputField
