@@ -1,9 +1,10 @@
+import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import HomeClient from './home-client';
 
 const prisma = new PrismaClient();
 
-async function getContent() {
+// GET - Obtener todo el contenido del sitio
+export async function GET() {
   try {
     // Obtener o crear configuraciones predeterminadas
     let siteSettings = await prisma.siteSettings.findFirst();
@@ -21,7 +22,7 @@ async function getContent() {
       toursSection = await prisma.toursSection.create({ data: {} });
     }
 
-    let tours = await prisma.tour.findMany({
+    const tours = await prisma.tour.findMany({
       where: {
         toursSectionId: toursSection.id,
         isActive: true,
@@ -32,9 +33,22 @@ async function getContent() {
     // Si no hay tours, crear los predeterminados
     if (tours.length === 0) {
       await createDefaultTours(toursSection.id);
-      tours = await prisma.tour.findMany({
+      const newTours = await prisma.tour.findMany({
         where: { toursSectionId: toursSection.id, isActive: true },
         orderBy: { order: 'asc' },
+      });
+
+      let footerSettings = await prisma.footerSettings.findFirst({ where: { isActive: true } });
+      if (!footerSettings) {
+        footerSettings = await prisma.footerSettings.create({ data: {} });
+      }
+
+      return NextResponse.json({
+        siteSettings,
+        heroSection,
+        toursSection,
+        tours: newTours,
+        footerSettings,
       });
     }
 
@@ -43,27 +57,29 @@ async function getContent() {
       footerSettings = await prisma.footerSettings.create({ data: {} });
     }
 
-    return {
+    return NextResponse.json({
       siteSettings,
       heroSection,
       toursSection,
       tours,
       footerSettings,
-    };
+    });
   } catch (error) {
     console.error('Error fetching content:', error);
-    // Return default fallback data
-    return null;
+    return NextResponse.json(
+      { error: 'Error al obtener el contenido' },
+      { status: 500 }
+    );
   }
 }
 
+// Función auxiliar para crear tours predeterminados
 async function createDefaultTours(toursSectionId: string) {
   const defaultTours = [
     {
       toursSectionId,
       title: 'Laguna San Rafael',
-      description:
-        'Navegación hacia el glaciar más accesible del Campo de Hielo Norte. 3 horas desde Puerto Chacabuco.',
+      description: 'Navegación hacia el glaciar más accesible del Campo de Hielo Norte. 3 horas desde Puerto Chacabuco.',
       tags: ['Día completo', 'Navegación', '380 km'],
       image: '/images/tours/laguna-san-rafael.jpg',
       gradient: 'from-blue-600 to-blue-700',
@@ -142,22 +158,4 @@ async function createDefaultTours(toursSectionId: string) {
   ];
 
   await prisma.tour.createMany({ data: defaultTours });
-}
-
-export default async function HomePage() {
-  const content = await getContent();
-
-  if (!content) {
-    return <div>Error loading content</div>;
-  }
-
-  return (
-    <HomeClient
-      heroSection={content.heroSection}
-      toursSection={content.toursSection}
-      tours={content.tours}
-      footerSettings={content.footerSettings}
-      siteSettings={content.siteSettings}
-    />
-  );
 }
