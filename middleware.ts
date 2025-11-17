@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 /**
  * Middleware de autenticación para proteger rutas
- * Requiere autenticación para /messages y /admin
+ * Requiere autenticación para /admin y APIs protegidas
  */
 export default withAuth(
   function middleware(req) {
@@ -12,7 +12,7 @@ export default withAuth(
 
     // Proteger rutas de admin solo para usuarios ADMIN
     if (path.startsWith('/admin') && token?.role !== 'ADMIN') {
-      return NextResponse.redirect(new URL('/messages', req.url));
+      return NextResponse.redirect(new URL('/', req.url));
     }
 
     return NextResponse.next();
@@ -27,13 +27,18 @@ export default withAuth(
           return true;
         }
 
-        // Requerir token para todas las demás rutas
-        return !!token;
+        // Proteger rutas admin
+        if (path.startsWith('/admin')) {
+          return !!token;
+        }
+
+        // Permitir acceso a APIs públicas
+        return true;
       },
     },
   }
 );
 
 export const config = {
-  matcher: ['/messages/:path*', '/admin/:path*', '/api/messages/:path*'],
+  matcher: ['/admin/:path*', '/api/cms/:path*'],
 };
