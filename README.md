@@ -1,235 +1,269 @@
-# JYP Turismo - Central de Mensajería Unificada
+# J&P Turismo - Sistema de Gestión de Contenido
 
-Plataforma profesional para centralizar mensajes de WhatsApp Business, Facebook Messenger e Instagram en una sola interfaz desarrollada con C# Blazor Server.
+Sistema web completo para J&P Turismo con CMS (Sistema de Gestión de Contenido) integrado. Diseño cinematográfico inspirado en Awwwards con estilo Bento Grid.
 
-## Características Principales
+## Características
 
-- **Centralización Total**: Gestiona mensajes de WhatsApp Business, Messenger e Instagram desde una única plataforma
-- **Tiempo Real**: Actualizaciones instantáneas con SignalR
-- **Arquitectura Profesional**: Diseño en capas con separación de responsabilidades
-- **Seguridad Avanzada**: Verificación de firmas de webhooks y cifrado de datos
-- **Escalable**: Preparado para crecer con tu negocio
-- **API Oficial de Meta**: Integración directa con las APIs oficiales
+### 🎨 Diseño Cinematográfico
+- Animaciones suaves con Framer Motion
+- Efectos parallax multi-capa
+- Glassmorphism y backdrop blur
+- Bento Grid layout para tours
+- Diseño responsive y accesible
 
-## Tecnologías Utilizadas
+### 🛠️ CMS Completo
+- **Panel de Administración** - Interfaz intuitiva para gestionar todo el contenido
+- **Edición en tiempo real** - Modales de edición con preview instantáneo
+- **Upload de imágenes** - Sistema de carga de imágenes optimizado
+- **Gestión de Tours** - Crear, editar y eliminar tours con tags dinámicos
+- **Configuración del sitio** - Editar textos, imágenes, metadata y contacto
+- **Autenticación segura** - NextAuth con bcrypt para passwords
 
-- **Backend**: C# .NET 8.0
-- **Framework**: Blazor Server
-- **ORM**: Entity Framework Core 8.0
-- **Base de Datos**: SQL Server
-- **Tiempo Real**: SignalR
-- **APIs**: Meta Graph API (WhatsApp, Messenger, Instagram)
+### 📱 Secciones Editables
 
-## Arquitectura del Proyecto
+#### Hero Section
+- Tagline
+- Títulos (2 líneas)
+- Descripción
+- Cards de información (2)
+- Imagen hero con badge
+- CTAs (WhatsApp y Teléfono)
+
+#### Tours (Bento Grid)
+- Título de sección
+- Descripción de sección
+- Tours individuales:
+  - Título
+  - Descripción (opcional)
+  - Tags personalizables
+  - Imagen
+  - Gradiente de respaldo
+  - Featured toggle
+  - Orden personalizado
+
+#### Footer
+- Título de marca
+- Descripción de empresa
+- Información de contacto
+- Links de redes sociales
+- Newsletter (con toggle)
+- Texto de copyright
+
+#### Configuración General
+- Nombre de empresa
+- Logo text
+- Email y teléfono
+- WhatsApp
+- Meta tags (title, description, keywords)
+- URLs de redes sociales
+
+## Stack Tecnológico
+
+- **Framework**: Next.js 14 (App Router)
+- **Base de Datos**: PostgreSQL con Prisma ORM
+- **Autenticación**: NextAuth.js
+- **Estilos**: Tailwind CSS
+- **Animaciones**: Framer Motion
+- **Lenguaje**: TypeScript
+- **Deployment**: Vercel
+
+## Estructura del Proyecto
 
 ```
-JypTurismo/
-├── src/
-│   ├── JypTurismo.Core/           # Entidades y contratos
-│   │   ├── Entities/              # Entidades de dominio
-│   │   ├── Enums/                 # Enumeraciones
-│   │   └── Interfaces/            # Interfaces de servicios
-│   │
-│   ├── JypTurismo.Application/    # Lógica de negocio
-│   │
-│   ├── JypTurismo.Infrastructure/ # Implementaciones
-│   │   ├── Data/                  # DbContext y configuraciones
-│   │   ├── Repositories/          # Repositorios y UnitOfWork
-│   │   └── Services/              # Servicios de integración
-│   │
-│   └── JypTurismo.Web/            # Capa de presentación
-│       ├── Controllers/           # Controladores de API
-│       ├── Hubs/                  # SignalR Hubs
-│       ├── Pages/                 # Páginas Blazor
-│       └── Components/            # Componentes reutilizables
+jyp-turismo/
+├── app/
+│   ├── admin/           # Panel de administración
+│   ├── api/
+│   │   ├── auth/        # NextAuth
+│   │   └── cms/         # APIs del CMS
+│   ├── home-client.tsx  # Homepage (client component)
+│   ├── page.tsx         # Homepage (server component)
+│   ├── login/           # Página de login
+│   └── layout.tsx       # Layout principal
+├── components/
+│   └── providers/       # Providers (SessionProvider)
+├── lib/
+│   ├── auth/            # Configuración de NextAuth
+│   └── prisma.ts        # Cliente de Prisma
+├── prisma/
+│   └── schema.prisma    # Schema de base de datos
+└── public/
+    └── images/
+        └── tours/       # Imágenes de tours
 ```
 
-## Requisitos Previos
+## Instalación
 
-- .NET 8.0 SDK
-- SQL Server (LocalDB o versión completa)
-- Visual Studio 2022 o Rider (opcional)
-- Cuenta de Meta Business con acceso a las APIs
+### Requisitos
+- Node.js 18+
+- PostgreSQL
+- npm o yarn
 
-## Configuración
+### Pasos
 
-### 1. Clonar el Repositorio
+1. **Clonar el repositorio**
+   ```bash
+   git clone <repository-url>
+   cd jyp-turismo
+   ```
 
-```bash
-git clone https://github.com/Yueqwerty/jyp-turismo.git
-cd jyp-turismo
-```
+2. **Instalar dependencias**
+   ```bash
+   npm install
+   ```
 
-### 2. Configurar Variables de Entorno
+3. **Configurar variables de entorno**
+   Crear archivo `.env`:
+   ```env
+   # Database
+   DATABASE_URL="postgresql://user:password@localhost:5432/jyp_turismo"
 
-Copia el archivo `.env.example` a `.env` y configura tus credenciales:
+   # NextAuth
+   NEXTAUTH_SECRET="tu-secret-key-muy-segura"
+   NEXTAUTH_URL="http://localhost:3000"
+   ```
 
-```bash
-cp .env.example .env
-```
+4. **Ejecutar migraciones de base de datos**
+   ```bash
+   npx prisma migrate dev
+   npx prisma generate
+   ```
 
-Edita el archivo `.env` con tus credenciales de Meta:
+5. **Crear usuario administrador**
+   ```bash
+   npx prisma studio
+   # Crear un User con rol ADMIN y password hasheado con bcrypt
+   ```
 
-- **WhatsApp Business**: Obtén tokens desde Meta Business Manager
-- **Messenger**: Configura una aplicación de Facebook
-- **Instagram**: Vincula tu cuenta de Instagram Business
+6. **Iniciar servidor de desarrollo**
+   ```bash
+   npm run dev
+   ```
 
-### 3. Configurar Base de Datos
+7. **Abrir navegador**
+   - Sitio web: http://localhost:3000
+   - Admin: http://localhost:3000/admin
+   - Login: http://localhost:3000/login
 
-Actualiza la cadena de conexión en `appsettings.json`:
+## Deployment en Vercel
 
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=JypTurismoDb;Trusted_Connection=True"
-  }
-}
-```
+1. **Conectar repositorio**
+   - Importar proyecto en Vercel
+   - Conectar con GitHub
 
-### 4. Aplicar Migraciones
+2. **Configurar variables de entorno**
+   En Vercel Dashboard:
+   - `DATABASE_URL`
+   - `NEXTAUTH_SECRET`
+   - `NEXTAUTH_URL`
 
-```bash
-cd src/JypTurismo.Web
-dotnet ef database update --project ../JypTurismo.Infrastructure
-```
+3. **Deploy**
+   ```bash
+   git push origin claude/check-status-011hRCFpgTfcmZzQ7LQhq93d
+   ```
 
-### 5. Ejecutar la Aplicación
+4. **Ejecutar migraciones en producción**
+   ```bash
+   npx prisma migrate deploy
+   ```
 
-```bash
-dotnet run
-```
+## Uso del CMS
 
-La aplicación estará disponible en `https://localhost:5001`
+### Acceder al Panel de Administración
 
-## Configuración de Webhooks
+1. Ir a `/login`
+2. Ingresar credenciales de administrador
+3. Redireccionará a `/admin`
 
-### WhatsApp Business
+### Editar Contenido
 
-1. Accede a Meta Business Manager
-2. Configura el webhook en tu aplicación de WhatsApp
-3. URL del webhook: `https://tudominio.com/api/webhooks/whatsapp`
-4. Eventos a suscribirse: `messages`
+**Hero Section:**
+- Click en "Editar Hero"
+- Modificar campos en el modal
+- Upload nueva imagen si es necesario
+- Click en "Guardar"
 
-### Messenger
+**Tours:**
+- Click en cualquier tour para editar
+- O click en "+ Agregar Tour" para crear nuevo
+- Agregar/eliminar tags con el botón "+"
+- Upload imagen
+- Toggle "Featured" para destacar
+- Guardar cambios
 
-1. Crea una aplicación de Facebook
-2. Configura el webhook
-3. URL del webhook: `https://tudominio.com/api/webhooks/messenger`
-4. Eventos: `messages`, `messaging_postbacks`
+**Footer y Settings:**
+- Click en "Editar" en cada sección
+- Modificar campos
+- Guardar
 
-### Instagram
+## API Endpoints
 
-1. Vincula tu cuenta de Instagram Business
-2. Configura el webhook
-3. URL del webhook: `https://tudominio.com/api/webhooks/instagram`
-4. Eventos: `messages`, `messaging_postbacks`
+### Públicos
+- `GET /api/cms/content` - Obtener todo el contenido del sitio
 
-## Estructura de la Base de Datos
+### Protegidos (requieren autenticación)
+- `PUT /api/cms/hero` - Actualizar Hero Section
+- `POST /api/cms/tours` - Crear tour
+- `PUT /api/cms/tours` - Actualizar Tours Section
+- `PUT /api/cms/tours/[id]` - Actualizar tour específico
+- `DELETE /api/cms/tours/[id]` - Eliminar tour
+- `PUT /api/cms/settings` - Actualizar configuración del sitio
+- `PUT /api/cms/footer` - Actualizar footer
+- `POST /api/cms/upload` - Subir imagen
 
-### Entidades Principales
+## Modelos de Base de Datos
 
-- **Message**: Mensajes centralizados de todos los canales
-- **Conversation**: Hilos de conversación
-- **Contact**: Contactos de clientes
-- **Attachment**: Archivos adjuntos (imágenes, videos, documentos)
+### SiteSettings
+Configuración general del sitio (logo, nombre, metadata, contacto, redes sociales)
 
-## Endpoints de API
+### HeroSection
+Contenido de la sección hero (tagline, títulos, descripción, info cards, imagen, CTAs)
 
-### Webhooks
+### ToursSection
+Configuración de la sección de tours (título y descripción de sección)
 
-- `GET/POST /api/webhooks/whatsapp` - Webhook de WhatsApp Business
-- `GET/POST /api/webhooks/messenger` - Webhook de Messenger
-- `GET/POST /api/webhooks/instagram` - Webhook de Instagram
+### Tour
+Tours individuales (título, descripción, tags, imagen, configuración de grid)
 
-## Características de Seguridad
+### FooterSettings
+Configuración del footer (brand, descripción, copyright, newsletter)
 
-- Verificación de firmas HMAC SHA-256 para todos los webhooks
-- Validación de tokens de verificación
-- Conexiones HTTPS obligatorias
-- Sanitización de entrada de datos
-- Protección contra inyección SQL mediante Entity Framework Core
+### User, Account, Session, VerificationToken
+Modelos de NextAuth para autenticación
 
-## Mejores Prácticas Implementadas
+## Seguridad
 
-### Código
-
-- Documentación XML completa
-- Arquitectura en capas (Clean Architecture)
-- Patrón Repository y Unit of Work
-- Inyección de dependencias
-- Logging estructurado
-- Manejo de errores centralizado
-
-### Performance
-
-- Conexión a base de datos con retry automático
-- Compresión de respuestas HTTP
-- SignalR con reconexión automática
-- Lazy loading de datos
+- ✅ Passwords hasheados con bcrypt
+- ✅ Sesiones JWT con NextAuth
+- ✅ CSRF protection
+- ✅ Content Security Policy
+- ✅ XSS Protection headers
+- ✅ Clickjacking protection
+- ✅ HTTPS enforcement (HSTS)
+- ✅ APIs protegidas con autenticación
 
 ## Desarrollo
 
-### Agregar Nuevas Migraciones
-
+### Scripts disponibles
 ```bash
-cd src/JypTurismo.Infrastructure
-dotnet ef migrations add NombreMigracion --startup-project ../JypTurismo.Web
+npm run dev          # Servidor de desarrollo
+npm run build        # Build para producción
+npm run start        # Servidor de producción
+npm run lint         # Linter
+npx prisma studio    # Prisma Studio (DB GUI)
+npx prisma migrate dev  # Crear migración
 ```
 
-### Ejecutar Tests
-
-```bash
-dotnet test
-```
-
-## Despliegue
-
-### Azure App Service
-
-1. Publica la aplicación desde Visual Studio o CLI
-2. Configura las variables de entorno en Azure
-3. Configura la cadena de conexión a SQL Azure
-4. Habilita HTTPS y dominios personalizados
-
-### Docker
-
-```bash
-docker build -t jypturismo .
-docker run -p 5000:80 jypturismo
-```
-
-## Contribución
-
-Las contribuciones son bienvenidas. Por favor:
-
-1. Fork el repositorio
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+### Convenciones de código
+- TypeScript estricto
+- ESLint para linting
+- Prettier para formateo
+- Conventional Commits
 
 ## Soporte
 
-Para soporte técnico o preguntas:
+Para reportar bugs o solicitar features, crear un issue en el repositorio.
 
-- Email: soporte@jypturismo.com
-- Issues: https://github.com/Yueqwerty/jyp-turismo/issues
+## Licencia
 
-## Roadmap
-
-- [ ] Panel de analytics y métricas
-- [ ] Respuestas automáticas con IA
-- [ ] Integración con CRM
-- [ ] Aplicación móvil
-- [ ] Sistema de etiquetas y categorías
-- [ ] Plantillas de mensajes
-- [ ] Asignación de agentes
-- [ ] Horarios de atención
-
----
-
-Desarrollado con profesionalismo por el equipo de JYP Turismo
+Todos los derechos reservados © 2024 J&P Turismo

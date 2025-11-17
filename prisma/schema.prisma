@@ -9,35 +9,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum MessageChannel {
-  WHATSAPP
-  MESSENGER
-  INSTAGRAM
-}
+// Messaging enums - Commented out (Meta integration removed)
+// enum MessageChannel {
+//   WHATSAPP
+//   MESSENGER
+//   INSTAGRAM
+// }
 
-enum MessageDirection {
-  INBOUND
-  OUTBOUND
-}
+// enum MessageDirection {
+//   INBOUND
+//   OUTBOUND
+// }
 
-enum MessageType {
-  TEXT
-  IMAGE
-  VIDEO
-  AUDIO
-  DOCUMENT
-  LOCATION
-  CONTACT
-  STICKER
-}
+// enum MessageType {
+//   TEXT
+//   IMAGE
+//   VIDEO
+//   AUDIO
+//   DOCUMENT
+//   LOCATION
+//   CONTACT
+//   STICKER
+// }
 
-enum MessageStatus {
-  PENDING
-  SENT
-  DELIVERED
-  READ
-  FAILED
-}
+// enum MessageStatus {
+//   PENDING
+//   SENT
+//   DELIVERED
+//   READ
+//   FAILED
+// }
 
 enum UserRole {
   ADMIN
@@ -96,89 +97,207 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model Contact {
-  id                String         @id @default(cuid())
-  externalId        String
-  channel           MessageChannel
-  displayName       String
-  phoneNumber       String?
-  email             String?
-  profilePictureUrl String?
-  metadata          Json?
-  isActive          Boolean        @default(true)
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
+// Messaging models - Commented out (Meta integration removed)
+// model Contact {
+//   id                String         @id @default(cuid())
+//   externalId        String
+//   channel           MessageChannel
+//   displayName       String
+//   phoneNumber       String?
+//   email             String?
+//   profilePictureUrl String?
+//   metadata          Json?
+//   isActive          Boolean        @default(true)
+//   createdAt         DateTime       @default(now())
+//   updatedAt         DateTime       @updatedAt
 
-  conversations Conversation[]
+//   conversations Conversation[]
 
-  @@unique([externalId, channel])
-  @@index([externalId])
-  @@index([channel])
+//   @@unique([externalId, channel])
+//   @@index([externalId])
+//   @@index([channel])
+// }
+
+// model Conversation {
+//   id                     String         @id @default(cuid())
+//   externalConversationId String         @unique
+//   channel                MessageChannel
+//   contactId              String
+//   subject                String?
+//   isActive               Boolean        @default(true)
+//   lastMessageAt          DateTime?
+//   unreadCount            Int            @default(0)
+//   createdAt              DateTime       @default(now())
+//   updatedAt              DateTime       @updatedAt
+
+//   contact  Contact   @relation(fields: [contactId], references: [id], onDelete: Restrict)
+//   messages Message[]
+
+//   @@index([contactId])
+//   @@index([channel])
+//   @@index([lastMessageAt])
+// }
+
+// model Message {
+//   id                  String           @id @default(cuid())
+//   externalMessageId   String           @unique
+//   conversationId      String
+//   channel             MessageChannel
+//   direction           MessageDirection
+//   type                MessageType
+//   status              MessageStatus
+//   textContent         String?
+//   senderName          String
+//   senderExternalId    String
+//   recipientName       String
+//   recipientExternalId String
+//   sentAt              DateTime
+//   deliveredAt         DateTime?
+//   readAt              DateTime?
+//   metadata            Json?
+//   errorMessage        String?
+//   createdAt           DateTime         @default(now())
+//   updatedAt           DateTime         @updatedAt
+
+//   conversation Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+//   attachments  Attachment[]
+
+//   @@index([conversationId])
+//   @@index([channel])
+//   @@index([sentAt])
+// }
+
+// model Attachment {
+//   id           String      @id @default(cuid())
+//   messageId    String
+//   type         MessageType
+//   fileName     String
+//   mimeType     String
+//   fileSize     Int
+//   fileUrl      String
+//   thumbnailUrl String?
+//   externalUrl  String?
+//   createdAt    DateTime    @default(now())
+//   updatedAt    DateTime    @updatedAt
+
+//   message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+//   @@index([messageId])
+// }
+
+// ============================================
+// CMS Models - Website Content Management
+// ============================================
+
+model SiteSettings {
+  id              String   @id @default(cuid())
+  logoText        String   @default("J&P")
+  companyName     String   @default("J&P Turismo")
+  metaTitle       String   @default("J&P Turismo - Transporte Patagonia Aysén")
+  metaDescription String   @default("Transporte especializado desde Coyhaique hacia los destinos más icónicos de la Patagonia chilena")
+  metaKeywords    String   @default("turismo, patagonia, aysén, transporte, glaciares, carretera austral")
+
+  // Contact info
+  phone           String?
+  whatsappNumber  String?
+  email           String?
+
+  // Social media
+  facebookUrl     String?
+  instagramUrl    String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
-model Conversation {
-  id                     String         @id @default(cuid())
-  externalConversationId String         @unique
-  channel                MessageChannel
-  contactId              String
-  subject                String?
-  isActive               Boolean        @default(true)
-  lastMessageAt          DateTime?
-  unreadCount            Int            @default(0)
-  createdAt              DateTime       @default(now())
-  updatedAt              DateTime       @updatedAt
+model HeroSection {
+  id              String   @id @default(cuid())
+  tagline         String   @default("Transporte · Patagonia Aysén")
+  titleLine1      String   @default("Explora")
+  titleLine2      String   @default("Aysén")
+  description     String   @default("Conectamos Coyhaique con los glaciares del Campo de Hielo Norte, las Capillas de Mármol y toda la Carretera Austral.")
 
-  contact  Contact   @relation(fields: [contactId], references: [id], onDelete: Restrict)
-  messages Message[]
+  // Info cards
+  infoCard1Title  String   @default("16 · 11")
+  infoCard1Subtitle String @default("Pasajeros")
+  infoCard2Title  String   @default("Nov — Mar")
+  infoCard2Subtitle String @default("Temporada")
 
-  @@index([contactId])
-  @@index([channel])
-  @@index([lastMessageAt])
+  // Hero image
+  heroImage       String   @default("/images/tours/laguna-san-rafael.jpg")
+  heroImageAlt    String   @default("Glaciar San Rafael")
+  heroBadgeText   String   @default("Campo de Hielo Norte")
+
+  // CTA buttons
+  ctaWhatsappText String   @default("WhatsApp")
+  ctaPhoneText    String   @default("+56 9 XXXX XXXX")
+
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
-model Message {
-  id                  String           @id @default(cuid())
-  externalMessageId   String           @unique
-  conversationId      String
-  channel             MessageChannel
-  direction           MessageDirection
-  type                MessageType
-  status              MessageStatus
-  textContent         String?
-  senderName          String
-  senderExternalId    String
-  recipientName       String
-  recipientExternalId String
-  sentAt              DateTime
-  deliveredAt         DateTime?
-  readAt              DateTime?
-  metadata            Json?
-  errorMessage        String?
-  createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @updatedAt
+model ToursSection {
+  id              String   @id @default(cuid())
+  sectionTitle    String   @default("Rutas")
+  sectionDescription String @default("Desde Puerto Tranquilo hasta el Parque Queulat. Descubre glaciares milenarios, formaciones de mármol y bosques nativos.")
 
-  conversation Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  attachments  Attachment[]
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  @@index([conversationId])
-  @@index([channel])
-  @@index([sentAt])
+  tours           Tour[]
 }
 
-model Attachment {
-  id           String      @id @default(cuid())
-  messageId    String
-  type         MessageType
-  fileName     String
-  mimeType     String
-  fileSize     Int
-  fileUrl      String
-  thumbnailUrl String?
-  externalUrl  String?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+model Tour {
+  id              String        @id @default(cuid())
+  toursSectionId  String
 
-  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  title           String
+  description     String?
+  tags            String[]      // Array of tags
+  image           String
+  gradient        String        @default("from-blue-600 to-blue-700")
 
-  @@index([messageId])
+  // Grid positioning
+  colSpan         Int           @default(4)  // 1-12 for responsive grid
+  rowSpan         Int           @default(1)  // 1-2 for vertical span
+  minHeight       String        @default("320px")
+
+  featured        Boolean       @default(false)
+  order           Int           @default(0)
+  isActive        Boolean       @default(true)
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  toursSection    ToursSection  @relation(fields: [toursSectionId], references: [id], onDelete: Cascade)
+
+  @@index([toursSectionId])
+  @@index([order])
+}
+
+model FooterSettings {
+  id              String   @id @default(cuid())
+
+  // Brand section
+  brandTitle      String   @default("J&P\nTurismo")
+  brandDescription String  @default("Transporte especializado desde Coyhaique hacia los destinos más icónicos de la Patagonia chilena.")
+
+  // Copyright
+  copyrightText   String   @default("J&P Turismo · Región de Aysén, Chile")
+
+  // Legal links
+  termsUrl        String?
+  privacyUrl      String?
+  cookiesUrl      String?
+
+  // Newsletter
+  newsletterEnabled Boolean @default(true)
+  newsletterTitle   String  @default("Newsletter")
+  newsletterPlaceholder String @default("Tu email")
+
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
