@@ -217,11 +217,11 @@ model HeroSection {
   titleLine2      String   @default("Aysén")
   description     String   @default("Conectamos Coyhaique con los glaciares del Campo de Hielo Norte, las Capillas de Mármol y toda la Carretera Austral.")
 
-  // Info cards
-  infoCard1Title  String   @default("16 · 11")
-  infoCard1Subtitle String @default("Pasajeros")
-  infoCard2Title  String   @default("Nov — Mar")
-  infoCard2Subtitle String @default("Temporada")
+  // Social media contact boxes (replaces info cards)
+  whatsappNumber  String   @default("+56912345678")
+  facebookUrl     String?
+  instagramUrl    String?
+  email           String   @default("contacto@jypturismo.cl")
 
   // Hero image
   heroImage       String   @default("/images/tours/laguna-san-rafael.jpg")
@@ -258,6 +258,12 @@ model Tour {
   tags            String[]      // Array of tags
   image           String
   gradient        String        @default("from-blue-600 to-blue-700")
+
+  // Package information
+  packageName     String?       // e.g., "Paquete Aventura", "Oferta Especial"
+  packagePrice    String?       // e.g., "$150.000", "Desde $200.000"
+  packageDuration String?       // e.g., "3 días / 2 noches", "Día completo"
+  packageIncludes String[]      @default([]) // Array of included items
 
   // Grid positioning
   colSpan         Int           @default(4)  // 1-12 for responsive grid
