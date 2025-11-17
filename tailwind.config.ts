@@ -13,6 +13,18 @@ const config: Config = {
         messenger: '#0084FF',
         instagram: '#C13584',
       },
+      fontFamily: {
+        sans: [
+          'system-ui',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"Segoe UI"',
+          'Roboto',
+          '"Helvetica Neue"',
+          'Arial',
+          'sans-serif',
+        ],
+      },
     },
   },
   plugins: [],
