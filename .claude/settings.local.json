@@ -11,7 +11,11 @@
       "Bash(npm install:*)",
       "Bash(node check-images.js:*)",
       "Bash(Get-Process node -ErrorAction SilentlyContinue)",
-      "Bash(Stop-Process -Force)"
+      "Bash(Stop-Process -Force)",
+      "Bash(node check-tours.js:*)",
+      "Bash(node fix-tours.js:*)",
+      "Bash(del check-tours.js fix-tours.js)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
