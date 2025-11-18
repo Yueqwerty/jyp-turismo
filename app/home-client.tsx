@@ -188,12 +188,12 @@ const TourCard = memo(function TourCard({ tour, index, siteSettings }: { tour: T
         )}
       </div>
 
-      {/* Package Info Overlay - Slides from bottom to 75% */}
+      {/* Package Info Overlay - Slides from bottom to cover almost full card */}
       <AnimatePresence>
         {showInfo && hasPackageInfo && (
           <motion.div
             initial={{ y: '100%' }}
-            animate={{ y: '25%' }}
+            animate={{ y: '5%' }}
             exit={{ y: '100%' }}
             transition={{ duration: 0.4, ease: [0.21, 0.45, 0.27, 0.9] }}
             className="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl z-20"
@@ -205,7 +205,7 @@ const TourCard = memo(function TourCard({ tour, index, siteSettings }: { tour: T
                 e.stopPropagation();
                 setShowInfo(false);
               }}
-              className="absolute top-4 right-4 z-10 w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center transition-all duration-300 shadow-md"
+              className="absolute top-4 right-4 z-10 w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center transition-all duration-300 shadow-md"
             >
               <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
@@ -213,7 +213,7 @@ const TourCard = memo(function TourCard({ tour, index, siteSettings }: { tour: T
             </button>
 
             {/* Scrollable content */}
-            <div className="h-full overflow-y-auto p-5 md:p-6 pt-14">
+            <div className="h-full overflow-y-auto p-6 md:p-8 pt-16">
               {/* Package Badge */}
               {tour.packageName && (
                 <div className="inline-flex items-center gap-2 mb-3">

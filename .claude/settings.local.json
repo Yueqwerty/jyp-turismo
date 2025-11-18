@@ -15,7 +15,9 @@
       "Bash(node check-tours.js:*)",
       "Bash(node fix-tours.js:*)",
       "Bash(del check-tours.js fix-tours.js)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
