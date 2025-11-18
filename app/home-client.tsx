@@ -91,7 +91,7 @@ const TourCard = memo(function TourCard({ tour, index, siteSettings }: { tour: T
   const hasPackageInfo = tour.packageName || tour.packagePrice || tour.packageDuration;
 
   return (
-    <Link href={`/tours/${tour.id}`}>
+    <Link href="/tours">
       <motion.div
         ref={cardRef}
         initial={{ opacity: 0, y: 40, scale: 0.98 }}
