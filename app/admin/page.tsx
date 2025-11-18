@@ -99,6 +99,8 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
+  const [isUpdatingContact, setIsUpdatingContact] = useState(false);
+  const [updateContactMessage, setUpdateContactMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -213,6 +215,43 @@ export default function AdminPage() {
     setSelectedTour(null);
   }, []);
 
+  const handleUpdateContact = useCallback(async () => {
+    setIsUpdatingContact(true);
+    setUpdateContactMessage(null);
+
+    try {
+      const response = await fetch('/api/admin/update-contact', {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setUpdateContactMessage({
+          type: 'success',
+          text: '✅ Información de contacto actualizada exitosamente'
+        });
+        // Refetch content to show updated data
+        await fetchContent();
+      } else {
+        setUpdateContactMessage({
+          type: 'error',
+          text: '❌ Error al actualizar: ' + (data.error || 'Error desconocido')
+        });
+      }
+    } catch (error) {
+      setUpdateContactMessage({
+        type: 'error',
+        text: '❌ Error de conexión al actualizar'
+      });
+      console.error('Error updating contact:', error);
+    } finally {
+      setIsUpdatingContact(false);
+      // Clear message after 5 seconds
+      setTimeout(() => setUpdateContactMessage(null), 5000);
+    }
+  }, [fetchContent]);
+
   if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -249,6 +288,68 @@ export default function AdminPage() {
           onTourClick={handleTourClick}
           onTourDelete={handleTourDelete}
         />
+
+        {/* System Utilities */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="bg-white rounded-3xl p-6 lg:p-8 border-2 border-slate-900/5 shadow-lg"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-black text-gray-900 tracking-tight">Utilidades del Sistema</h2>
+              <p className="text-sm text-gray-500 mt-1">Actualizaciones y configuraciones especiales</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4">
+            <button
+              onClick={handleUpdateContact}
+              disabled={isUpdatingContact}
+              className="px-6 py-4 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-lg shadow-cyan-600/25 hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+            >
+              {isUpdatingContact ? (
+                <>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                    className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+                  />
+                  Actualizando...
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Actualizar Información de Contacto
+                </>
+              )}
+            </button>
+
+            {updateContactMessage && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0 }}
+                className={`px-6 py-4 rounded-2xl font-medium flex-1 ${
+                  updateContactMessage.type === 'success'
+                    ? 'bg-emerald-50 border-2 border-emerald-200 text-emerald-900'
+                    : 'bg-red-50 border-2 border-red-200 text-red-900'
+                }`}
+              >
+                {updateContactMessage.text}
+              </motion.div>
+            )}
+          </div>
+
+          <div className="mt-6 p-4 bg-cyan-50 rounded-xl border border-cyan-200">
+            <p className="text-sm text-cyan-900 leading-relaxed">
+              <strong>¿Qué hace este botón?</strong> Actualiza toda la información de contacto en la base de datos (WhatsApp: +56 9 9718 7142, Facebook, Instagram, Email) en todas las secciones del sitio.
+            </p>
+          </div>
+        </motion.section>
 
         {/* Footer & Settings Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
