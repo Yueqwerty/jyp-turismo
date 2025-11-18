@@ -16,11 +16,19 @@ export async function POST() {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    // Obtener la sección de tours activa
-    const toursSection = await prisma.toursSection.findFirst({ where: { isActive: true } });
+    // Obtener o crear la sección de tours activa
+    let toursSection = await prisma.toursSection.findFirst({ where: { isActive: true } });
 
     if (!toursSection) {
-      return NextResponse.json({ error: 'No hay sección de tours activa' }, { status: 404 });
+      // Crear ToursSection si no existe
+      toursSection = await prisma.toursSection.create({
+        data: {
+          sectionTitle: 'Rutas',
+          sectionDescription: 'Desde Puerto Tranquilo hasta el Parque Queulat. Descubre glaciares milenarios, formaciones de mármol y bosques nativos.',
+          isActive: true,
+        },
+      });
+      console.log('✅ ToursSection creado');
     }
 
     // Verificar cuántos tours existen
@@ -151,8 +159,14 @@ export async function POST() {
   } catch (error) {
     console.error('Error syncing tours:', error);
     return NextResponse.json(
-      { error: 'Error al sincronizar tours', details: error },
+      {
+        error: 'Error al sincronizar tours',
+        details: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }

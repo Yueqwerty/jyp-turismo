@@ -72,8 +72,14 @@ export async function POST() {
   } catch (error) {
     console.error('Error updating contact info:', error);
     return NextResponse.json(
-      { error: 'Error al actualizar información de contacto', details: error },
+      {
+        error: 'Error al actualizar información de contacto',
+        details: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
