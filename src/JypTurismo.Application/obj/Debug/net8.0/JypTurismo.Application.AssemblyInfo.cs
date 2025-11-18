@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("JypTurismo.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3f37967a99f7838c2d0e8827a413dfe8fdd0e3fe")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+26dd867c9b8d840e683c1b001a0b44c610bdd602")]
 [assembly: System.Reflection.AssemblyProductAttribute("JypTurismo.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("JypTurismo.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
