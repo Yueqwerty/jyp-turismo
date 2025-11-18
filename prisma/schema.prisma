@@ -260,10 +260,11 @@ model Tour {
   gradient        String        @default("from-blue-600 to-blue-700")
 
   // Package information
-  packageName     String?       // e.g., "Paquete Aventura", "Oferta Especial"
-  packagePrice    String?       // e.g., "$150.000", "Desde $200.000"
-  packageDuration String?       // e.g., "3 días / 2 noches", "Día completo"
-  packageIncludes String[]      @default([]) // Array of included items
+  packageName        String?       // e.g., "Paquete Aventura", "Oferta Especial"
+  packageDescription String?       // Descripción detallada del paquete
+  packagePrice       String?       // e.g., "$150.000", "Desde $200.000"
+  packageDuration    String?       // e.g., "3 días / 2 noches", "Día completo"
+  packageIncludes    String[]      @default([]) // Array of included items
 
   // Grid positioning
   colSpan         Int           @default(4)  // 1-12 for responsive grid

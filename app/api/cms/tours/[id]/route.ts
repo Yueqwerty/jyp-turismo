@@ -33,6 +33,7 @@ export async function PUT(
         featured: data.featured,
         order: data.order,
         packageName: data.packageName,
+        packageDescription: data.packageDescription,
         packagePrice: data.packagePrice,
         packageDuration: data.packageDuration,
         packageIncludes: data.packageIncludes,

@@ -37,6 +37,7 @@ interface Tour {
   featured: boolean;
   order: number;
   packageName?: string | null;
+  packageDescription?: string | null;
   packagePrice?: string | null;
   packageDuration?: string | null;
   packageIncludes?: string[];
@@ -985,6 +986,7 @@ function TourModal({
       featured: false,
       order: 0,
       packageName: null,
+      packageDescription: null,
       packagePrice: null,
       packageDuration: null,
       packageIncludes: [],
@@ -1194,6 +1196,11 @@ function TourModal({
               value={formData.packageName || ''}
               onChange={(value) => setFormData({ ...formData, packageName: value || null })}
               placeholder="Ej: Paquete Aventura"
+            />
+            <TextAreaField
+              label="Descripción del Paquete"
+              value={formData.packageDescription || ''}
+              onChange={(value) => setFormData({ ...formData, packageDescription: value || null })}
             />
             <div className="grid grid-cols-2 gap-4">
               <InputField
