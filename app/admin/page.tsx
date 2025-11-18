@@ -101,6 +101,8 @@ export default function AdminPage() {
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
   const [isUpdatingContact, setIsUpdatingContact] = useState(false);
   const [updateContactMessage, setUpdateContactMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [isSyncingTours, setIsSyncingTours] = useState(false);
+  const [syncToursMessage, setSyncToursMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -252,6 +254,43 @@ export default function AdminPage() {
     }
   }, [fetchContent]);
 
+  const handleSyncTours = useCallback(async () => {
+    setIsSyncingTours(true);
+    setSyncToursMessage(null);
+
+    try {
+      const response = await fetch('/api/admin/sync-tours', {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSyncToursMessage({
+          type: 'success',
+          text: `✅ ${data.message} (${data.toursAdded} nuevos agregados)`
+        });
+        // Refetch content to show updated tours
+        await fetchContent();
+      } else {
+        setSyncToursMessage({
+          type: 'error',
+          text: '❌ Error al sincronizar: ' + (data.error || 'Error desconocido')
+        });
+      }
+    } catch (error) {
+      setSyncToursMessage({
+        type: 'error',
+        text: '❌ Error de conexión al sincronizar'
+      });
+      console.error('Error syncing tours:', error);
+    } finally {
+      setIsSyncingTours(false);
+      // Clear message after 5 seconds
+      setTimeout(() => setSyncToursMessage(null), 5000);
+    }
+  }, [fetchContent]);
+
   if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -303,51 +342,104 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button
-              onClick={handleUpdateContact}
-              disabled={isUpdatingContact}
-              className="px-6 py-4 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-lg shadow-cyan-600/25 hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-            >
-              {isUpdatingContact ? (
-                <>
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-                    className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-                  />
-                  Actualizando...
-                </>
-              ) : (
-                <>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  Actualizar Información de Contacto
-                </>
-              )}
-            </button>
-
-            {updateContactMessage && (
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0 }}
-                className={`px-6 py-4 rounded-2xl font-medium flex-1 ${
-                  updateContactMessage.type === 'success'
-                    ? 'bg-emerald-50 border-2 border-emerald-200 text-emerald-900'
-                    : 'bg-red-50 border-2 border-red-200 text-red-900'
-                }`}
+          <div className="space-y-4">
+            {/* Actualizar Contacto */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={handleUpdateContact}
+                disabled={isUpdatingContact}
+                className="px-6 py-4 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-lg shadow-cyan-600/25 hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
               >
-                {updateContactMessage.text}
-              </motion.div>
-            )}
-          </div>
+                {isUpdatingContact ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                      className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+                    />
+                    Actualizando...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Actualizar Información de Contacto
+                  </>
+                )}
+              </button>
 
-          <div className="mt-6 p-4 bg-cyan-50 rounded-xl border border-cyan-200">
-            <p className="text-sm text-cyan-900 leading-relaxed">
-              <strong>¿Qué hace este botón?</strong> Actualiza toda la información de contacto en la base de datos (WhatsApp: +56 9 9718 7142, Facebook, Instagram, Email) en todas las secciones del sitio.
-            </p>
+              {updateContactMessage && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0 }}
+                  className={`px-6 py-4 rounded-2xl font-medium flex-1 ${
+                    updateContactMessage.type === 'success'
+                      ? 'bg-emerald-50 border-2 border-emerald-200 text-emerald-900'
+                      : 'bg-red-50 border-2 border-red-200 text-red-900'
+                  }`}
+                >
+                  {updateContactMessage.text}
+                </motion.div>
+              )}
+            </div>
+
+            {/* Sincronizar Tours */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={handleSyncTours}
+                disabled={isSyncingTours}
+                className="px-6 py-4 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-bold rounded-2xl shadow-lg shadow-violet-600/25 hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+              >
+                {isSyncingTours ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                      className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+                    />
+                    Sincronizando...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                    </svg>
+                    Sincronizar Todos los Tours
+                  </>
+                )}
+              </button>
+
+              {syncToursMessage && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0 }}
+                  className={`px-6 py-4 rounded-2xl font-medium flex-1 ${
+                    syncToursMessage.type === 'success'
+                      ? 'bg-emerald-50 border-2 border-emerald-200 text-emerald-900'
+                      : 'bg-red-50 border-2 border-red-200 text-red-900'
+                  }`}
+                >
+                  {syncToursMessage.text}
+                </motion.div>
+              )}
+            </div>
+
+            {/* Info */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 bg-cyan-50 rounded-xl border border-cyan-200">
+                <p className="text-sm text-cyan-900 leading-relaxed">
+                  <strong>Actualizar Contacto:</strong> Actualiza WhatsApp, Facebook, Instagram y Email en la base de datos.
+                </p>
+              </div>
+              <div className="p-4 bg-violet-50 rounded-xl border border-violet-200">
+                <p className="text-sm text-violet-900 leading-relaxed">
+                  <strong>Sincronizar Tours:</strong> Agrega los tours faltantes (de 3 a 7 tours completos).
+                </p>
+              </div>
+            </div>
           </div>
         </motion.section>
 
