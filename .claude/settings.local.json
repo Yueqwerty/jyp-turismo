@@ -6,7 +6,9 @@
       "Bash(npx prisma db push:*)",
       "Bash(rd /s /q .next)",
       "Bash(npm run dev:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(taskkill:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

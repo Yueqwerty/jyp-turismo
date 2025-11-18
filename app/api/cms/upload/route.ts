@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
+import { put } from '@vercel/blob';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
+
+const IS_PRODUCTION = process.env.VERCEL === '1';
 
 export async function POST(request: Request) {
   try {
@@ -17,35 +20,52 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No se proporcionó archivo' }, { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
     // Generar nombre único
     const timestamp = Date.now();
     const originalName = file.name.replace(/\s+/g, '-').toLowerCase();
     const fileName = `${timestamp}-${originalName}`;
 
-    // Ruta donde se guardará el archivo
-    const uploadDir = path.join(process.cwd(), 'public', 'images', 'tours');
-    const filePath = path.join(uploadDir, fileName);
+    if (IS_PRODUCTION) {
+      // Producción: Usar Vercel Blob
+      if (!process.env.BLOB_READ_WRITE_TOKEN) {
+        throw new Error('BLOB_READ_WRITE_TOKEN no configurado');
+      }
 
-    // Crear directorio si no existe
-    try {
-      await mkdir(uploadDir, { recursive: true });
-    } catch (error) {
-      // El directorio ya existe
+      const blob = await put(fileName, file, {
+        access: 'public',
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+      });
+
+      return NextResponse.json({
+        url: blob.url,
+        fileName,
+      });
+    } else {
+      // Desarrollo: Usar sistema de archivos local
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const uploadDir = path.join(process.cwd(), 'public', 'images', 'tours');
+      const filePath = path.join(uploadDir, fileName);
+
+      // Crear directorio si no existe
+      try {
+        await mkdir(uploadDir, { recursive: true });
+      } catch (error) {
+        // El directorio ya existe
+      }
+
+      // Guardar archivo
+      await writeFile(filePath, buffer);
+
+      // Retornar URL pública
+      const publicUrl = `/images/tours/${fileName}`;
+
+      return NextResponse.json({
+        url: publicUrl,
+        fileName,
+      });
     }
-
-    // Guardar archivo
-    await writeFile(filePath, buffer);
-
-    // Retornar URL pública
-    const publicUrl = `/images/tours/${fileName}`;
-
-    return NextResponse.json({
-      url: publicUrl,
-      fileName,
-    });
   } catch (error) {
     console.error('Error uploading file:', error);
     return NextResponse.json(
