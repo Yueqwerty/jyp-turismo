@@ -487,46 +487,6 @@ export default function HomeClient({
                 </div>
               </motion.div>
 
-              {/* CTAs */}
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="flex flex-col sm:flex-row gap-3 pt-2 md:pt-3"
-              >
-                {siteSettings.whatsappNumber && (
-                  <motion.a
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    href={`https://wa.me/${siteSettings.whatsappNumber}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex-1 px-5 py-3 md:px-6 md:py-3.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl md:rounded-2xl font-bold text-sm md:text-base text-center flex items-center justify-center gap-2 shadow-lg transition-all duration-300"
-                  >
-                    <span>{heroSection.ctaWhatsappText}</span>
-                    <svg
-                      className="w-4 h-4 transition-transform group-hover:translate-x-0.5 duration-300"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </motion.a>
-                )}
-
-                {siteSettings.phone && (
-                  <motion.a
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    href={`tel:${siteSettings.phone}`}
-                    className="flex-1 px-5 py-3 md:px-6 md:py-3.5 bg-white border-2 border-slate-200 text-slate-900 rounded-xl md:rounded-2xl font-bold text-sm md:text-base text-center hover:border-slate-300 hover:bg-slate-50 transition-all duration-300"
-                  >
-                    {heroSection.ctaPhoneText}
-                  </motion.a>
-                )}
-              </motion.div>
-
               {/* Social Links */}
               <motion.div
                 initial={{ opacity: 0 }}
