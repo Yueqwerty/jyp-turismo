@@ -3,6 +3,9 @@ import HomeClient from './home-client';
 
 const prisma = new PrismaClient();
 
+// Desactivar cache para siempre obtener datos frescos de la BD
+export const revalidate = 0;
+
 function getDefaultContent() {
   return {
     siteSettings: {

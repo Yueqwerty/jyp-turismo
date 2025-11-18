@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
+import { revalidatePath } from 'next/cache';
 
 const prisma = new PrismaClient();
 
@@ -38,6 +39,9 @@ export async function PUT(
       },
     });
 
+    // Revalidar la página principal para mostrar los cambios
+    revalidatePath('/');
+
     return NextResponse.json(tour);
   } catch (error) {
     console.error('Error updating tour:', error);
@@ -62,6 +66,9 @@ export async function DELETE(
     const { id } = params;
 
     await prisma.tour.delete({ where: { id } });
+
+    // Revalidar la página principal para reflejar la eliminación
+    revalidatePath('/');
 
     return NextResponse.json({ message: 'Tour eliminado exitosamente' });
   } catch (error) {

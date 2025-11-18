@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
+import { revalidatePath } from 'next/cache';
 
 const prisma = new PrismaClient();
 
@@ -26,6 +27,9 @@ export async function POST(request: Request) {
         toursSectionId: toursSection.id,
       },
     });
+
+    // Revalidar la página principal para mostrar el nuevo tour
+    revalidatePath('/');
 
     return NextResponse.json(tour);
   } catch (error) {
@@ -60,6 +64,9 @@ export async function PUT(request: Request) {
     } else {
       toursSection = await prisma.toursSection.create({ data });
     }
+
+    // Revalidar la página principal para mostrar los cambios
+    revalidatePath('/');
 
     return NextResponse.json(toursSection);
   } catch (error) {
