@@ -496,21 +496,6 @@ const HeroSectionCard = memo(function HeroSectionCard({
               ))}
             </div>
           </div>
-
-          {/* Image Preview */}
-          <div className="relative h-64 lg:h-80 rounded-xl lg:rounded-2xl overflow-hidden">
-            <Image
-              src={heroSection.heroImage}
-              alt={heroSection.heroImageAlt}
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-              priority
-            />
-            <div className="absolute bottom-4 right-4 px-3 lg:px-4 py-1.5 lg:py-2 bg-white/20 backdrop-blur-xl rounded-xl border border-white/30">
-              <p className="text-white text-xs lg:text-sm font-bold">{heroSection.heroBadgeText}</p>
-            </div>
-          </div>
         </div>
       </div>
     </motion.section>
