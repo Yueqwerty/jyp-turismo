@@ -131,47 +131,28 @@ export default function AdminPage() {
   }, [status, fetchContent]);
 
   const handleHeroSave = useCallback(async (data: HeroSection) => {
-    setContent(prev => prev ? { ...prev, heroSection: data } : null);
     setActiveModal(null);
-    // Refetch para asegurar sincronización
     await fetchContent();
   }, [fetchContent]);
 
   const handleTourSave = useCallback(async (tour: Tour) => {
-    setContent(prev => {
-      if (!prev) return null;
-      if (selectedTour) {
-        return {
-          ...prev,
-          tours: prev.tours.map(t => t.id === tour.id ? tour : t)
-        };
-      }
-      return { ...prev, tours: [...prev.tours, tour] };
-    });
     setActiveModal(null);
     setSelectedTour(null);
-    // Refetch para asegurar sincronización
     await fetchContent();
-  }, [selectedTour, fetchContent]);
+  }, [fetchContent]);
 
   const handleToursSectionSave = useCallback(async (data: ToursSection) => {
-    setContent(prev => prev ? { ...prev, toursSection: data } : null);
     setActiveModal(null);
-    // Refetch para asegurar sincronización
     await fetchContent();
   }, [fetchContent]);
 
   const handleFooterSave = useCallback(async (data: FooterSettings) => {
-    setContent(prev => prev ? { ...prev, footerSettings: data } : null);
     setActiveModal(null);
-    // Refetch para asegurar sincronización
     await fetchContent();
   }, [fetchContent]);
 
   const handleSettingsSave = useCallback(async (data: SiteSettings) => {
-    setContent(prev => prev ? { ...prev, siteSettings: data } : null);
     setActiveModal(null);
-    // Refetch para asegurar sincronización
     await fetchContent();
   }, [fetchContent]);
 
@@ -196,15 +177,9 @@ export default function AdminPage() {
       });
 
       if (response.ok) {
-        setContent(prev => {
-          if (!prev) return null;
-          return {
-            ...prev,
-            tours: prev.tours.filter(t => t.id !== tourId)
-          };
-        });
-        // Refetch para asegurar sincronización
         await fetchContent();
+      } else {
+        alert('Error al eliminar el tour');
       }
     } catch (error) {
       console.error('Error deleting tour:', error);
