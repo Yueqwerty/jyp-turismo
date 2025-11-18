@@ -193,9 +193,9 @@ model SiteSettings {
   id              String   @id @default(cuid())
   logoText        String   @default("J&P")
   companyName     String   @default("J&P Turismo")
-  metaTitle       String   @default("J&P Turismo - Transporte Patagonia Aysén")
-  metaDescription String   @default("Transporte especializado desde Coyhaique hacia los destinos más icónicos de la Patagonia chilena")
-  metaKeywords    String   @default("turismo, patagonia, aysén, transporte, glaciares, carretera austral")
+  metaTitle       String   @default("J&P Turismo - Operadores Turísticos en Patagonia Aysén")
+  metaDescription String   @default("Operadores turísticos especializados en la región de Aysén. Tours a Laguna San Rafael, Capillas de Mármol, Carretera Austral y más. Transporte seguro y confiable desde Coyhaique.")
+  metaKeywords    String   @default("turismo patagonia, aysén chile, laguna san rafael, capillas mármol, carretera austral, coyhaique, operadores turísticos, glaciares patagonia, puerto tranquilo")
 
   // Contact info
   phone           String?
@@ -212,10 +212,10 @@ model SiteSettings {
 
 model HeroSection {
   id              String   @id @default(cuid())
-  tagline         String   @default("Transporte · Patagonia Aysén")
+  tagline         String   @default("Operadores Turísticos · Región de Aysén")
   titleLine1      String   @default("Explora")
-  titleLine2      String   @default("Aysén")
-  description     String   @default("Conectamos Coyhaique con los glaciares del Campo de Hielo Norte, las Capillas de Mármol y toda la Carretera Austral.")
+  titleLine2      String   @default("la Patagonia")
+  description     String   @default("Descubre los glaciares del Campo de Hielo Norte, las Capillas de Mármol y los paisajes más impresionantes de la Carretera Austral. Transporte seguro y profesional desde Coyhaique.")
 
   // Social media contact boxes (replaces info cards)
   whatsappNumber  String   @default("+56912345678")
@@ -225,8 +225,8 @@ model HeroSection {
 
   // Hero image
   heroImage       String   @default("/images/tours/laguna-san-rafael.jpg")
-  heroImageAlt    String   @default("Glaciar San Rafael")
-  heroBadgeText   String   @default("Campo de Hielo Norte")
+  heroImageAlt    String   @default("Glaciar San Rafael - Patagonia Chilena")
+  heroBadgeText   String   @default("Turismo Sustentable")
 
   // CTA buttons
   ctaWhatsappText String   @default("WhatsApp")
@@ -239,8 +239,8 @@ model HeroSection {
 
 model ToursSection {
   id              String   @id @default(cuid())
-  sectionTitle    String   @default("Rutas")
-  sectionDescription String @default("Desde Puerto Tranquilo hasta el Parque Queulat. Descubre glaciares milenarios, formaciones de mármol y bosques nativos.")
+  sectionTitle    String   @default("Destinos & Experiencias")
+  sectionDescription String @default("Conectamos los rincones más extraordinarios de la Patagonia Aysén. Desde navegaciones al Glaciar San Rafael hasta las formaciones de mármol de Puerto Tranquilo, cada ruta es una aventura única.")
 
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
@@ -288,10 +288,10 @@ model FooterSettings {
 
   // Brand section
   brandTitle      String   @default("J&P\nTurismo")
-  brandDescription String  @default("Transporte especializado desde Coyhaique hacia los destinos más icónicos de la Patagonia chilena.")
+  brandDescription String  @default("Operadores turísticos con más de una década de experiencia conectando viajeros con los paisajes más impresionantes de la Patagonia Aysén. Seguridad, profesionalismo y compromiso con el turismo sustentable.")
 
   // Copyright
-  copyrightText   String   @default("J&P Turismo · Región de Aysén, Chile")
+  copyrightText   String   @default("© 2024 J&P Turismo · Operadores Turísticos · Región de Aysén, Chile")
 
   // Legal links
   termsUrl        String?

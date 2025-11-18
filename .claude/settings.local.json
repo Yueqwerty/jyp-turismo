@@ -5,7 +5,8 @@
       "Bash(npx prisma generate:*)",
       "Bash(npx prisma db push:*)",
       "Bash(rd /s /q .next)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

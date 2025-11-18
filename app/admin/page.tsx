@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import { useState, useEffect, useCallback, useMemo, memo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -1088,14 +1088,121 @@ function TourModal({
           onChange={(value) => setFormData({ ...formData, description: value })}
         />
 
-        {/* Tags */}
-        <TagInput
-          tags={formData.tags}
-          tagInput={tagInput}
-          onTagInputChange={setTagInput}
-          onAddTag={addTag}
-          onRemoveTag={removeTag}
-        />
+        {/* Tags con sugerencias */}
+        <div>
+          <TagInput
+            tags={formData.tags}
+            tagInput={tagInput}
+            onTagInputChange={setTagInput}
+            onAddTag={addTag}
+            onRemoveTag={removeTag}
+          />
+          {/* Tags sugeridos */}
+          <div className="mt-2">
+            <p className="text-xs text-gray-500 mb-2 font-semibold">Sugerencias:</p>
+            <div className="flex flex-wrap gap-2">
+              {['Día completo', 'Medio día', 'Multi-día', 'Navegación', 'Trekking', 'Glaciares', 'Carretera Austral', 'Puerto Tranquilo', 'Coyhaique', 'Todo incluido'].map((suggestion) => (
+                !formData.tags.includes(suggestion) && (
+                  <button
+                    key={suggestion}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, tags: [...formData.tags, suggestion] })}
+                    className="px-2.5 py-1 bg-gray-100 hover:bg-cyan-100 text-gray-700 hover:text-cyan-800 rounded-lg text-xs font-medium transition-colors"
+                  >
+                    + {suggestion}
+                  </button>
+                )
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Gradient Selector */}
+        <div>
+          <label className="block text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">
+            Color del tour
+          </label>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            {[
+              { name: 'Cyan-Teal', value: 'from-cyan-600 to-teal-600' },
+              { name: 'Azul', value: 'from-blue-600 to-blue-700' },
+              { name: 'Gris Oscuro', value: 'from-gray-700 to-gray-800' },
+              { name: 'Gris', value: 'from-gray-600 to-gray-700' },
+              { name: 'Gris-Negro', value: 'from-gray-800 to-gray-900' },
+              { name: 'Cyan-Teal 2', value: 'from-cyan-700 to-teal-700' },
+              { name: 'Cyan-Teal 3', value: 'from-cyan-800 to-teal-800' },
+              { name: 'Índigo', value: 'from-indigo-600 to-purple-600' },
+            ].map((gradient) => (
+              <button
+                key={gradient.value}
+                type="button"
+                onClick={() => setFormData({ ...formData, gradient: gradient.value })}
+                className={`relative h-16 rounded-xl bg-gradient-to-br ${gradient.value} transition-all duration-300 ${
+                  formData.gradient === gradient.value
+                    ? 'ring-4 ring-cyan-500 ring-offset-2 scale-105'
+                    : 'hover:scale-105 hover:shadow-lg'
+                }`}
+              >
+                {formData.gradient === gradient.value && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg className="w-6 h-6 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-gray-500 mt-2">Selecciona el color de fondo cuando no hay imagen</p>
+        </div>
+
+        {/* Card Size Selector */}
+        <div>
+          <label className="block text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">
+            Tamaño de la tarjeta
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, colSpan: 4, rowSpan: 1, minHeight: '320px' })}
+              className={`p-4 rounded-xl border-2 transition-all ${
+                formData.colSpan === 4
+                  ? 'border-cyan-600 bg-cyan-50'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <div className="w-full h-12 bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg mb-2" />
+              <p className="text-xs font-bold text-gray-700">Pequeña</p>
+              <p className="text-[10px] text-gray-500">1 columna</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, colSpan: 5, rowSpan: 1, minHeight: '290px' })}
+              className={`p-4 rounded-xl border-2 transition-all ${
+                formData.colSpan === 5
+                  ? 'border-cyan-600 bg-cyan-50'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <div className="w-full h-16 bg-gradient-to-br from-gray-300 to-gray-400 rounded-lg mb-2" />
+              <p className="text-xs font-bold text-gray-700">Mediana</p>
+              <p className="text-[10px] text-gray-500">1 columna alta</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, colSpan: 7, rowSpan: 2, minHeight: '600px', featured: true })}
+              className={`col-span-2 p-4 rounded-xl border-2 transition-all ${
+                formData.colSpan >= 7
+                  ? 'border-cyan-600 bg-cyan-50'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <div className="w-full h-20 bg-gradient-to-br from-gray-400 to-gray-500 rounded-lg mb-2" />
+              <p className="text-xs font-bold text-gray-700">Grande (Destacada)</p>
+              <p className="text-[10px] text-gray-500">2 columnas, muy visible</p>
+            </button>
+          </div>
+        </div>
 
         <ImageUpload
           label="Imagen"
@@ -1140,25 +1247,14 @@ function TourModal({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wider">
-              Featured
-            </label>
-            <input
-              type="checkbox"
-              checked={formData.featured}
-              onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-              className="w-6 h-6 rounded"
-            />
-          </div>
-          <InputField
-            label="Orden"
-            type="number"
-            value={formData.order.toString()}
-            onChange={(value) => setFormData({ ...formData, order: parseInt(value) || 0 })}
-          />
-        </div>
+        {/* Orden */}
+        <InputField
+          label="Orden de aparición"
+          type="number"
+          value={formData.order.toString()}
+          onChange={(value) => setFormData({ ...formData, order: parseInt(value) || 0 })}
+          placeholder="1, 2, 3..."
+        />
       </div>
       <ModalActions onClose={onClose} onSave={handleSave} saving={saving} />
     </Modal>
@@ -1542,48 +1638,196 @@ function ImageUpload({
   onChange: (value: string) => void;
 }) {
   const [uploading, setUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+  const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
+  const validateFile = (file: File): string | null => {
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return 'Por favor sube una imagen en formato JPG, PNG o WebP';
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      return 'La imagen no puede superar los 5MB';
+    }
+    return null;
+  };
+
+  const uploadFile = async (file: File) => {
+    const validationError = validateFile(file);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    setError(null);
     setUploading(true);
+    setUploadProgress(0);
+
     try {
       const formData = new FormData();
       formData.append('file', file);
+
+      // Simular progreso durante el upload
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) return prev;
+          return prev + 10;
+        });
+      }, 200);
 
       const response = await fetch('/api/cms/upload', {
         method: 'POST',
         body: formData,
       });
 
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Error al subir la imagen');
+      }
+
       const data = await response.json();
       onChange(data.url);
+
+      // Limpiar después de un momento
+      setTimeout(() => {
+        setUploadProgress(0);
+      }, 1000);
     } catch (error) {
       console.error('Error uploading:', error);
+      setError(error instanceof Error ? error.message : 'Error al subir la imagen. Por favor intenta nuevamente.');
+      setUploadProgress(0);
     } finally {
       setUploading(false);
     }
   };
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await uploadFile(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+    await uploadFile(file);
+  };
+
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div>
-      <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wider">
+      <label className="block text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">
         {label}
       </label>
+
+      {/* Preview */}
       {value && (
-        <div className="relative h-48 mb-3 rounded-xl overflow-hidden">
+        <div className="relative h-56 mb-4 rounded-2xl overflow-hidden border-2 border-gray-200 group">
           <Image src={value} alt="Preview" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center">
+            <button
+              type="button"
+              onClick={handleClick}
+              className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 px-4 py-2 bg-white rounded-lg font-bold text-sm text-gray-900 hover:bg-gray-100"
+            >
+              Cambiar imagen
+            </button>
+          </div>
         </div>
       )}
+
+      {/* Drag & Drop Zone */}
+      {!value && (
+        <div
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onClick={handleClick}
+          className={`relative border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 ${
+            isDragging
+              ? 'border-cyan-600 bg-cyan-50'
+              : 'border-gray-300 hover:border-cyan-600 hover:bg-gray-50'
+          } ${uploading ? 'opacity-60 cursor-not-allowed' : ''}`}
+        >
+          <svg
+            className={`mx-auto h-12 w-12 mb-4 transition-colors ${
+              isDragging ? 'text-cyan-600' : 'text-gray-400'
+            }`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+            />
+          </svg>
+          <p className="text-sm font-bold text-gray-700 mb-1">
+            {isDragging ? 'Suelta la imagen aquí' : 'Arrastra una imagen o haz clic para seleccionar'}
+          </p>
+          <p className="text-xs text-gray-500">JPG, PNG o WebP hasta 5MB</p>
+        </div>
+      )}
+
+      {/* Hidden file input */}
       <input
+        ref={fileInputRef}
         type="file"
         accept="image/*"
         onChange={handleFileChange}
         disabled={uploading}
-        className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-cyan-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-cyan-600 file:text-white file:font-bold hover:file:bg-cyan-700"
+        className="hidden"
       />
-      {uploading && <p className="text-sm text-cyan-600 mt-2">Subiendo imagen...</p>}
+
+      {/* Upload Progress */}
+      {uploading && (
+        <div className="mt-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-bold text-cyan-600">Subiendo imagen...</span>
+            <span className="text-sm font-bold text-cyan-600">{uploadProgress}%</span>
+          </div>
+          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-cyan-600 to-teal-600 transition-all duration-300"
+              style={{ width: `${uploadProgress}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2">
+          <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p className="text-sm text-red-700 font-medium">{error}</p>
+        </div>
+      )}
     </div>
   );
 }
