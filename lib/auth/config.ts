@@ -63,11 +63,8 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async redirect({ url, baseUrl }) {
-      // Siempre redirigir al admin después del login
-      if (url.startsWith(baseUrl)) {
-        return `${baseUrl}/admin`;
-      }
-      return baseUrl + '/admin';
+      // Siempre redirigir al admin después del login, ignorando cualquier URL de callback
+      return `${baseUrl}/admin`;
     },
     async jwt({ token, user }) {
       if (user) {

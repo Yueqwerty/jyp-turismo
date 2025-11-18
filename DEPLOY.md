@@ -1,4 +1,4 @@
-# 🚀 Guía de Deployment - J&P Turismo Messaging
+🚀 Guía de Deployment - J&P Turismo Messaging
 
 ## ✅ Pre-requisitos
 

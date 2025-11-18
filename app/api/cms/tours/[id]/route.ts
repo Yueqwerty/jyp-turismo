@@ -31,6 +31,10 @@ export async function PUT(
         minHeight: data.minHeight,
         featured: data.featured,
         order: data.order,
+        packageName: data.packageName,
+        packagePrice: data.packagePrice,
+        packageDuration: data.packageDuration,
+        packageIncludes: data.packageIncludes,
       },
     });
 
