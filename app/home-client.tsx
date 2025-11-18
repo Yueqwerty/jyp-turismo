@@ -155,8 +155,8 @@ const TourCard = memo(function TourCard({ tour, index, siteSettings }: { tour: T
           {tour.title}
         </motion.h3>
 
-        {/* Description (only for large cards when info not shown) */}
-        {tour.description && (tour.featured || tour.colSpan >= 7) && !showInfo && (
+        {/* Description (only for large cards) */}
+        {tour.description && (tour.featured || tour.colSpan >= 7) && (
           <motion.p
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : {}}
