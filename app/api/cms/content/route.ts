@@ -35,12 +35,18 @@ export async function GET() {
       footerSettings = await prisma.footerSettings.create({ data: {} });
     }
 
+    let toursPage = await prisma.toursPage.findFirst({ where: { isActive: true } });
+    if (!toursPage) {
+      toursPage = await prisma.toursPage.create({ data: {} });
+    }
+
     return NextResponse.json({
       siteSettings,
       heroSection,
       toursSection,
       tours,
       footerSettings,
+      toursPage,
     });
   } catch (error) {
     console.error('Error fetching content:', error);

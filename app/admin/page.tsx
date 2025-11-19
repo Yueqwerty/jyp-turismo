@@ -70,12 +70,19 @@ interface SiteSettings {
   email?: string | null;
 }
 
+interface ToursPage {
+  id: string;
+  heroTitle: string;
+  heroSubtitle: string;
+}
+
 interface Content {
   heroSection: HeroSection;
   toursSection: ToursSection;
   tours: Tour[];
   footerSettings: FooterSettings;
   siteSettings: SiteSettings;
+  toursPage: ToursPage;
 }
 
 // Animation variants
@@ -153,6 +160,11 @@ export default function AdminPage() {
   }, [fetchContent]);
 
   const handleSettingsSave = useCallback(async (data: SiteSettings) => {
+    setActiveModal(null);
+    await fetchContent();
+  }, [fetchContent]);
+
+  const handleToursPageSave = useCallback(async (data: ToursPage) => {
     setActiveModal(null);
     await fetchContent();
   }, [fetchContent]);
@@ -429,6 +441,10 @@ export default function AdminPage() {
             siteSettings={content.siteSettings}
             onEdit={() => setActiveModal('settings')}
           />
+          <ToursPageCard
+            toursPage={content.toursPage}
+            onEdit={() => setActiveModal('tours-page')}
+          />
         </div>
       </main>
 
@@ -467,6 +483,13 @@ export default function AdminPage() {
             content={content.siteSettings}
             onClose={closeModal}
             onSave={handleSettingsSave}
+          />
+        )}
+        {activeModal === 'tours-page' && (
+          <ToursPageModal
+            content={content.toursPage}
+            onClose={closeModal}
+            onSave={handleToursPageSave}
           />
         )}
       </AnimatePresence>
@@ -827,6 +850,36 @@ const SettingItem = memo(function SettingItem({ label, value }: { label: string;
       <span className="text-xs text-gray-400 uppercase tracking-wider">{label}</span>
       <p className="text-sm font-bold text-gray-900 truncate">{value}</p>
     </div>
+  );
+});
+
+// Memoized ToursPage Card
+const ToursPageCard = memo(function ToursPageCard({
+  toursPage,
+  onEdit
+}: {
+  toursPage: ToursPage;
+  onEdit: () => void;
+}) {
+  return (
+    <motion.div
+      variants={fadeInUp}
+      initial="initial"
+      animate="animate"
+      transition={{ delay: 0.3 }}
+    >
+      <div className="flex items-center justify-between mb-4 lg:mb-6 gap-4">
+        <div className="min-w-0">
+          <h2 className="text-2xl lg:text-3xl font-black text-gray-900 tracking-tight">Página de Paquetes</h2>
+          <p className="text-sm lg:text-base text-gray-500 mt-1 hidden sm:block">Contenido de /tours</p>
+        </div>
+        <EditButton onClick={onEdit} label="Editar" compact />
+      </div>
+      <div className="bg-white rounded-2xl lg:rounded-3xl p-4 lg:p-6 shadow-lg border border-gray-100 space-y-3">
+        <SettingItem label="Título Hero" value={toursPage.heroTitle} />
+        <SettingItem label="Subtítulo" value={toursPage.heroSubtitle} />
+      </div>
+    </motion.div>
   );
 });
 
@@ -1421,6 +1474,59 @@ function SettingsModal({
           label="Meta Description"
           value={formData.metaDescription}
           onChange={(value) => setFormData({ ...formData, metaDescription: value })}
+        />
+      </div>
+      <ModalActions onClose={onClose} onSave={handleSave} saving={saving} />
+    </Modal>
+  );
+}
+
+function ToursPageModal({
+  content,
+  onClose,
+  onSave,
+}: {
+  content: ToursPage;
+  onClose: () => void;
+  onSave: (data: ToursPage) => void;
+}) {
+  const [formData, setFormData] = useState(content);
+  const [saving, setSaving] = useState(false);
+
+  // Sincronizar formData cuando cambie content
+  useEffect(() => {
+    setFormData(content);
+  }, [content]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const response = await fetch('/api/cms/tours-page', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      onSave(data);
+    } catch (error) {
+      console.error('Error saving:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Modal title="Página de Paquetes Turísticos" onClose={onClose}>
+      <div className="space-y-6 max-h-[70vh] overflow-y-auto px-1">
+        <InputField
+          label="Título Hero"
+          value={formData.heroTitle}
+          onChange={(value) => setFormData({ ...formData, heroTitle: value })}
+        />
+        <InputField
+          label="Subtítulo Hero"
+          value={formData.heroSubtitle}
+          onChange={(value) => setFormData({ ...formData, heroSubtitle: value })}
         />
       </div>
       <ModalActions onClose={onClose} onSave={handleSave} saving={saving} />

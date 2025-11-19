@@ -40,8 +40,9 @@ export async function PUT(
       },
     });
 
-    // Revalidar la página principal para mostrar los cambios
+    // Revalidar la página principal y el catálogo para mostrar los cambios
     revalidatePath('/');
+    revalidatePath('/tours');
 
     return NextResponse.json(tour);
   } catch (error) {
@@ -68,8 +69,9 @@ export async function DELETE(
 
     await prisma.tour.delete({ where: { id } });
 
-    // Revalidar la página principal para reflejar la eliminación
+    // Revalidar la página principal y el catálogo para reflejar la eliminación
     revalidatePath('/');
+    revalidatePath('/tours');
 
     return NextResponse.json({ message: 'Tour eliminado exitosamente' });
   } catch (error) {

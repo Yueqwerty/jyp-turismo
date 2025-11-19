@@ -35,9 +35,25 @@ async function getSiteSettings() {
   return settings;
 }
 
+async function getToursPage() {
+  try {
+    let toursPage = await prisma.toursPage.findFirst({ where: { isActive: true } });
+
+    if (!toursPage) {
+      toursPage = await prisma.toursPage.create({ data: {} });
+    }
+
+    return toursPage;
+  } catch (error) {
+    console.error('Error fetching tours page:', error);
+    return null;
+  }
+}
+
 export default async function ToursPage() {
   const tours = await getAllTours();
   const siteSettings = await getSiteSettings();
+  const toursPage = await getToursPage();
 
-  return <ToursClient tours={tours} siteSettings={siteSettings} />;
+  return <ToursClient tours={tours} siteSettings={siteSettings} toursPage={toursPage} />;
 }

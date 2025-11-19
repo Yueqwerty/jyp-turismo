@@ -28,8 +28,9 @@ export async function POST(request: Request) {
       },
     });
 
-    // Revalidar la página principal para mostrar el nuevo tour
+    // Revalidar la página principal y el catálogo para mostrar el nuevo tour
     revalidatePath('/');
+    revalidatePath('/tours');
 
     return NextResponse.json(tour);
   } catch (error) {
@@ -65,8 +66,9 @@ export async function PUT(request: Request) {
       toursSection = await prisma.toursSection.create({ data });
     }
 
-    // Revalidar la página principal para mostrar los cambios
+    // Revalidar la página principal y el catálogo para mostrar los cambios
     revalidatePath('/');
+    revalidatePath('/tours');
 
     return NextResponse.json(toursSection);
   } catch (error) {
