@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { put } from '@vercel/blob';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 
@@ -26,20 +25,14 @@ export async function POST(request: Request) {
     const fileName = `${timestamp}-${originalName}`;
 
     if (IS_PRODUCTION) {
-      // Producción: Usar Vercel Blob
-      if (!process.env.BLOB_READ_WRITE_TOKEN) {
-        throw new Error('BLOB_READ_WRITE_TOKEN no configurado');
-      }
-
-      const blob = await put(fileName, file, {
-        access: 'public',
-        token: process.env.BLOB_READ_WRITE_TOKEN,
-      });
-
-      return NextResponse.json({
-        url: blob.url,
-        fileName,
-      });
+      // Producción: Usar Vercel Blob (requiere instalar @vercel/blob)
+      return NextResponse.json(
+        {
+          error: 'La subida de archivos en producción requiere instalar @vercel/blob. Ejecutar: npm install @vercel/blob',
+          details: 'Por favor contacte al administrador para configurar el almacenamiento de archivos.'
+        },
+        { status: 500 }
+      );
     } else {
       // Desarrollo: Usar sistema de archivos local
       const bytes = await file.arrayBuffer();
