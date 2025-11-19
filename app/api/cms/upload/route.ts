@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
+import { put } from '@vercel/blob';
 
 const IS_PRODUCTION = process.env.VERCEL === '1';
 
@@ -25,14 +26,16 @@ export async function POST(request: Request) {
     const fileName = `${timestamp}-${originalName}`;
 
     if (IS_PRODUCTION) {
-      // Producción: Usar Vercel Blob (requiere instalar @vercel/blob)
-      return NextResponse.json(
-        {
-          error: 'La subida de archivos en producción requiere instalar @vercel/blob. Ejecutar: npm install @vercel/blob',
-          details: 'Por favor contacte al administrador para configurar el almacenamiento de archivos.'
-        },
-        { status: 500 }
-      );
+      // Producción: Usar Vercel Blob Storage
+      const blob = await put(fileName, file, {
+        access: 'public',
+        addRandomSuffix: false,
+      });
+
+      return NextResponse.json({
+        url: blob.url,
+        fileName,
+      });
     } else {
       // Desarrollo: Usar sistema de archivos local
       const bytes = await file.arrayBuffer();
