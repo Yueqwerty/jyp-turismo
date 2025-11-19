@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 // Types
 interface HeroSection {
