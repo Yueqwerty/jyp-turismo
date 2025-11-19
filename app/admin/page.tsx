@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 // Types
 interface HeroSection {
@@ -89,6 +88,16 @@ interface Content {
 }
 
 type MenuItem = 'dashboard' | 'hero' | 'tours' | 'footer' | 'settings' | 'tools' | 'media';
+
+const menuItems = [
+  { id: 'dashboard' as MenuItem, label: 'Dashboard', icon: '📊' },
+  { id: 'hero' as MenuItem, label: 'Hero Section', icon: '🏔️' },
+  { id: 'tours' as MenuItem, label: 'Tours', icon: '🗺️' },
+  { id: 'footer' as MenuItem, label: 'Footer', icon: '📄' },
+  { id: 'settings' as MenuItem, label: 'Configuración', icon: '⚙️' },
+  { id: 'tools' as MenuItem, label: 'Herramientas', icon: '🔧' },
+  { id: 'media' as MenuItem, label: 'Medios', icon: '🖼️' },
+];
 
 export default function AdminPage() {
   const router = useRouter();
@@ -275,16 +284,6 @@ export default function AdminPage() {
   }
 
   if (!content) return null;
-
-  const menuItems = [
-    { id: 'dashboard' as MenuItem, label: 'Dashboard', icon: '📊' },
-    { id: 'hero' as MenuItem, label: 'Hero Section', icon: '🏔️' },
-    { id: 'tours' as MenuItem, label: 'Tours', icon: '🗺️' },
-    { id: 'footer' as MenuItem, label: 'Footer', icon: '📄' },
-    { id: 'settings' as MenuItem, label: 'Configuración', icon: '⚙️' },
-    { id: 'tools' as MenuItem, label: 'Herramientas', icon: '🔧' },
-    { id: 'media' as MenuItem, label: 'Medios', icon: '🖼️' },
-  ];
 
   return (
     <div className="flex h-screen bg-gray-100">
