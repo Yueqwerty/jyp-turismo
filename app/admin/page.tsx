@@ -110,6 +110,8 @@ export default function AdminPage() {
   const [isSyncingTours, setIsSyncingTours] = useState(false);
   const [updateContactMessage, setUpdateContactMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [syncToursMessage, setSyncToursMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [activeModal, setActiveModal] = useState<'hero' | 'tour' | 'tours-section' | 'footer' | 'settings' | 'tours-page' | null>(null);
+  const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -381,24 +383,28 @@ export default function AdminPage() {
               </div>
             </div>
           </div>
-        </motion.section>
+        </header>
 
-        {/* Footer & Settings Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-          <FooterCard
-            footerSettings={content.footerSettings}
-            onEdit={() => setActiveModal('footer')}
-          />
-          <SettingsCard
-            siteSettings={content.siteSettings}
-            onEdit={() => setActiveModal('settings')}
-          />
-          <ToursPageCard
-            toursPage={content.toursPage}
-            onEdit={() => setActiveModal('tours-page')}
-          />
-        </div>
-      </main>
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
+          {activeSection === 'dashboard' && <DashboardSection content={content} />}
+          {activeSection === 'hero' && <HeroSection content={content} />}
+          {activeSection === 'tours' && <ToursSection content={content} />}
+          {activeSection === 'footer' && <FooterSection content={content} />}
+          {activeSection === 'settings' && <SettingsSection content={content} />}
+          {activeSection === 'tools' && (
+            <ToolsSection
+              onUpdateContact={handleUpdateContact}
+              onSyncTours={handleSyncTours}
+              isUpdatingContact={isUpdatingContact}
+              isSyncingTours={isSyncingTours}
+              updateContactMessage={updateContactMessage}
+              syncToursMessage={syncToursMessage}
+            />
+          )}
+          {activeSection === 'media' && <MediaSection />}
+        </main>
+      </div>
 
       {/* Modals */}
       <AnimatePresence mode="wait">
@@ -637,7 +643,7 @@ function ToursSection({ content }: { content: Content }) {
       </div>
     </div>
   );
-});
+}
 
 // Memoized ToursPage Card
 const ToursPageCard = memo(function ToursPageCard({
@@ -725,6 +731,52 @@ function HeroModal({
       setSaving(false);
     }
   };
+
+  return (
+    <Modal title="Editar Hero Section" onClose={onClose}>
+      <div className="space-y-6 max-h-[70vh] overflow-y-auto px-1">
+        <InputField
+          label="Tagline"
+          value={formData.tagline}
+          onChange={(value) => setFormData({ ...formData, tagline: value })}
+        />
+        <div className="grid grid-cols-2 gap-4">
+          <InputField
+            label="Título Línea 1"
+            value={formData.titleLine1}
+            onChange={(value) => setFormData({ ...formData, titleLine1: value })}
+          />
+          <InputField
+            label="Título Línea 2"
+            value={formData.titleLine2}
+            onChange={(value) => setFormData({ ...formData, titleLine2: value })}
+          />
+        </div>
+        <TextAreaField
+          label="Descripción"
+          value={formData.description}
+          onChange={(value) => setFormData({ ...formData, description: value })}
+        />
+        <InputField
+          label="WhatsApp"
+          value={formData.whatsappNumber}
+          onChange={(value) => setFormData({ ...formData, whatsappNumber: value })}
+        />
+        <InputField
+          label="Email"
+          value={formData.email}
+          onChange={(value) => setFormData({ ...formData, email: value })}
+        />
+        <ImageUpload
+          label="Imagen Hero"
+          value={formData.heroImage}
+          onChange={(value) => setFormData({ ...formData, heroImage: value })}
+        />
+      </div>
+      <ModalActions onClose={onClose} onSave={handleSave} saving={saving} />
+    </Modal>
+  );
+}
 
 // Footer Section (Placeholder)
 function FooterSection({ content }: { content: Content }) {
@@ -1041,7 +1093,8 @@ function TourModal({
           placeholder="1, 2, 3..."
         />
       </div>
-    </div>
+      <ModalActions onClose={onClose} onSave={handleSave} saving={saving} />
+    </Modal>
   );
 }
 
@@ -1098,11 +1151,57 @@ function ToursPageModal({
   );
 }
 
-// Utility Components
-function Modal({
-  title,
-  children,
-  onClose,
+// Settings Section
+function SettingsSection({ content }: { content: Content }) {
+  return (
+    <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
+      <h3 className="text-lg font-bold mb-4">Configuración del Sitio</h3>
+      <div className="border-t-2 border-dashed border-gray-200 my-4"></div>
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Logo Text</label>
+          <input
+            type="text"
+            defaultValue={content.siteSettings.logoText}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Nombre de la Compañía</label>
+          <input
+            type="text"
+            defaultValue={content.siteSettings.companyName}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+          />
+        </div>
+        <div className="border-t-2 border-dashed border-gray-200 my-4"></div>
+        <button className="px-6 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-medium transition-colors">
+          Guardar Cambios
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Media Section
+function MediaSection() {
+  return (
+    <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
+      <h3 className="text-lg font-bold mb-4">Gestión de Medios</h3>
+      <div className="border-t-2 border-dashed border-gray-200 my-4"></div>
+      <p className="text-gray-600">Gestión de medios próximamente...</p>
+    </div>
+  );
+}
+
+// Tools Section
+function ToolsSection({
+  onUpdateContact,
+  onSyncTours,
+  isUpdatingContact,
+  isSyncingTours,
+  updateContactMessage,
+  syncToursMessage,
 }: {
   onUpdateContact: () => void;
   onSyncTours: () => void;
@@ -1193,7 +1292,49 @@ function Modal({
       </div>
     </div>
   );
-});
+}
+
+// Utility Components
+function Modal({
+  title,
+  children,
+  onClose,
+}: {
+  title: string;
+  children: React.ReactNode;
+  onClose: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
+          <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div className="p-6">{children}</div>
+      </motion.div>
+    </motion.div>
+  );
+}
 
 function ImageUpload({
   label,
@@ -1398,3 +1539,345 @@ function ImageUpload({
     </div>
   );
 }
+
+// Helper Input Components
+function InputField({
+  label,
+  value,
+  onChange,
+  type = 'text',
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: string;
+  placeholder?: string;
+}) {
+  return (
+    <div>
+      <label className="block text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">
+        {label}
+      </label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all text-gray-900 placeholder-gray-400"
+      />
+    </div>
+  );
+}
+
+function TextAreaField({
+  label,
+  value,
+  onChange,
+  rows = 3,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  rows?: number;
+}) {
+  return (
+    <div>
+      <label className="block text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">
+        {label}
+      </label>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={rows}
+        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all text-gray-900 placeholder-gray-400 resize-none"
+      />
+    </div>
+  );
+}
+
+function TagInput({
+  label,
+  tags,
+  tagInput,
+  onTagInputChange,
+  onAddTag,
+  onRemoveTag,
+  placeholder,
+}: {
+  label?: string;
+  tags: string[];
+  tagInput: string;
+  onTagInputChange: (value: string) => void;
+  onAddTag: () => void;
+  onRemoveTag: (index: number) => void;
+  placeholder?: string;
+}) {
+  return (
+    <div>
+      {label && (
+        <label className="block text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">
+          {label}
+        </label>
+      )}
+      <div className="flex gap-2 mb-3">
+        <input
+          type="text"
+          value={tagInput}
+          onChange={(e) => onTagInputChange(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), onAddTag())}
+          placeholder={placeholder || 'Agregar tag...'}
+          className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all"
+        />
+        <button
+          type="button"
+          onClick={onAddTag}
+          className="px-6 py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-bold transition-colors"
+        >
+          +
+        </button>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {tags.map((tag, index) => (
+          <span
+            key={index}
+            className="inline-flex items-center gap-2 px-3 py-1.5 bg-cyan-100 text-cyan-800 rounded-lg text-sm font-medium"
+          >
+            {tag}
+            <button
+              type="button"
+              onClick={() => onRemoveTag(index)}
+              className="text-cyan-600 hover:text-cyan-900 transition-colors"
+            >
+              ×
+            </button>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ModalActions({
+  onClose,
+  onSave,
+  saving,
+}: {
+  onClose: () => void;
+  onSave: () => void;
+  saving: boolean;
+}) {
+  return (
+    <div className="mt-6 pt-6 border-t border-gray-200 flex justify-end gap-3">
+      <button
+        type="button"
+        onClick={onClose}
+        className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-colors"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        onClick={onSave}
+        disabled={saving}
+        className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 disabled:from-gray-400 disabled:to-gray-400 text-white rounded-xl font-bold transition-all shadow-lg shadow-cyan-600/25 inline-flex items-center gap-2"
+      >
+        {saving ? (
+          <>
+            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            Guardando...
+          </>
+        ) : (
+          'Guardar Cambios'
+        )}
+      </button>
+    </div>
+  );
+}
+
+function SettingItem({ label, value }: { label: string; value: string | null | undefined }) {
+  return (
+    <div className="py-2">
+      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">{label}</p>
+      <p className="text-base font-medium text-gray-900">{value || 'No configurado'}</p>
+    </div>
+  );
+}
+
+// Missing Modal Components
+function FooterModal({
+  content,
+  onClose,
+  onSave,
+}: {
+  content: FooterSettings;
+  onClose: () => void;
+  onSave: (data: FooterSettings) => void;
+}) {
+  const [formData, setFormData] = useState(content);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setFormData(content);
+  }, [content]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const response = await fetch('/api/cms/footer', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      onSave(data);
+    } catch (error) {
+      console.error('Error saving:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Modal title="Editar Footer" onClose={onClose}>
+      <div className="space-y-6 max-h-[70vh] overflow-y-auto px-1">
+        <InputField
+          label="Título de Marca"
+          value={formData.brandTitle}
+          onChange={(value) => setFormData({ ...formData, brandTitle: value })}
+        />
+        <TextAreaField
+          label="Descripción"
+          value={formData.brandDescription}
+          onChange={(value) => setFormData({ ...formData, brandDescription: value })}
+        />
+        <InputField
+          label="Copyright"
+          value={formData.copyrightText}
+          onChange={(value) => setFormData({ ...formData, copyrightText: value })}
+        />
+      </div>
+      <ModalActions onClose={onClose} onSave={handleSave} saving={saving} />
+    </Modal>
+  );
+}
+
+function SettingsModal({
+  content,
+  onClose,
+  onSave,
+}: {
+  content: SiteSettings;
+  onClose: () => void;
+  onSave: (data: SiteSettings) => void;
+}) {
+  const [formData, setFormData] = useState(content);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setFormData(content);
+  }, [content]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const response = await fetch('/api/cms/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      onSave(data);
+    } catch (error) {
+      console.error('Error saving:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Modal title="Configuración del Sitio" onClose={onClose}>
+      <div className="space-y-6 max-h-[70vh] overflow-y-auto px-1">
+        <InputField
+          label="Logo Text"
+          value={formData.logoText}
+          onChange={(value) => setFormData({ ...formData, logoText: value })}
+        />
+        <InputField
+          label="Nombre de la Compañía"
+          value={formData.companyName}
+          onChange={(value) => setFormData({ ...formData, companyName: value })}
+        />
+        <InputField
+          label="Meta Título"
+          value={formData.metaTitle}
+          onChange={(value) => setFormData({ ...formData, metaTitle: value })}
+        />
+        <TextAreaField
+          label="Meta Descripción"
+          value={formData.metaDescription}
+          onChange={(value) => setFormData({ ...formData, metaDescription: value })}
+        />
+      </div>
+      <ModalActions onClose={onClose} onSave={handleSave} saving={saving} />
+    </Modal>
+  );
+}
+
+function ToursSectionModal({
+  content,
+  onClose,
+  onSave,
+}: {
+  content: ToursSection;
+  onClose: () => void;
+  onSave: (data: ToursSection) => void;
+}) {
+  const [formData, setFormData] = useState(content);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setFormData(content);
+  }, [content]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const response = await fetch('/api/cms/tours-section', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      onSave(data);
+    } catch (error) {
+      console.error('Error saving:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Modal title="Sección de Tours" onClose={onClose}>
+      <div className="space-y-6 max-h-[70vh] overflow-y-auto px-1">
+        <InputField
+          label="Título de Sección"
+          value={formData.sectionTitle}
+          onChange={(value) => setFormData({ ...formData, sectionTitle: value })}
+        />
+        <TextAreaField
+          label="Descripción de Sección"
+          value={formData.sectionDescription}
+          onChange={(value) => setFormData({ ...formData, sectionDescription: value })}
+        />
+      </div>
+      <ModalActions onClose={onClose} onSave={handleSave} saving={saving} />
+    </Modal>
+  );
+}
+
+// Animation Variants
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+};
