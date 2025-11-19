@@ -114,6 +114,11 @@ export default function ToursClient({ tours, siteSettings, toursPage }: ToursCli
         <div className="absolute top-1/2 right-0 w-1/3 h-96 bg-gradient-to-l from-neutral-100 to-transparent opacity-50" />
       </section>
 
+      {/* Decorative Border Separator */}
+      <div className="max-w-[1800px] mx-auto px-8 lg:px-16 py-12">
+        <div className="border-t-2 border-dashed border-neutral-200"></div>
+      </div>
+
       {/* Tours Grid - Professional Layout */}
       <section className="relative py-32 bg-white">
         <div className="max-w-[1800px] mx-auto px-8 lg:px-16">
@@ -129,6 +134,11 @@ export default function ToursClient({ tours, siteSettings, toursPage }: ToursCli
           </div>
         </div>
       </section>
+
+      {/* Decorative Border Separator Before Footer */}
+      <div className="max-w-[1800px] mx-auto px-8 lg:px-16 py-12">
+        <div className="border-t-2 border-dashed border-neutral-200"></div>
+      </div>
 
       {/* Footer - Minimal */}
       <footer className="border-t border-neutral-100 bg-neutral-50">
