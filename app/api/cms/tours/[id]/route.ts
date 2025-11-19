@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
+import { revalidatePath } from 'next/cache';
 
 const prisma = new PrismaClient();
 
@@ -32,11 +33,16 @@ export async function PUT(
         featured: data.featured,
         order: data.order,
         packageName: data.packageName,
+        packageDescription: data.packageDescription,
         packagePrice: data.packagePrice,
         packageDuration: data.packageDuration,
         packageIncludes: data.packageIncludes,
       },
     });
+
+    // Revalidar la página principal y el catálogo para mostrar los cambios
+    revalidatePath('/');
+    revalidatePath('/tours');
 
     return NextResponse.json(tour);
   } catch (error) {
@@ -62,6 +68,10 @@ export async function DELETE(
     const { id } = params;
 
     await prisma.tour.delete({ where: { id } });
+
+    // Revalidar la página principal y el catálogo para reflejar la eliminación
+    revalidatePath('/');
+    revalidatePath('/tours');
 
     return NextResponse.json({ message: 'Tour eliminado exitosamente' });
   } catch (error) {

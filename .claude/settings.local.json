@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(npx prisma db push:*)",
+      "Bash(rd /s /q .next)",
+      "Bash(npm run dev:*)",
+      "WebSearch",
+      "Bash(taskkill:*)",
+      "Bash(npm install:*)",
+      "Bash(node check-images.js:*)",
+      "Bash(Get-Process node -ErrorAction SilentlyContinue)",
+      "Bash(Stop-Process -Force)",
+      "Bash(node check-tours.js:*)",
+      "Bash(node fix-tours.js:*)",
+      "Bash(del check-tours.js fix-tours.js)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(git restore:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

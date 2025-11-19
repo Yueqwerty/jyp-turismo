@@ -7,6 +7,16 @@ const nextConfig = {
     }
   },
 
+  // Image optimization configuration
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.public.blob.vercel-storage.com',
+      },
+    ],
+  },
+
   // Security Headers
   async headers() {
     return [
