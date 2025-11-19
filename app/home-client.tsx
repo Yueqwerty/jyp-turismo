@@ -374,6 +374,11 @@ export default function HomeClient({
               style={{ y: backgroundY }}
               className="min-h-screen p-4 md:p-8 lg:p-14"
             >
+              {/* Decorative Border Separator */}
+              <div className="mb-12 md:mb-16">
+                <div className="border-t-2 border-dashed border-slate-300/60"></div>
+              </div>
+
               {/* Section Header */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -395,6 +400,11 @@ export default function HomeClient({
                 {tours.map((tour, index) => (
                   <TourCard key={tour.id} tour={tour} index={index} siteSettings={siteSettings} />
                 ))}
+              </div>
+
+              {/* Decorative Border Separator Before Footer */}
+              <div className="mt-16 md:mt-24 mb-8 md:mb-12">
+                <div className="border-t-2 border-dashed border-slate-300/60"></div>
               </div>
 
               {/* Footer */}
