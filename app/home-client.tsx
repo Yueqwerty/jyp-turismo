@@ -532,6 +532,11 @@ export default function HomeClient({
               style={{ y: backgroundY }}
               className="min-h-screen p-4 md:p-8 lg:p-14"
             >
+              {/* Decorative Border Separator */}
+              <div className="mb-12 md:mb-16">
+                <div className="border-t-2 border-dashed border-slate-300/60"></div>
+              </div>
+
               {/* Section Header */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -555,13 +560,18 @@ export default function HomeClient({
                 ))}
               </div>
 
+              {/* Decorative Border Separator Before Footer */}
+              <div className="mt-16 md:mt-24 mb-8 md:mb-12">
+                <div className="border-t-2 border-dashed border-slate-300/60"></div>
+              </div>
+
               {/* Footer */}
               <motion.footer
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="mt-16 md:mt-24 pt-8 md:pt-12 border-t border-slate-200"
+                className="pt-8 md:pt-12 border-t border-slate-200"
               >
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10 mb-6 md:mb-10">
                   <div className="md:col-span-2">
