@@ -1,52 +1,80 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';
+import { prisma } from '@/lib/prisma';
+import { tourSchema, validateInput } from '@/lib/validations/cms';
 
-const prisma = new PrismaClient();
+interface RouteParams {
+  params: Promise<{ id: string }>;
+}
 
-// PUT - Actualizar un tour específico
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+// GET - Get single tour
+export async function GET(request: Request, { params }: RouteParams) {
+  try {
+    const { id } = await params;
+
+    const tour = await prisma.tour.findUnique({
+      where: { id },
+    });
+
+    if (!tour) {
+      return NextResponse.json(
+        { error: 'Tour no encontrado' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(tour);
+  } catch (error) {
+    console.error('[Tour GET] Error:', error);
+    return NextResponse.json(
+      { error: 'Error al obtener tour' },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT - Update tour
+export async function PUT(request: Request, { params }: RouteParams) {
   try {
     const session = await getServerSession();
     if (!session) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const data = await request.json();
-    const { id } = params;
+    const { id } = await params;
+    const body = await request.json();
+    const validation = validateInput(tourSchema, body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      );
+    }
+
+    // Verify tour exists
+    const existingTour = await prisma.tour.findUnique({ where: { id } });
+    if (!existingTour) {
+      return NextResponse.json(
+        { error: 'Tour no encontrado' },
+        { status: 404 }
+      );
+    }
+
+    const { id: _, ...tourData } = validation.data;
 
     const tour = await prisma.tour.update({
       where: { id },
-      data: {
-        title: data.title,
-        description: data.description,
-        tags: data.tags,
-        image: data.image,
-        gradient: data.gradient,
-        colSpan: data.colSpan,
-        rowSpan: data.rowSpan,
-        minHeight: data.minHeight,
-        featured: data.featured,
-        order: data.order,
-        packageName: data.packageName,
-        packageDescription: data.packageDescription,
-        packagePrice: data.packagePrice,
-        packageDuration: data.packageDuration,
-        packageIncludes: data.packageIncludes,
-      },
+      data: tourData,
     });
 
-    // Revalidar la página principal y el catálogo para mostrar los cambios
     revalidatePath('/');
     revalidatePath('/tours');
 
     return NextResponse.json(tour);
   } catch (error) {
-    console.error('Error updating tour:', error);
+    console.error('[Tour PUT] Error:', error);
     return NextResponse.json(
       { error: 'Error al actualizar tour' },
       { status: 500 }
@@ -54,28 +82,33 @@ export async function PUT(
   }
 }
 
-// DELETE - Eliminar un tour
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+// DELETE - Delete tour
+export async function DELETE(request: Request, { params }: RouteParams) {
   try {
     const session = await getServerSession();
     if (!session) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = await params;
+
+    // Verify tour exists
+    const existingTour = await prisma.tour.findUnique({ where: { id } });
+    if (!existingTour) {
+      return NextResponse.json(
+        { error: 'Tour no encontrado' },
+        { status: 404 }
+      );
+    }
 
     await prisma.tour.delete({ where: { id } });
 
-    // Revalidar la página principal y el catálogo para reflejar la eliminación
     revalidatePath('/');
     revalidatePath('/tours');
 
-    return NextResponse.json({ message: 'Tour eliminado exitosamente' });
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting tour:', error);
+    console.error('[Tour DELETE] Error:', error);
     return NextResponse.json(
       { error: 'Error al eliminar tour' },
       { status: 500 }

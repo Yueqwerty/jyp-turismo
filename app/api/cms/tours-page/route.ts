@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';
+import { prisma } from '@/lib/prisma';
+import { toursPageSchema, validateInput } from '@/lib/validations/cms';
 
-const prisma = new PrismaClient();
-
-// GET - Obtener ToursPage
+// GET - Get tours page config
 export async function GET() {
   try {
     let toursPage = await prisma.toursPage.findFirst({ where: { isActive: true } });
@@ -16,15 +15,15 @@ export async function GET() {
 
     return NextResponse.json(toursPage);
   } catch (error) {
-    console.error('Error fetching tours page:', error);
+    console.error('[ToursPage GET] Error:', error);
     return NextResponse.json(
-      { error: 'Error al obtener página de tours' },
+      { error: 'Error al obtener pagina de tours' },
       { status: 500 }
     );
   }
 }
 
-// PUT - Actualizar ToursPage
+// PUT - Update tours page config
 export async function PUT(request: Request) {
   try {
     const session = await getServerSession();
@@ -32,30 +31,38 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const data = await request.json();
+    const body = await request.json();
+    const validation = validateInput(toursPageSchema, body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      );
+    }
 
     let toursPage = await prisma.toursPage.findFirst({ where: { isActive: true } });
+
+    const { id, ...pageData } = validation.data;
 
     if (toursPage) {
       toursPage = await prisma.toursPage.update({
         where: { id: toursPage.id },
-        data: {
-          heroTitle: data.heroTitle,
-          heroSubtitle: data.heroSubtitle,
-        },
+        data: pageData,
       });
     } else {
-      toursPage = await prisma.toursPage.create({ data });
+      toursPage = await prisma.toursPage.create({
+        data: pageData,
+      });
     }
 
-    // Revalidar la página de tours
     revalidatePath('/tours');
 
     return NextResponse.json(toursPage);
   } catch (error) {
-    console.error('Error updating tours page:', error);
+    console.error('[ToursPage PUT] Error:', error);
     return NextResponse.json(
-      { error: 'Error al actualizar página de tours' },
+      { error: 'Error al actualizar pagina de tours' },
       { status: 500 }
     );
   }

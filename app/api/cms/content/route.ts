@@ -1,55 +1,57 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 
-const prisma = new PrismaClient();
-
-// GET - Obtener todo el contenido del sitio
 export async function GET() {
   try {
-    // Obtener o crear configuraciones predeterminadas
-    let siteSettings = await prisma.siteSettings.findFirst();
-    if (!siteSettings) {
-      siteSettings = await prisma.siteSettings.create({ data: {} });
-    }
+    // Parallel fetching for better performance
+    const [
+      siteSettings,
+      heroSection,
+      toursSection,
+      footerSettings,
+      toursPage,
+    ] = await Promise.all([
+      prisma.siteSettings.findFirst(),
+      prisma.heroSection.findFirst({ where: { isActive: true } }),
+      prisma.toursSection.findFirst({ where: { isActive: true } }),
+      prisma.footerSettings.findFirst({ where: { isActive: true } }),
+      prisma.toursPage.findFirst({ where: { isActive: true } }),
+    ]);
 
-    let heroSection = await prisma.heroSection.findFirst({ where: { isActive: true } });
-    if (!heroSection) {
-      heroSection = await prisma.heroSection.create({ data: {} });
-    }
+    // Create defaults if not exist (upsert pattern)
+    const [
+      finalSiteSettings,
+      finalHeroSection,
+      finalToursSection,
+      finalFooterSettings,
+      finalToursPage,
+    ] = await Promise.all([
+      siteSettings ?? prisma.siteSettings.create({ data: {} }),
+      heroSection ?? prisma.heroSection.create({ data: {} }),
+      toursSection ?? prisma.toursSection.create({ data: {} }),
+      footerSettings ?? prisma.footerSettings.create({ data: {} }),
+      toursPage ?? prisma.toursPage.create({ data: {} }),
+    ]);
 
-    let toursSection = await prisma.toursSection.findFirst({ where: { isActive: true } });
-    if (!toursSection) {
-      toursSection = await prisma.toursSection.create({ data: {} });
-    }
-
+    // Fetch tours after we have toursSection
     const tours = await prisma.tour.findMany({
       where: {
-        toursSectionId: toursSection.id,
+        toursSectionId: finalToursSection.id,
         isActive: true,
       },
       orderBy: { order: 'asc' },
     });
 
-    let footerSettings = await prisma.footerSettings.findFirst({ where: { isActive: true } });
-    if (!footerSettings) {
-      footerSettings = await prisma.footerSettings.create({ data: {} });
-    }
-
-    let toursPage = await prisma.toursPage.findFirst({ where: { isActive: true } });
-    if (!toursPage) {
-      toursPage = await prisma.toursPage.create({ data: {} });
-    }
-
     return NextResponse.json({
-      siteSettings,
-      heroSection,
-      toursSection,
+      siteSettings: finalSiteSettings,
+      heroSection: finalHeroSection,
+      toursSection: finalToursSection,
       tours,
-      footerSettings,
-      toursPage,
+      footerSettings: finalFooterSettings,
+      toursPage: finalToursPage,
     });
   } catch (error) {
-    console.error('Error fetching content:', error);
+    console.error('[CMS Content] Error:', error);
     return NextResponse.json(
       { error: 'Error al obtener contenido' },
       { status: 500 }

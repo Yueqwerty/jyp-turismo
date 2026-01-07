@@ -2,67 +2,9 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion, useScroll, useTransform, useSpring, useInView, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
 import { useState, useRef, memo } from 'react';
-
-interface HeroSection {
-  tagline: string;
-  titleLine1: string;
-  titleLine2: string;
-  description: string;
-  whatsappNumber: string;
-  facebookUrl?: string | null;
-  instagramUrl?: string | null;
-  email: string;
-  heroImage: string;
-  heroImageAlt: string;
-  heroBadgeText: string;
-  ctaWhatsappText: string;
-  ctaPhoneText: string;
-}
-
-interface Tour {
-  id: string;
-  title: string;
-  description?: string | null;
-  tags: string[];
-  image: string;
-  gradient: string;
-  colSpan: number;
-  rowSpan: number;
-  minHeight: string;
-  featured: boolean;
-  order: number;
-  packageName?: string | null;
-  packageDescription?: string | null;
-  packagePrice?: string | null;
-  packageDuration?: string | null;
-  packageIncludes?: string[];
-}
-
-interface ToursSection {
-  sectionTitle: string;
-  sectionDescription: string;
-}
-
-interface FooterSettings {
-  brandTitle: string;
-  brandDescription: string;
-  copyrightText: string;
-  newsletterEnabled: boolean;
-  newsletterTitle: string;
-  newsletterPlaceholder: string;
-}
-
-interface SiteSettings {
-  logoText: string;
-  companyName: string;
-  phone?: string | null;
-  whatsappNumber?: string | null;
-  email?: string | null;
-  facebookUrl?: string | null;
-  instagramUrl?: string | null;
-}
+import type { HeroSection, Tour, ToursSection, FooterSettings, SiteSettings } from '@/types/cms';
 
 interface HomeClientProps {
   heroSection: HeroSection;

@@ -1,4 +1,4 @@
-// Prisma schema for messaging platform
+// Prisma schema for J&P Turismo CMS
 
 generator client {
   provider = "prisma-client-js"
@@ -9,36 +9,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Messaging enums - Commented out (Meta integration removed)
-// enum MessageChannel {
-//   WHATSAPP
-//   MESSENGER
-//   INSTAGRAM
-// }
-
-// enum MessageDirection {
-//   INBOUND
-//   OUTBOUND
-// }
-
-// enum MessageType {
-//   TEXT
-//   IMAGE
-//   VIDEO
-//   AUDIO
-//   DOCUMENT
-//   LOCATION
-//   CONTACT
-//   STICKER
-// }
-
-// enum MessageStatus {
-//   PENDING
-//   SENT
-//   DELIVERED
-//   READ
-//   FAILED
-// }
+// ===========================================
+// Authentication Models
+// ===========================================
 
 enum UserRole {
   ADMIN
@@ -46,18 +19,18 @@ enum UserRole {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  password      String
-  name          String?
-  role          UserRole  @default(AGENT)
-  isActive      Boolean   @default(true)
-  lastLoginAt   DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id          String    @id @default(cuid())
+  email       String    @unique
+  password    String
+  name        String?
+  role        UserRole  @default(AGENT)
+  isActive    Boolean   @default(true)
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
+  accounts Account[]
+  sessions Session[]
 
   @@index([email])
 }
@@ -97,226 +70,104 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// Messaging models - Commented out (Meta integration removed)
-// model Contact {
-//   id                String         @id @default(cuid())
-//   externalId        String
-//   channel           MessageChannel
-//   displayName       String
-//   phoneNumber       String?
-//   email             String?
-//   profilePictureUrl String?
-//   metadata          Json?
-//   isActive          Boolean        @default(true)
-//   createdAt         DateTime       @default(now())
-//   updatedAt         DateTime       @updatedAt
-
-//   conversations Conversation[]
-
-//   @@unique([externalId, channel])
-//   @@index([externalId])
-//   @@index([channel])
-// }
-
-// model Conversation {
-//   id                     String         @id @default(cuid())
-//   externalConversationId String         @unique
-//   channel                MessageChannel
-//   contactId              String
-//   subject                String?
-//   isActive               Boolean        @default(true)
-//   lastMessageAt          DateTime?
-//   unreadCount            Int            @default(0)
-//   createdAt              DateTime       @default(now())
-//   updatedAt              DateTime       @updatedAt
-
-//   contact  Contact   @relation(fields: [contactId], references: [id], onDelete: Restrict)
-//   messages Message[]
-
-//   @@index([contactId])
-//   @@index([channel])
-//   @@index([lastMessageAt])
-// }
-
-// model Message {
-//   id                  String           @id @default(cuid())
-//   externalMessageId   String           @unique
-//   conversationId      String
-//   channel             MessageChannel
-//   direction           MessageDirection
-//   type                MessageType
-//   status              MessageStatus
-//   textContent         String?
-//   senderName          String
-//   senderExternalId    String
-//   recipientName       String
-//   recipientExternalId String
-//   sentAt              DateTime
-//   deliveredAt         DateTime?
-//   readAt              DateTime?
-//   metadata            Json?
-//   errorMessage        String?
-//   createdAt           DateTime         @default(now())
-//   updatedAt           DateTime         @updatedAt
-
-//   conversation Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-//   attachments  Attachment[]
-
-//   @@index([conversationId])
-//   @@index([channel])
-//   @@index([sentAt])
-// }
-
-// model Attachment {
-//   id           String      @id @default(cuid())
-//   messageId    String
-//   type         MessageType
-//   fileName     String
-//   mimeType     String
-//   fileSize     Int
-//   fileUrl      String
-//   thumbnailUrl String?
-//   externalUrl  String?
-//   createdAt    DateTime    @default(now())
-//   updatedAt    DateTime    @updatedAt
-
-//   message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
-
-//   @@index([messageId])
-// }
-
-// ============================================
+// ===========================================
 // CMS Models - Website Content Management
-// ============================================
+// ===========================================
 
 model SiteSettings {
   id              String   @id @default(cuid())
   logoText        String   @default("J&P")
   companyName     String   @default("J&P Turismo")
-  metaTitle       String   @default("J&P Turismo - Operadores Turísticos en Patagonia Aysén")
-  metaDescription String   @default("Operadores turísticos especializados en la región de Aysén. Tours a Laguna San Rafael, Capillas de Mármol, Carretera Austral y más. Transporte seguro y confiable desde Coyhaique.")
-  metaKeywords    String   @default("turismo patagonia, aysén chile, laguna san rafael, capillas mármol, carretera austral, coyhaique, operadores turísticos, glaciares patagonia, puerto tranquilo")
-
-  // Contact info
+  metaTitle       String   @default("J&P Turismo - Operadores Turisticos en Patagonia Aysen")
+  metaDescription String   @default("Operadores turisticos especializados en la region de Aysen.")
+  metaKeywords    String   @default("turismo patagonia, aysen chile")
   phone           String?
   whatsappNumber  String?
   email           String?
-
-  // Social media
   facebookUrl     String?
   instagramUrl    String?
-
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
 
 model HeroSection {
   id              String   @id @default(cuid())
-  tagline         String   @default("Operadores Turísticos · Región de Aysén")
+  tagline         String   @default("Operadores Turisticos - Region de Aysen")
   titleLine1      String   @default("Explora")
   titleLine2      String   @default("la Patagonia")
-  description     String   @default("Descubre los glaciares del Campo de Hielo Norte, las Capillas de Mármol y los paisajes más impresionantes de la Carretera Austral. Transporte seguro y profesional desde Coyhaique.")
-
-  // Social media contact boxes (replaces info cards)
+  description     String   @default("Descubre los glaciares del Campo de Hielo Norte y los paisajes mas impresionantes de la Carretera Austral.")
   whatsappNumber  String   @default("+56912345678")
   facebookUrl     String?
   instagramUrl    String?
   email           String   @default("contacto@jypturismo.cl")
-
-  // Hero image
   heroImage       String   @default("/images/tours/laguna-san-rafael.jpg")
   heroImageAlt    String   @default("Glaciar San Rafael - Patagonia Chilena")
   heroBadgeText   String   @default("Turismo Sustentable")
-
-  // CTA buttons
   ctaWhatsappText String   @default("WhatsApp")
   ctaPhoneText    String   @default("+56 9 XXXX XXXX")
-
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
 
 model ToursSection {
-  id              String   @id @default(cuid())
-  sectionTitle    String   @default("Destinos & Experiencias")
-  sectionDescription String @default("Conectamos los rincones más extraordinarios de la Patagonia Aysén. Desde navegaciones al Glaciar San Rafael hasta las formaciones de mármol de Puerto Tranquilo, cada ruta es una aventura única.")
-
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  tours           Tour[]
+  id                 String   @id @default(cuid())
+  sectionTitle       String   @default("Destinos & Experiencias")
+  sectionDescription String   @default("Conectamos los rincones mas extraordinarios de la Patagonia Aysen.")
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  tours              Tour[]
 }
 
 model Tour {
-  id              String        @id @default(cuid())
-  toursSectionId  String
-
-  title           String
-  description     String?
-  tags            String[]      // Array of tags
-  image           String
-  gradient        String        @default("from-blue-600 to-blue-700")
-
-  // Package information
-  packageName        String?       // e.g., "Paquete Aventura", "Oferta Especial"
-  packageDescription String?       // Descripción detallada del paquete
-  packagePrice       String?       // e.g., "$150.000", "Desde $200.000"
-  packageDuration    String?       // e.g., "3 días / 2 noches", "Día completo"
-  packageIncludes    String[]      @default([]) // Array of included items
-
-  // Grid positioning
-  colSpan         Int           @default(4)  // 1-12 for responsive grid
-  rowSpan         Int           @default(1)  // 1-2 for vertical span
-  minHeight       String        @default("320px")
-
-  featured        Boolean       @default(false)
-  order           Int           @default(0)
-  isActive        Boolean       @default(true)
-
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  toursSection    ToursSection  @relation(fields: [toursSectionId], references: [id], onDelete: Cascade)
+  id                 String       @id @default(cuid())
+  toursSectionId     String
+  title              String
+  description        String?
+  tags               String[]
+  image              String
+  gradient           String       @default("from-blue-600 to-blue-700")
+  packageName        String?
+  packageDescription String?
+  packagePrice       String?
+  packageDuration    String?
+  packageIncludes    String[]     @default([])
+  colSpan            Int          @default(4)
+  rowSpan            Int          @default(1)
+  minHeight          String       @default("320px")
+  featured           Boolean      @default(false)
+  order              Int          @default(0)
+  isActive           Boolean      @default(true)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  toursSection       ToursSection @relation(fields: [toursSectionId], references: [id], onDelete: Cascade)
 
   @@index([toursSectionId])
   @@index([order])
 }
 
 model ToursPage {
-  id              String   @id @default(cuid())
-
-  // Hero section
-  heroTitle       String   @default("Nuestros Paquetes")
-  heroSubtitle    String   @default("Selección curada de experiencias")
-
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id           String   @id @default(cuid())
+  heroTitle    String   @default("Nuestros Paquetes")
+  heroSubtitle String   @default("Seleccion curada de experiencias")
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model FooterSettings {
-  id              String   @id @default(cuid())
-
-  // Brand section
-  brandTitle      String   @default("J&P\nTurismo")
-  brandDescription String  @default("Operadores turísticos con más de una década de experiencia conectando viajeros con los paisajes más impresionantes de la Patagonia Aysén. Seguridad, profesionalismo y compromiso con el turismo sustentable.")
-
-  // Copyright
-  copyrightText   String   @default("© 2024 J&P Turismo · Operadores Turísticos · Región de Aysén, Chile")
-
-  // Legal links
-  termsUrl        String?
-  privacyUrl      String?
-  cookiesUrl      String?
-
-  // Newsletter
-  newsletterEnabled Boolean @default(true)
-  newsletterTitle   String  @default("Newsletter")
-  newsletterPlaceholder String @default("Tu email")
-
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                    String   @id @default(cuid())
+  brandTitle            String   @default("J&P\nTurismo")
+  brandDescription      String   @default("Operadores turisticos con experiencia conectando viajeros con los paisajes de la Patagonia Aysen.")
+  copyrightText         String   @default("2024 J&P Turismo - Region de Aysen, Chile")
+  termsUrl              String?
+  privacyUrl            String?
+  cookiesUrl            String?
+  newsletterEnabled     Boolean  @default(true)
+  newsletterTitle       String   @default("Newsletter")
+  newsletterPlaceholder String   @default("Tu email")
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 }

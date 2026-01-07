@@ -1,51 +1,66 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
+import { revalidatePath } from 'next/cache';
+import { prisma } from '@/lib/prisma';
+import { heroSectionSchema, validateInput } from '@/lib/validations/cms';
 
-const prisma = new PrismaClient();
+// GET - Get hero section
+export async function GET() {
+  try {
+    let heroSection = await prisma.heroSection.findFirst({ where: { isActive: true } });
 
-// PUT - Actualizar Hero Section
+    if (!heroSection) {
+      heroSection = await prisma.heroSection.create({ data: {} });
+    }
+
+    return NextResponse.json(heroSection);
+  } catch (error) {
+    console.error('[Hero GET] Error:', error);
+    return NextResponse.json(
+      { error: 'Error al obtener hero section' },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT - Update hero section
 export async function PUT(request: Request) {
   try {
-    // Verificar autenticación
     const session = await getServerSession();
     if (!session) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const data = await request.json();
+    const body = await request.json();
+    const validation = validateInput(heroSectionSchema, body);
 
-    // Buscar la hero section activa
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      );
+    }
+
     let heroSection = await prisma.heroSection.findFirst({ where: { isActive: true } });
 
+    const { id, ...heroData } = validation.data;
+
     if (heroSection) {
-      // Actualizar existente
       heroSection = await prisma.heroSection.update({
         where: { id: heroSection.id },
-        data: {
-          tagline: data.tagline,
-          titleLine1: data.titleLine1,
-          titleLine2: data.titleLine2,
-          description: data.description,
-          whatsappNumber: data.whatsappNumber,
-          facebookUrl: data.facebookUrl,
-          instagramUrl: data.instagramUrl,
-          email: data.email,
-          heroImage: data.heroImage,
-          heroImageAlt: data.heroImageAlt,
-          heroBadgeText: data.heroBadgeText,
-          ctaWhatsappText: data.ctaWhatsappText,
-          ctaPhoneText: data.ctaPhoneText,
-        },
+        data: heroData,
       });
     } else {
-      // Crear nuevo
-      heroSection = await prisma.heroSection.create({ data });
+      heroSection = await prisma.heroSection.create({
+        data: heroData,
+      });
     }
+
+    revalidatePath('/');
 
     return NextResponse.json(heroSection);
   } catch (error) {
-    console.error('Error updating hero section:', error);
+    console.error('[Hero PUT] Error:', error);
     return NextResponse.json(
       { error: 'Error al actualizar hero section' },
       { status: 500 }

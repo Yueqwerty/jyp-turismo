@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';
+import { prisma } from '@/lib/prisma';
+import { tourSchema, toursSectionSchema, validateInput } from '@/lib/validations/cms';
 
-const prisma = new PrismaClient();
-
-// POST - Crear nuevo tour
+// POST - Create new tour
 export async function POST(request: Request) {
   try {
     const session = await getServerSession();
@@ -13,28 +12,37 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const data = await request.json();
+    const body = await request.json();
+    const validation = validateInput(tourSchema, body);
 
-    // Obtener la sección de tours activa
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      );
+    }
+
+    // Get or create active tours section
     let toursSection = await prisma.toursSection.findFirst({ where: { isActive: true } });
     if (!toursSection) {
       toursSection = await prisma.toursSection.create({ data: {} });
     }
 
+    const { id, ...tourData } = validation.data;
+
     const tour = await prisma.tour.create({
       data: {
-        ...data,
+        ...tourData,
         toursSectionId: toursSection.id,
       },
     });
 
-    // Revalidar la página principal y el catálogo para mostrar el nuevo tour
     revalidatePath('/');
     revalidatePath('/tours');
 
-    return NextResponse.json(tour);
+    return NextResponse.json(tour, { status: 201 });
   } catch (error) {
-    console.error('Error creating tour:', error);
+    console.error('[Tours POST] Error:', error);
     return NextResponse.json(
       { error: 'Error al crear tour' },
       { status: 500 }
@@ -42,7 +50,7 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT - Actualizar tours section
+// PUT - Update tours section
 export async function PUT(request: Request) {
   try {
     const session = await getServerSession();
@@ -50,7 +58,15 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const data = await request.json();
+    const body = await request.json();
+    const validation = validateInput(toursSectionSchema, body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      );
+    }
 
     let toursSection = await prisma.toursSection.findFirst({ where: { isActive: true } });
 
@@ -58,23 +74,24 @@ export async function PUT(request: Request) {
       toursSection = await prisma.toursSection.update({
         where: { id: toursSection.id },
         data: {
-          sectionTitle: data.sectionTitle,
-          sectionDescription: data.sectionDescription,
+          sectionTitle: validation.data.sectionTitle,
+          sectionDescription: validation.data.sectionDescription,
         },
       });
     } else {
-      toursSection = await prisma.toursSection.create({ data });
+      toursSection = await prisma.toursSection.create({
+        data: validation.data,
+      });
     }
 
-    // Revalidar la página principal y el catálogo para mostrar los cambios
     revalidatePath('/');
     revalidatePath('/tours');
 
     return NextResponse.json(toursSection);
   } catch (error) {
-    console.error('Error updating tours section:', error);
+    console.error('[Tours PUT] Error:', error);
     return NextResponse.json(
-      { error: 'Error al actualizar sección de tours' },
+      { error: 'Error al actualizar seccion de tours' },
       { status: 500 }
     );
   }

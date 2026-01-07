@@ -1,10 +1,29 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
+import { revalidatePath } from 'next/cache';
+import { prisma } from '@/lib/prisma';
+import { siteSettingsSchema, validateInput } from '@/lib/validations/cms';
 
-const prisma = new PrismaClient();
+// GET - Get site settings
+export async function GET() {
+  try {
+    let siteSettings = await prisma.siteSettings.findFirst();
 
-// PUT - Actualizar configuraciones del sitio
+    if (!siteSettings) {
+      siteSettings = await prisma.siteSettings.create({ data: {} });
+    }
+
+    return NextResponse.json(siteSettings);
+  } catch (error) {
+    console.error('[Settings GET] Error:', error);
+    return NextResponse.json(
+      { error: 'Error al obtener configuracion' },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT - Update site settings
 export async function PUT(request: Request) {
   try {
     const session = await getServerSession();
@@ -12,35 +31,38 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const data = await request.json();
+    const body = await request.json();
+    const validation = validateInput(siteSettingsSchema, body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      );
+    }
 
     let siteSettings = await prisma.siteSettings.findFirst();
+
+    const { id, ...settingsData } = validation.data;
 
     if (siteSettings) {
       siteSettings = await prisma.siteSettings.update({
         where: { id: siteSettings.id },
-        data: {
-          logoText: data.logoText,
-          companyName: data.companyName,
-          metaTitle: data.metaTitle,
-          metaDescription: data.metaDescription,
-          metaKeywords: data.metaKeywords,
-          phone: data.phone,
-          whatsappNumber: data.whatsappNumber,
-          email: data.email,
-          facebookUrl: data.facebookUrl,
-          instagramUrl: data.instagramUrl,
-        },
+        data: settingsData,
       });
     } else {
-      siteSettings = await prisma.siteSettings.create({ data });
+      siteSettings = await prisma.siteSettings.create({
+        data: settingsData,
+      });
     }
+
+    revalidatePath('/');
 
     return NextResponse.json(siteSettings);
   } catch (error) {
-    console.error('Error updating site settings:', error);
+    console.error('[Settings PUT] Error:', error);
     return NextResponse.json(
-      { error: 'Error al actualizar configuraciones' },
+      { error: 'Error al actualizar configuracion' },
       { status: 500 }
     );
   }
