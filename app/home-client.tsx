@@ -119,36 +119,6 @@ const TourCard = memo(function TourCard({ tour, index }: { tour: Tour; index: nu
 });
 
 // ===========================================
-// Stats Component
-// ===========================================
-function StatsSection() {
-  const stats = [
-    { value: '15+', label: 'Anos de experiencia' },
-    { value: '50+', label: 'Destinos unicos' },
-    { value: '10K+', label: 'Viajeros felices' },
-    { value: '100%', label: 'Turismo sustentable' },
-  ];
-
-  return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-      {stats.map((stat, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.1 }}
-          className="text-center"
-        >
-          <div className="text-4xl md:text-5xl font-black text-slate-900 mb-1">{stat.value}</div>
-          <div className="text-sm text-slate-500 font-medium">{stat.label}</div>
-        </motion.div>
-      ))}
-    </div>
-  );
-}
-
-// ===========================================
 // Feature Card
 // ===========================================
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
@@ -321,13 +291,6 @@ export default function HomeClient({
             <div className="w-1.5 h-3 bg-white/50 rounded-full" />
           </motion.div>
         </motion.div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-16 md:py-24 bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <StatsSection />
-        </div>
       </section>
 
       {/* Tours Section */}

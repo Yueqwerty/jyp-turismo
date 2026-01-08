@@ -1,279 +1,224 @@
-# J&P Turismo - Sistema de Gestión de Contenido
+# J&P Turismo
 
-Sistema web completo para J&P Turismo con CMS (Sistema de Gestión de Contenido) integrado. Diseño cinematográfico inspirado en Awwwards con estilo Bento Grid.
+Sistema de gestion de contenido (CMS) para operador turistico en la Region de Aysen, Patagonia Chilena.
 
-## Características
+## Descripcion
 
-### 🎨 Diseño Cinematográfico
-- Animaciones suaves con Framer Motion
-- Efectos parallax multi-capa
-- Glassmorphism y backdrop blur
-- Bento Grid layout para tours
-- Diseño responsive y accesible
+Aplicacion web con panel de administracion para gestionar el contenido del sitio publico. Permite editar secciones del sitio, administrar tours y configurar informacion de contacto sin necesidad de modificar codigo.
 
-### 🛠️ CMS Completo
-- **Panel de Administración** - Interfaz intuitiva para gestionar todo el contenido
-- **Edición en tiempo real** - Modales de edición con preview instantáneo
-- **Upload de imágenes** - Sistema de carga de imágenes optimizado
-- **Gestión de Tours** - Crear, editar y eliminar tours con tags dinámicos
-- **Configuración del sitio** - Editar textos, imágenes, metadata y contacto
-- **Autenticación segura** - NextAuth con bcrypt para passwords
+## Requisitos
 
-### 📱 Secciones Editables
+- Node.js 18.17.0 o superior
+- PostgreSQL 14 o superior
+- npm 9.x o superior
 
-#### Hero Section
-- Tagline
-- Títulos (2 líneas)
-- Descripción
-- Cards de información (2)
-- Imagen hero con badge
-- CTAs (WhatsApp y Teléfono)
+## Instalacion
 
-#### Tours (Bento Grid)
-- Título de sección
-- Descripción de sección
-- Tours individuales:
-  - Título
-  - Descripción (opcional)
-  - Tags personalizables
-  - Imagen
-  - Gradiente de respaldo
-  - Featured toggle
-  - Orden personalizado
+```bash
+git clone <repository-url>
+cd jyp-turismo
+npm install
+```
 
-#### Footer
-- Título de marca
-- Descripción de empresa
-- Información de contacto
-- Links de redes sociales
-- Newsletter (con toggle)
-- Texto de copyright
+## Configuracion
 
-#### Configuración General
-- Nombre de empresa
-- Logo text
-- Email y teléfono
-- WhatsApp
-- Meta tags (title, description, keywords)
-- URLs de redes sociales
+Crear archivo `.env` en la raiz del proyecto:
 
-## Stack Tecnológico
+```env
+DATABASE_URL="postgresql://usuario:password@localhost:5432/jyp_turismo"
+NEXTAUTH_SECRET="clave-secreta-de-32-caracteres-minimo"
+NEXTAUTH_URL="http://localhost:3000"
+```
 
-- **Framework**: Next.js 14 (App Router)
-- **Base de Datos**: PostgreSQL con Prisma ORM
-- **Autenticación**: NextAuth.js
-- **Estilos**: Tailwind CSS
-- **Animaciones**: Framer Motion
-- **Lenguaje**: TypeScript
-- **Deployment**: Vercel
+### Base de datos
 
-## Estructura del Proyecto
+```bash
+npx prisma db push
+npx prisma generate
+```
+
+### Usuario administrador
+
+```bash
+npm run create-admin
+```
+
+El script solicita email, nombre y contrasena. El usuario se crea con rol ADMIN.
+
+## Ejecucion
+
+### Desarrollo
+
+```bash
+npm run dev
+```
+
+Disponible en `http://localhost:3000`
+
+### Produccion
+
+```bash
+npm run build
+npm run start
+```
+
+## Estructura del proyecto
 
 ```
 jyp-turismo/
 ├── app/
-│   ├── admin/           # Panel de administración
+│   ├── admin/
+│   │   └── page.tsx              # Panel de administracion
 │   ├── api/
-│   │   ├── auth/        # NextAuth
-│   │   └── cms/         # APIs del CMS
-│   ├── home-client.tsx  # Homepage (client component)
-│   ├── page.tsx         # Homepage (server component)
-│   ├── login/           # Página de login
-│   └── layout.tsx       # Layout principal
+│   │   ├── auth/[...nextauth]/   # Autenticacion
+│   │   └── cms/                  # Endpoints del CMS
+│   │       ├── content/          # GET contenido completo
+│   │       ├── hero/             # PUT hero section
+│   │       ├── tours/            # CRUD tours
+│   │       ├── tours-section/    # PUT seccion de tours
+│   │       ├── tours-page/       # PUT pagina de tours
+│   │       ├── footer/           # PUT footer
+│   │       ├── settings/         # PUT configuracion
+│   │       └── upload/           # POST imagenes
+│   ├── login/
+│   │   └── page.tsx              # Pagina de login
+│   ├── tours/
+│   │   └── page.tsx              # Listado de tours
+│   ├── home-client.tsx           # Homepage (componente cliente)
+│   ├── page.tsx                  # Homepage (server component)
+│   └── layout.tsx                # Layout principal
 ├── components/
-│   └── providers/       # Providers (SessionProvider)
+│   ├── admin/
+│   │   ├── modals/               # Modales de edicion
+│   │   ├── sections/             # Secciones del panel
+│   │   └── sidebar.tsx           # Navegacion lateral
+│   ├── icons/
+│   │   └── index.tsx             # Iconos reutilizables
+│   ├── ui/
+│   │   ├── form-fields.tsx       # Campos de formulario
+│   │   └── modal.tsx             # Componente modal base
+│   └── providers/
+│       └── session-provider.tsx  # Provider de NextAuth
+├── hooks/
+│   └── use-form-modal.ts         # Hook para modales con formulario
 ├── lib/
-│   ├── auth/            # Configuración de NextAuth
-│   └── prisma.ts        # Cliente de Prisma
+│   ├── auth/
+│   │   └── config.ts             # Configuracion NextAuth
+│   ├── validations/
+│   │   └── cms.ts                # Esquemas Zod
+│   └── prisma.ts                 # Cliente Prisma (singleton)
 ├── prisma/
-│   └── schema.prisma    # Schema de base de datos
+│   └── schema.prisma             # Esquema de base de datos
+├── scripts/
+│   └── create-admin.ts           # Script creacion de admin
+├── types/
+│   └── cms.ts                    # Tipos TypeScript
 └── public/
     └── images/
-        └── tours/       # Imágenes de tours
+        └── tours/                # Imagenes de tours
 ```
 
-## Instalación
+## Stack tecnico
 
-### Requisitos
-- Node.js 18+
-- PostgreSQL
-- npm o yarn
+| Tecnologia | Version | Uso |
+|------------|---------|-----|
+| Next.js | 14.0.4 | Framework React con App Router |
+| React | 18.2.0 | Libreria UI |
+| TypeScript | 5.3.3 | Tipado estatico |
+| Prisma | 6.19.0 | ORM para PostgreSQL |
+| NextAuth.js | 4.24.5 | Autenticacion |
+| Tailwind CSS | 3.4.0 | Estilos |
+| Framer Motion | 10.16.16 | Animaciones |
+| Zod | 3.22.4 | Validacion de datos |
+| bcryptjs | 2.4.3 | Hash de contrasenas |
 
-### Pasos
+## API
 
-1. **Clonar el repositorio**
-   ```bash
-   git clone <repository-url>
-   cd jyp-turismo
-   ```
+### Endpoints publicos
 
-2. **Instalar dependencias**
-   ```bash
-   npm install
-   ```
+| Metodo | Ruta | Descripcion |
+|--------|------|-------------|
+| GET | /api/cms/content | Obtiene todo el contenido del sitio |
 
-3. **Configurar variables de entorno**
-   Crear archivo `.env`:
-   ```env
-   # Database
-   DATABASE_URL="postgresql://user:password@localhost:5432/jyp_turismo"
+### Endpoints protegidos
 
-   # NextAuth
-   NEXTAUTH_SECRET="tu-secret-key-muy-segura"
-   NEXTAUTH_URL="http://localhost:3000"
-   ```
+Requieren sesion de usuario autenticado.
 
-4. **Ejecutar migraciones de base de datos**
-   ```bash
-   npx prisma db push
-   npx prisma generate
-   ```
+| Metodo | Ruta | Descripcion |
+|--------|------|-------------|
+| PUT | /api/cms/hero | Actualiza seccion hero |
+| POST | /api/cms/tours | Crea nuevo tour |
+| PUT | /api/cms/tours/[id] | Actualiza tour existente |
+| DELETE | /api/cms/tours/[id] | Elimina tour |
+| PUT | /api/cms/tours-section | Actualiza seccion de tours |
+| PUT | /api/cms/tours-page | Actualiza pagina de tours |
+| PUT | /api/cms/footer | Actualiza footer |
+| PUT | /api/cms/settings | Actualiza configuracion del sitio |
+| POST | /api/cms/upload | Sube imagen |
 
-   > **Nota**: Si usas Neon PostgreSQL (como está configurado), usa `npx prisma db push` en lugar de `npx prisma migrate dev`
+## Modelos de datos
 
-5. **Crear usuario administrador**
-   ```bash
-   npm run create-admin
-   ```
-
-   El script te pedirá:
-   - Email
-   - Nombre (opcional)
-   - Contraseña
-
-   El usuario será creado automáticamente con rol ADMIN
-
-6. **Iniciar servidor de desarrollo**
-   ```bash
-   npm run dev
-   ```
-
-7. **Abrir navegador**
-   - Sitio web: http://localhost:3000
-   - Admin: http://localhost:3000/admin
-   - Login: http://localhost:3000/login
-
-## Deployment en Vercel
-
-1. **Conectar repositorio**
-   - Importar proyecto en Vercel
-   - Conectar con GitHub
-
-2. **Configurar variables de entorno**
-   En Vercel Dashboard:
-   - `DATABASE_URL`
-   - `NEXTAUTH_SECRET`
-   - `NEXTAUTH_URL`
-
-3. **Deploy**
-   ```bash
-   git push origin claude/check-status-011hRCFpgTfcmZzQ7LQhq93d
-   ```
-
-4. **Ejecutar migraciones en producción**
-   ```bash
-   npx prisma db push
-   ```
-
-## Uso del CMS
-
-### Acceder al Panel de Administración
-
-1. Ir a `/login`
-2. Ingresar credenciales de administrador
-3. Redireccionará a `/admin`
-
-### Editar Contenido
-
-**Hero Section:**
-- Click en "Editar Hero"
-- Modificar campos en el modal
-- Upload nueva imagen si es necesario
-- Click en "Guardar"
-
-**Tours:**
-- Click en cualquier tour para editar
-- O click en "+ Agregar Tour" para crear nuevo
-- Agregar/eliminar tags con el botón "+"
-- Upload imagen
-- Toggle "Featured" para destacar
-- Guardar cambios
-
-**Footer y Settings:**
-- Click en "Editar" en cada sección
-- Modificar campos
-- Guardar
-
-## API Endpoints
-
-### Públicos
-- `GET /api/cms/content` - Obtener todo el contenido del sitio
-
-### Protegidos (requieren autenticación)
-- `PUT /api/cms/hero` - Actualizar Hero Section
-- `POST /api/cms/tours` - Crear tour
-- `PUT /api/cms/tours` - Actualizar Tours Section
-- `PUT /api/cms/tours/[id]` - Actualizar tour específico
-- `DELETE /api/cms/tours/[id]` - Eliminar tour
-- `PUT /api/cms/settings` - Actualizar configuración del sitio
-- `PUT /api/cms/footer` - Actualizar footer
-- `POST /api/cms/upload` - Subir imagen
-
-## Modelos de Base de Datos
+### User
+Usuarios del sistema con roles ADMIN o AGENT.
 
 ### SiteSettings
-Configuración general del sitio (logo, nombre, metadata, contacto, redes sociales)
+Configuracion general: nombre, logo, metadata SEO, datos de contacto, redes sociales.
 
 ### HeroSection
-Contenido de la sección hero (tagline, títulos, descripción, info cards, imagen, CTAs)
+Contenido de la seccion principal: tagline, titulos, descripcion, imagen, botones de accion.
 
 ### ToursSection
-Configuración de la sección de tours (título y descripción de sección)
+Configuracion de la seccion de tours: titulo y descripcion.
 
 ### Tour
-Tours individuales (título, descripción, tags, imagen, configuración de grid)
+Tours individuales: titulo, descripcion, tags, imagen, precio, duracion, orden, estado destacado.
+
+### ToursPage
+Configuracion de la pagina de tours: titulo y subtitulo del hero.
 
 ### FooterSettings
-Configuración del footer (brand, descripción, copyright, newsletter)
+Contenido del footer: marca, descripcion, copyright, configuracion de newsletter.
 
-### User, Account, Session, VerificationToken
-Modelos de NextAuth para autenticación
+## Panel de administracion
 
-## Seguridad
+Acceso en `/admin` despues de autenticarse en `/login`.
 
-- ✅ Passwords hasheados con bcrypt
-- ✅ Sesiones JWT con NextAuth
-- ✅ CSRF protection
-- ✅ Content Security Policy
-- ✅ XSS Protection headers
-- ✅ Clickjacking protection
-- ✅ HTTPS enforcement (HSTS)
-- ✅ APIs protegidas con autenticación
+### Secciones disponibles
 
-## Desarrollo
+- **Dashboard**: Vista general del contenido
+- **Hero**: Edicion de la seccion principal
+- **Tours**: Gestion de tours (crear, editar, eliminar, reordenar)
+- **Footer**: Edicion del pie de pagina
+- **Configuracion**: Datos del sitio y SEO
+- **Herramientas**: Sincronizacion y utilidades
 
-### Scripts disponibles
+## Despliegue
+
+### Vercel
+
+1. Importar repositorio en Vercel
+2. Configurar variables de entorno:
+   - DATABASE_URL
+   - NEXTAUTH_SECRET
+   - NEXTAUTH_URL (URL de produccion)
+3. Desplegar
+
+### Migraciones en produccion
+
 ```bash
-npm run dev          # Servidor de desarrollo
-npm run build        # Build para producción
-npm run start        # Servidor de producción
-npm run lint         # Linter
-npm run create-admin # Crear usuario administrador
-npx prisma studio    # Prisma Studio (DB GUI)
-npx prisma db push   # Sincronizar schema con base de datos
-npx prisma generate  # Generar cliente Prisma
+npx prisma db push
 ```
 
-### Convenciones de código
-- TypeScript estricto
-- ESLint para linting
-- Prettier para formateo
-- Conventional Commits
+## Scripts disponibles
 
-## Soporte
-
-Para reportar bugs o solicitar features, crear un issue en el repositorio.
+| Comando | Descripcion |
+|---------|-------------|
+| npm run dev | Inicia servidor de desarrollo |
+| npm run build | Genera build de produccion |
+| npm run start | Inicia servidor de produccion |
+| npm run lint | Ejecuta linter |
+| npm run create-admin | Crea usuario administrador |
 
 ## Licencia
 
-Todos los derechos reservados © 2024 J&P Turismo
+Todos los derechos reservados.
